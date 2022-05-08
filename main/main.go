@@ -3,51 +3,102 @@ package main
 import (
 	"context"
 	"log"
-	"time"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	config "github.com/sandy0786/skill-assessment-service/configuration"
+	userDao "github.com/sandy0786/skill-assessment-service/dao/user"
+	database "github.com/sandy0786/skill-assessment-service/database"
+	endpoint "github.com/sandy0786/skill-assessment-service/endpoint"
+	server "github.com/sandy0786/skill-assessment-service/server"
+	service "github.com/sandy0786/skill-assessment-service/service"
+	transport "github.com/sandy0786/skill-assessment-service/transport"
+
+	"github.com/go-playground/validator"
+	// "github.com/ArthurHlt/go-eureka-client/eureka"
+	// "github.com/go-playground/validator"
+	// "github.com/ArthurHlt/go-eureka-client/eureka"
 )
 
-type Task struct {
-	ID        primitive.ObjectID `bson:"_id"`
-	CreatedAt time.Time          `bson:"created_at"`
-	UpdatedAt time.Time          `bson:"updated_at"`
-	Text      string             `bson:"text"`
-	completed bool               `bson:"completed"`
-}
-
-var collection *mongo.Collection
-var ctx = context.TODO()
-
 func init() {
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017/")
-	client, err := mongo.Connect(ctx, clientOptions)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = client.Ping(ctx, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	collection = client.Database("tasker").Collection("tasks")
+	log.Println("inside init")
+	transport.Validate = validator.New()
 }
 
 func main() {
-	log.Println("hello")
-	task := &Task{
-		ID:        primitive.NewObjectID(),
-		Text:      "test",
-		completed: true,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-	}
-	a, err := collection.InsertOne(ctx, task)
+
+	ctx := context.Background()
+
+	// config
+	configobj := config.NewConfigObject()
+	configobj.LoadConfiguration()
+
+	log.Println("config > ", configobj.GetConfigDetails())
+	dbDetails := configobj.GetConfigDetails().DatabaseDetails
+	// connect to db
+	dbObj := database.NewMongoObj(dbDetails.Host, dbDetails.Port, dbDetails.User, dbDetails.Password, dbDetails.Name, dbDetails.ConnectionString)
+	err := dbObj.Connect()
 	if err != nil {
-		log.Println("error while insertion : ", err)
+		log.Fatal("Db connection error : ", err)
 	}
-	log.Println("a > ", a)
+
+	empDao := userDao.NewUserDAO(dbObj, "user")
+
+	// create service
+	testSrv := service.NewUserService(configobj, empDao)
+
+	errChan := make(chan error)
+
+	// mapping endpoints
+	endpoints := endpoint.Endpoints{
+		StatusEndpoint:      endpoint.MakeStatusEndpoint(testSrv),
+		AddEmployeeEndpoint: endpoint.MakeAddEmployeeEndpoint(testSrv),
+		// GetAllEmployeesEndpoint: endpoint.MakeGetAllEmployeesEndpoint(testSrv),
+		// GetEmployeeByIdEndpoint: endpoint.MakeGetEmployeeByIdEndpoint(testSrv),
+	}
+
+	// HTTP transport
+	srv := server.CreateNewServer(configobj.GetConfigDetails(), server.NewHTTPServer(ctx, endpoints))
+	go func() {
+		errChan <- srv.ListenAndServe()
+	}()
+
+	log.Println("Main: main: Microservice started")
+
+	// client := eureka.NewClient([]string{
+	// 	"http://127.0.0.1:8761/eureka", //From a spring boot based eureka server
+	// 	// add others servers here
+	// })
+	// instance := eureka.NewInstanceInfo("localhost", "test-service", "127.0.0.1", 8084, 30, false) //Create a new instance to register
+	// instance.Metadata = &eureka.MetaData{
+	// 	Map: make(map[string]string),
+	// }
+	// instance.Metadata.Map["foo"] = "bar"        //add metadata for example
+	// client.RegisterInstance("test-service", instance) // Register new instance in your eureka(s)
+	// applications, _ := client.GetApplications() // Retrieves all applications from eureka server(s)
+	// log.Println("applications : ", applications)
+	// client.GetApplication(instance.App)                 // retrieve the application "test"
+	// client.GetInstance(instance.App, instance.HostName) // retrieve the instance from "test.com" inside "test"" app
+
+	// go func() {
+	// 	// send heartbeat every 30sec
+	// client.SendHeartbeat(instance.App, instance.HostName) // say to eureka that your app is alive (here you must send heartbeat before 30 sec)
+	// }()
+
+	// s, err := scheduler.NewScheduler(1)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+
+	// // s.Every().Do(client.SendHeartbeat, instance.App, instance.HostName)
+	// s.Every().Do(test, client, instance)
+
+	log.Println("msg", <-errChan)
 }
+
+// func test(client *eureka.Client, instance *eureka.InstanceInfo) {
+// 	log.Println("print")
+// 	applications, _ := client.GetApplications() // Retrieves all applications from eureka server(s)
+// 	log.Println("applications : ", applications)
+// 	client.GetApplication(instance.App) // retrieve the application "test"
+// 	client.GetInstance(instance.App, instance.HostName)
+// 	client.SendHeartbeat(instance.App, instance.HostName)
+// }

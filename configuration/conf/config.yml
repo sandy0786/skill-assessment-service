@@ -1,0 +1,14 @@
+# Service name
+serviceName: skill-assessment
+
+# API port number
+serverPort: 8084
+
+database:
+  host: localhost
+  port: 27017
+  name: skill_assessment
+  user: mongo
+  password: mongo
+  connectionString: mongodb://localhost:27017/
+
