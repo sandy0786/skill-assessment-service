@@ -1,0 +1,27 @@
+{
+  "_id": "objectId(id)",
+  "name": "Sandilya",
+  "email": "abc@gmail.com",
+  "profile": "file",
+  "assessmentIdList": [
+    {
+      "questionId": "ObjectId(id)",
+      "selectedAnswer": "",
+      "isCorrect": true,
+      "score": 1
+    },
+    {
+      "questionId": "ObjectId(id)",
+      "selectedAnswer": "",
+      "isCorrect": false,
+      "score": 0
+    }
+  ],
+  "totalTime": 60,
+  "timeTaken": 45,
+  "startedAt": "time",
+  "completedAt": "time",
+  "totalScore": 20,
+  "rating": 5,
+  "feedback": "Excellent"
+}

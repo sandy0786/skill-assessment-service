@@ -1,0 +1,8 @@
+{
+  "_id": "object(id)",
+  "question": "How are you",
+  "options": ["good", "bad", "amazing", "ok"],
+  "answer": "amazing",
+  "questionType": "radio/checkbox",
+  "author": "Sandilya Anisetty"
+}

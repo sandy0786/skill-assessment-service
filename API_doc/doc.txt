@@ -1,0 +1,143 @@
+Method: POST
+Endpoint: /api/user
+Headers:
+    Authorization: token
+RequestBody: {
+    "username": "sampleuser",
+    "password": "abc",
+    "email": "xyz@gmail.com",
+    "role":"manager",
+    "createdAt": "",
+    "updatedAt": ""
+}
+Response:
+    Success:
+        ResponseCode: 200
+        ResponseBody: {
+            "status": "ok",
+            "message": "User created successfuly",
+            "timestamp": "utc timestamp"
+        }
+    Failure:
+        ResponseCode: 409
+        ResponseBody: {
+            "status": "conflict",
+            "message": "User already exists",
+            "timestamp": "utc timestamp"
+        },
+        ResponseCode: 500
+        ResponseBody: {
+            "status": "Internal server error",
+            "message": "Something went wrong",
+            "timestamp": "utc timestamp"
+        }
+
+-------------------------------------------------------------------------------
+Method: DELETE
+Endpoint: /api/user/{user_name}
+Headers:
+    Authorization: token
+RequestBody: {}
+Response:
+    Success:
+        ResponseCode: 200
+        ResponseBody: {
+            "status": "ok",
+            "message": "User deleted successfuly",
+            "timestamp": "utc timestamp"
+        }
+    Failure:
+        ResponseCode: 404
+        ResponseBody: {
+            "status": "not found",
+            "message": "User does not exist",
+            "timestamp": "utc timestamp"
+        },
+        ResponseCode: 500
+        ResponseBody: {
+            "status": "Internal server error",
+            "message": "Something went wrong",
+            "timestamp": "utc timestamp"
+        }
+---------------------------------------------------------------------------------
+Method: PUT
+Endpoint: /api/user/{user_name}/password
+Headers:
+    Authorization: token
+RequestBody: {
+    "currentPassword": "abc",
+    "newPassword": "xyz"
+}
+Response:
+    Success:
+        ResponseCode: 200
+        ResponseBody: {
+            "status": "ok",
+            "message": "Password updated successfuly",
+            "timestamp": "utc timestamp"
+        }
+    Failure:
+        ResponseCode: 404
+        ResponseBody: {
+            "status": "not found",
+            "message": "User does not exists",
+            "timestamp": "utc timestamp"
+        },
+        ResponseCode: 500
+        ResponseBody: {
+            "status": "Internal server error",
+            "message": "Something went wrong",
+            "timestamp": "utc timestamp"
+        }
+-----------------------------------------------------------------------------------------
+Method: POST
+Endpoint: /api/user/login
+RequestBody: {
+    "username": "abc",
+    "password": "xyz"
+}
+Response:
+    Success:
+        ResponseCode: 200
+        ResponseBody: {
+            "token": "huhuhjn098789/5567***())"
+        }
+    Failure:
+        ResponseCode: 401
+        ResponseBody: {
+            "status": "Unauthorized",
+            "message": "Incorrect username or password",
+            "timestamp": "utc timestamp"
+        },
+        ResponseCode: 500
+        ResponseBody: {
+            "status": "Internal server error",
+            "message": "Something went wrong",
+            "timestamp": "utc timestamp"
+        }
+-----------------------------------------------------------------------------------
+Method: POST
+Endpoint: /api/user/logout
+Headers: 
+    Authorization: token
+RequestBody: {}
+Response:
+    Success:
+        ResponseCode: 200
+        ResponseBody: {
+            "token": "huhuhjn098789/5567***())"
+        }
+    Failure:
+        ResponseCode: 401
+        ResponseBody: {
+            "status": "Unauthorized",
+            "message": "Incorrect username or password",
+            "timestamp": "utc timestamp"
+        },
+        ResponseCode: 500
+        ResponseBody: {
+            "status": "Internal server error",
+            "message": "Something went wrong",
+            "timestamp": "utc timestamp"
+        }
+------------------------------------------------------------------------------
