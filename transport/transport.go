@@ -40,9 +40,9 @@ func EncodeStatusResponse(ctx context.Context, w http.ResponseWriter, response i
 	return json.NewEncoder(w).Encode(finalResponse)
 }
 
-//EncodeAddEmployeeResponse - decodes status GET request
-func DecodeAddEmployeeRequest(ctx context.Context, r *http.Request) (interface{}, error) {
-	log.Println("transport:DecodeAddEmployeeRequest")
+//DecodeAddUserRequest - decodes status GET request
+func DecodeAddUserRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	log.Println("transport:DecodeAddUserRequest")
 	var uRequest userRequest.UserRequest
 	err := json.NewDecoder(r.Body).Decode(&uRequest)
 	err = Validate.Struct(uRequest)
@@ -52,20 +52,20 @@ func DecodeAddEmployeeRequest(ctx context.Context, r *http.Request) (interface{}
 	return uRequest, err
 }
 
-// EncodeAddEmployeeResponse - encodes status service response
-func EncodeAddEmployeeResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
-	log.Println("transport:EncodeAddEmployeeResponse")
+// EncodeAddUserResponse - encodes status service response
+func EncodeAddUserResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	log.Println("transport:EncodeAddUserResponse")
 	return json.NewEncoder(w).Encode(response)
 }
 
-func DecodeGetAllEmpRequest(ctx context.Context, r *http.Request) (interface{}, error) {
-	log.Println("transport:DecodeGetAllEmpRequest")
+func DecodeGetAllUsersRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	log.Println("transport:DecodeGetAllUsersRequest")
 	return r, nil
 }
 
-// EncodeGetAllEmpResponse - encodes status service response
-func EncodeGetAllEmpResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
-	log.Println("transport:EncodeGetAllEmpResponse")
+// EncodeGetAllUsersResponse - encodes status service response
+func EncodeGetAllUsersResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	log.Println("transport:EncodeGetAllUsersResponse")
 	return json.NewEncoder(w).Encode(response)
 }
 
@@ -90,7 +90,6 @@ func ErrorEncoder(ctx context.Context, err error, w http.ResponseWriter) {
 			message = "Age should be between 20 and 60"
 		}
 		globalError = errors.GlobalError{
-			Result:    nil,
 			TimeStamp: time.Now().UTC().String(),
 			Status:    400,
 			Message:   message,

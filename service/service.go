@@ -3,20 +3,23 @@ package service
 import (
 	"context"
 	"log"
+	"net/http"
+	"time"
 
 	configuration "github.com/sandy0786/skill-assessment-service/configuration"
 	userDao "github.com/sandy0786/skill-assessment-service/dao/user"
 	userDocument "github.com/sandy0786/skill-assessment-service/documents/user"
 	userRequest "github.com/sandy0786/skill-assessment-service/request/user"
 	userResponse "github.com/sandy0786/skill-assessment-service/response/user"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/jinzhu/copier"
 )
 
 type UserService interface {
 	GetServiceStatus(context.Context) (string, error)
-	AddUser(context.Context, userRequest.UserRequest) (userResponse.UserResponse, error)
-	// GetAllEmployees(context.Context) ([]employeeResponse.EmployeeResponse, error)
+	AddUser(context.Context, userRequest.UserRequest) (userResponse.UserSuccessResponse, error)
+	GetAllUsers(context.Context) ([]userResponse.UserResponse, error)
 	// GetEmployeeById(context.Context, int64) (employeeResponse.EmployeeResponse, error)
 }
 
@@ -38,25 +41,35 @@ func (t *userService) GetServiceStatus(ctx context.Context) (string, error) {
 	return `ok`, nil
 }
 
-func (t *userService) AddUser(ctx context.Context, userRequest userRequest.UserRequest) (userResponse.UserResponse, error) {
+func (t *userService) AddUser(ctx context.Context, userRequest userRequest.UserRequest) (userResponse.UserSuccessResponse, error) {
 	log.Println("Inside Add user")
-	var userResponse userResponse.UserResponse
+	// var userResponse userResponse.UserSuccessResponse
 	var user userDocument.User
 	copier.Copy(&user, &userRequest)
-	_, err := t.dao.Save(&user)
-	copier.Copy(&userResponse, &userRequest)
-	return userResponse, err
+	user.CreatedAt = time.Now().UTC()
+	user.UpdatedAt = time.Now().UTC()
+	user.ID = primitive.NewObjectID()
+	userCreated, err := t.dao.Save(&user)
+	// copier.Copy(&userResponse, &userRequest)
+	if userCreated {
+		return userResponse.UserSuccessResponse{
+			Status:    http.StatusOK,
+			Message:   "User created successfully",
+			TimeStamp: time.Now().UTC().String(),
+		}, err
+	}
+	return userResponse.UserSuccessResponse{}, err
 }
 
-// func (t *testService) GetAllEmployees(context.Context) ([]employeeResponse.EmployeeResponse, error) {
-// 	log.Println("Inside GetAllEmployees")
-// 	var employeeResponses []employeeResponse.EmployeeResponse
-// 	employees, err := t.dao.FindAll()
-// 	copier.Copy(&employeeResponses, &employees)
-// 	return employeeResponses, err
-// }
+func (t *userService) GetAllUsers(context.Context) ([]userResponse.UserResponse, error) {
+	log.Println("Inside GetAllusers")
+	var userResponses []userResponse.UserResponse
+	users, err := t.dao.FindAll()
+	copier.Copy(&userResponses, &users)
+	return userResponses, err
+}
 
-// func (t *testService) GetEmployeeById(_ context.Context, id int64) (employeeResponse.EmployeeResponse, error) {
+// func (t *userService) GetEmployeeById(_ context.Context, id int64) (employeeResponse.EmployeeResponse, error) {
 // 	log.Println("Inside GetEmployeeById : ", id)
 // 	var employeeResponse employeeResponse.EmployeeResponse
 // 	employee, err := t.dao.FindById(id)

@@ -10,6 +10,8 @@ type User struct {
 	ID        primitive.ObjectID `bson:"_id"`
 	CreatedAt time.Time          `bson:"created_at"`
 	UpdatedAt time.Time          `bson:"updated_at"`
-	Text      string             `bson:"text"`
-	completed bool               `bson:"completed"`
+	Username  string             `bson:"username"`
+	Password  string             `bson:"password"`
+	Email     string             `bson:"email,unique"`
+	Role      string             `bson:"string"`
 }

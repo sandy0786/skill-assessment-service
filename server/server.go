@@ -33,10 +33,17 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[0],
 	))
 
-	r.Methods("POST").Path(constants.EMPLOYEE).Handler(httptransport.NewServer(
-		endpoints.AddEmployeeEndpoint,
-		transport.DecodeAddEmployeeRequest,
-		transport.EncodeAddEmployeeResponse,
+	r.Methods("POST").Path(constants.USER).Handler(httptransport.NewServer(
+		endpoints.AddUserEndpoint,
+		transport.DecodeAddUserRequest,
+		transport.EncodeAddUserResponse,
+		Opts[0],
+	))
+
+	r.Methods("GET").Path(constants.ALL_USERS).Handler(httptransport.NewServer(
+		endpoints.GetAllUsersEndpoint,
+		transport.DecodeGetAllUsersRequest,
+		transport.EncodeGetAllUsersResponse,
 		Opts[0],
 	))
 

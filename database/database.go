@@ -55,6 +55,8 @@ func (m *mongoDB) Connect() error {
 		log.Fatal(err)
 	}
 
+	m.Db = m.Client.Database(m.dbname)
+
 	return nil
 }
 
@@ -64,7 +66,7 @@ func (m *mongoDB) Close() error {
 }
 
 func (m *mongoDB) GetMongoDbObject() *mongo.Database {
-	return m.Client.Database(m.dbname)
+	return m.Db
 }
 
 func (m *mongoDB) GetMongoDbContext() context.Context {

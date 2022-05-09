@@ -5,13 +5,14 @@ import (
 
 	Database "github.com/sandy0786/skill-assessment-service/database"
 	userDocument "github.com/sandy0786/skill-assessment-service/documents/user"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type UserDAO interface {
-	Save(*userDocument.User) (userDocument.User, error)
+	Save(*userDocument.User) (bool, error)
 	// FindById(int64) (userModel.User, error)
-	// FindAll() ([]userModel.User, error)
+	FindAll() ([]userDocument.User, error)
 }
 
 type userDAOImpl struct {
@@ -28,30 +29,34 @@ func NewUserDAO(db Database.DatabaseInterface, collectionName string) *userDAOIm
 	}
 }
 
-func (u *userDAOImpl) Save(user *userDocument.User) (userDocument.User, error) {
-	log.Println("save employee")
-	test, err := u.mongoCollection.InsertOne(u.db.GetMongoDbContext(), user)
-	log.Println("test : ", test)
-	// db := e.db.GetDbObject().Create(employee)
-	// log.Println("> ", db.RowsAffected)
-	// db = e.db.GetDbObject().Save(employee)
-	// log.Println("> ", db.Value)
-	// var savedEmployee model.Employee
-	// savedEmployee := db.Value.(*model.Employee)
-	return *user, err
+func (u *userDAOImpl) Save(user *userDocument.User) (bool, error) {
+	log.Println("save user")
+	_, err := u.mongoCollection.InsertOne(u.db.GetMongoDbContext(), user)
+	if err != nil {
+		return false, err
+	}
+	return true, err
 }
 
-// func (e *userDAOImpl) FindById(id int64) (model.Employee, error) {
+// func (e *userDAOImpl) FindById(idint64) (model.Employee, error) {
 // 	log.Println("FindById employee : ", id)
-// 	var employee model.Employee
-// 	// db := e.db.GetDbObject().Find(&employee, id)
-// 	db := e.db.GetDbObject().Model(&employee).Preload("Address").Find(&employee, id)
-// 	return employee, db.Error
+// 	var employeemodel.Employee
+// 	// db := e.db.GtDbObject().Find(&employee, id)
+//	db := e.db.GetDbObject().Model(&employee).Preload("Address").Find(&employee, id)
+// 	return employe, db.Error
 // }
 
-// func (e *userDAOImpl) FindAll() ([]model.Employee, error) {
-// 	log.Println("FindAll employees")
-// 	var employees []model.Employee
-// 	db := e.db.GetDbObject().Find(&employees)
-// 	return employees, db.Error
-// }
+func (u *userDAOImpl) FindAll() ([]userDocument.User, error) {
+	log.Println("FindAll Users")
+	var users []userDocument.User
+	cursor, err := u.mongoCollection.Find(u.db.GetMongoDbContext(), bson.M{})
+	if err != nil {
+		log.Println("error , ", err)
+		return users, err
+	}
+	if err = cursor.All(u.db.GetMongoDbContext(), &users); err != nil {
+		log.Println("error , ", err)
+		return users, err
+	}
+	return users, err
+}

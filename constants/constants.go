@@ -3,7 +3,8 @@ package constants
 // api endpoints
 const (
 	STATUS_PATH = "/api/health"
-	EMPLOYEE    = "/api/user"
-	EMPLOYEE_ID = "/api/user/{user_name}"
+	USER        = "/api/user"
+	USER_ID     = "/api/user/{user_name}"
+	ALL_USERS   = "/api/users"
 	DOC_PATH    = "/api/swagger/docs"
 )

@@ -31,7 +31,7 @@ func main() {
 	configobj := config.NewConfigObject()
 	configobj.LoadConfiguration()
 
-	log.Println("config > ", configobj.GetConfigDetails())
+	// log.Println("config > ", configobj.GetConfigDetails())
 	dbDetails := configobj.GetConfigDetails().DatabaseDetails
 	// connect to db
 	dbObj := database.NewMongoObj(dbDetails.Host, dbDetails.Port, dbDetails.User, dbDetails.Password, dbDetails.Name, dbDetails.ConnectionString)
@@ -43,16 +43,16 @@ func main() {
 	empDao := userDao.NewUserDAO(dbObj, "user")
 
 	// create service
-	testSrv := service.NewUserService(configobj, empDao)
+	userSrv := service.NewUserService(configobj, empDao)
 
 	errChan := make(chan error)
 
 	// mapping endpoints
 	endpoints := endpoint.Endpoints{
-		StatusEndpoint:      endpoint.MakeStatusEndpoint(testSrv),
-		AddEmployeeEndpoint: endpoint.MakeAddEmployeeEndpoint(testSrv),
-		// GetAllEmployeesEndpoint: endpoint.MakeGetAllEmployeesEndpoint(testSrv),
-		// GetEmployeeByIdEndpoint: endpoint.MakeGetEmployeeByIdEndpoint(testSrv),
+		StatusEndpoint:      endpoint.MakeStatusEndpoint(userSrv),
+		AddUserEndpoint:     endpoint.MakeAddUserEndpoint(userSrv),
+		GetAllUsersEndpoint: endpoint.MakeGetAllUsersEndpoint(userSrv),
+		// GetEmployeeByIdEndpoint: endpoint.MakeGetEmployeeByIdEndpoint(userSrv),
 	}
 
 	// HTTP transport

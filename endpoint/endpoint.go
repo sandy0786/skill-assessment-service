@@ -15,8 +15,8 @@ import (
 //Contains endpoints that map request from client to our service
 type Endpoints struct {
 	StatusEndpoint      endpoint.Endpoint
-	AddEmployeeEndpoint endpoint.Endpoint
-	// GetAllEmployeesEndpoint endpoint.Endpoint
+	AddUserEndpoint     endpoint.Endpoint
+	GetAllUsersEndpoint endpoint.Endpoint
 	// GetEmployeeByIdEndpoint endpoint.Endpoint
 }
 
@@ -32,24 +32,24 @@ func MakeStatusEndpoint(srv service.UserService) endpoint.Endpoint {
 	}
 }
 
-//MakeAddEmployeeEndpoint returns response
-func MakeAddEmployeeEndpoint(srv service.UserService) endpoint.Endpoint {
+//MakeAddUserEndpoint returns response
+func MakeAddUserEndpoint(srv service.UserService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		log.Println("MakeAddEmployeeEndpoint")
-		employeeRequest := request.(userRequest.UserRequest)
-		responseFromService, err := srv.AddUser(ctx, employeeRequest)
+		log.Println("MakeAddUserEndpoint")
+		userRequest := request.(userRequest.UserRequest)
+		responseFromService, err := srv.AddUser(ctx, userRequest)
 		return responseFromService, err
 	}
 }
 
-//MakeGetAllEmployeesEndpoint returns response
-// func MakeGetAllEmployeesEndpoint(srv service.Service) endpoint.Endpoint {
-// 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-// 		log.Println("MakeGetAllEmployeesEndpoint")
-// 		responseFromService, err := srv.GetAllEmployees(ctx)
-// 		return responseFromService, err
-// 	}
-// }
+// MakeGetAllUsersEndpoint returns response
+func MakeGetAllUsersEndpoint(srv service.UserService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		log.Println("MakeGetAllUsersEndpoint")
+		responseFromService, err := srv.GetAllUsers(ctx)
+		return responseFromService, err
+	}
+}
 
 // //MakeGetEmployeeByIdEndpoint returns response
 // func MakeGetEmployeeByIdEndpoint(srv service.Service) endpoint.Endpoint {
