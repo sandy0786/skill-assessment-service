@@ -9,6 +9,7 @@ type UserResponse struct {
 // User success created
 type UserSuccessResponse struct {
 	TimeStamp string `json:"timestamp"`
-	Status    int          `json:staus"`
+	Status    int    `json:status"`
 	Message   string `json:"message"`
 }
+

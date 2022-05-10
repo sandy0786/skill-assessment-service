@@ -24,6 +24,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 
 	Opts := []httptransport.ServerOption{
 		httptransport.ServerErrorEncoder(transport.ErrorEncoder),
+		httptransport.ServerErrorEncoder(transport.QuestionErrorEncoder),
 	}
 
 	r.Methods("GET").Path(constants.STATUS_PATH).Handler(httptransport.NewServer(
@@ -45,6 +46,20 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		transport.DecodeGetAllUsersRequest,
 		transport.EncodeGetAllUsersResponse,
 		Opts[0],
+	))
+
+	r.Methods("POST").Path(constants.QUESTION).Handler(httptransport.NewServer(
+		endpoints.AddQuestionEndpoint,
+		transport.DecodeAddQuestionRequest,
+		transport.EncodeAddQuestionResponse,
+		Opts[1],
+	))
+
+	r.Methods("GET").Path(constants.ALL_QUESTIONS).Handler(httptransport.NewServer(
+		endpoints.GetAllQuestionsEndpoint,
+		transport.DecodeGetAllQuestionsRequest,
+		transport.EncodeGetAllQuestionsResponse,
+		Opts[1],
 	))
 
 	// r.Methods("GET").Path(constants.EMPLOYEE).Handler(httptransport.NewServer(

@@ -5,6 +5,7 @@ import (
 	"log"
 
 	config "github.com/sandy0786/skill-assessment-service/configuration"
+	questionDao "github.com/sandy0786/skill-assessment-service/dao/question"
 	userDao "github.com/sandy0786/skill-assessment-service/dao/user"
 	database "github.com/sandy0786/skill-assessment-service/database"
 	endpoint "github.com/sandy0786/skill-assessment-service/endpoint"
@@ -41,9 +42,11 @@ func main() {
 	}
 
 	empDao := userDao.NewUserDAO(dbObj, "user")
+	qsnDao := questionDao.NewQuestionDAO(dbObj, "questions")
 
 	// create service
 	userSrv := service.NewUserService(configobj, empDao)
+	qsnSrv := service.NewQuestionService(configobj, qsnDao)
 
 	errChan := make(chan error)
 
@@ -53,6 +56,8 @@ func main() {
 		AddUserEndpoint:     endpoint.MakeAddUserEndpoint(userSrv),
 		GetAllUsersEndpoint: endpoint.MakeGetAllUsersEndpoint(userSrv),
 		// GetEmployeeByIdEndpoint: endpoint.MakeGetEmployeeByIdEndpoint(userSrv),
+		AddQuestionEndpoint:     endpoint.MakeAddQuestionEndpoint(qsnSrv),
+		GetAllQuestionsEndpoint: endpoint.MakeGetAllQuestionsEndpoint(qsnSrv),
 	}
 
 	// HTTP transport

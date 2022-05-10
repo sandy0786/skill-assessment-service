@@ -1,0 +1,64 @@
+package transport
+
+import (
+	"context"
+	"encoding/json"
+	"log"
+	"net/http"
+	"strings"
+	"time"
+
+	errors "github.com/sandy0786/skill-assessment-service/errors"
+	questionRequest "github.com/sandy0786/skill-assessment-service/request/question"
+
+	"github.com/go-playground/validator"
+)
+
+//DecodeAddQuestionRequest - decodes status GET request
+func DecodeAddQuestionRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	log.Println("transport:DecodeAddUserRequest")
+	var qRequest questionRequest.QuestionRequest
+	err := json.NewDecoder(r.Body).Decode(&qRequest)
+	err = Validate.Struct(qRequest)
+	log.Println("aa >> ", err)
+	log.Println("path >> ", r.URL.Path)
+
+	return qRequest, err
+}
+
+// EncodeAddQuestionResponse - encodes status service response
+func EncodeAddQuestionResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	log.Println("transport:EncodeAddQuestionResponse")
+	return json.NewEncoder(w).Encode(response)
+}
+
+func DecodeGetAllQuestionsRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	log.Println("transport:DecodeGetAllQuestionsRequest")
+	return r, nil
+}
+
+// EncodeGetAllQuestionsResponse - encodes status service response
+func EncodeGetAllQuestionsResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	log.Println("transport:EncodeGetAllQuestionsResponse")
+	return json.NewEncoder(w).Encode(response)
+}
+
+//QuestionErrorEncoder will encode error to our format
+func QuestionErrorEncoder(ctx context.Context, err error, w http.ResponseWriter) {
+	log.Println("transport:ErrorEncoder: Inside ErrorEncoder: ")
+	var globalError errors.GlobalError
+	if _, ok := err.(validator.ValidationErrors); ok {
+		log.Println("err ... ", err.Error())
+		var message string
+		if strings.Contains(err.Error(), ".Age") {
+			message = "Age should be between 20 and 60"
+		}
+		globalError = errors.GlobalError{
+			TimeStamp: time.Now().UTC().String(),
+			Status:    400,
+			Message:   message,
+		}
+	}
+	// finalResponse := map[string]string{"a": "b"}
+	json.NewEncoder(w).Encode(globalError)
+}

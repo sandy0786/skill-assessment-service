@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	questionRequest "github.com/sandy0786/skill-assessment-service/request/question"
 	userRequest "github.com/sandy0786/skill-assessment-service/request/user"
 	service "github.com/sandy0786/skill-assessment-service/service"
 	transport "github.com/sandy0786/skill-assessment-service/transport"
@@ -18,6 +19,8 @@ type Endpoints struct {
 	AddUserEndpoint     endpoint.Endpoint
 	GetAllUsersEndpoint endpoint.Endpoint
 	// GetEmployeeByIdEndpoint endpoint.Endpoint
+	AddQuestionEndpoint     endpoint.Endpoint
+	GetAllQuestionsEndpoint endpoint.Endpoint
 }
 
 //MakeStatusEndpoint returns response
@@ -60,3 +63,22 @@ func MakeGetAllUsersEndpoint(srv service.UserService) endpoint.Endpoint {
 // 		return responseFromService, err
 // 	}
 // }
+
+//MakeAddQuestionEndpoint returns response
+func MakeAddQuestionEndpoint(srv service.QuestionService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		log.Println("MakeAddQuestionEndpoint")
+		questionRequest := request.(questionRequest.QuestionRequest)
+		responseFromService, err := srv.AddQuestion(ctx, questionRequest)
+		return responseFromService, err
+	}
+}
+
+// MakeGetAllQuestionsEndpoint returns response
+func MakeGetAllQuestionsEndpoint(srv service.QuestionService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		log.Println("MakeGetAllQuestionsEndpoint")
+		responseFromService, err := srv.GetAllQuestions(ctx)
+		return responseFromService, err
+	}
+}
