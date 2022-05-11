@@ -32,6 +32,23 @@ func EncodeAddQuestionResponse(ctx context.Context, w http.ResponseWriter, respo
 	return json.NewEncoder(w).Encode(response)
 }
 
+//DecodeAddMutlipleQuestionsRequest - decodes status POST request
+func DecodeAddMutlipleQuestionsRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	log.Println("transport:DecodeAddMutlipleQuestionsRequest")
+	var qRequests []questionRequest.QuestionRequest
+	err := json.NewDecoder(r.Body).Decode(&qRequests)
+	for _, qRequest := range qRequests {
+		err = Validate.Struct(qRequest)
+	}
+	return qRequests, err
+}
+
+// EncodeAddMultipleQuestionsResponse - encodes status service response
+func EncodeAddMultipleQuestionsResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	log.Println("transport:EncodeAddMultipleQuestionsResponse")
+	return json.NewEncoder(w).Encode(response)
+}
+
 func DecodeGetAllQuestionsRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	log.Println("transport:DecodeGetAllQuestionsRequest")
 	return r, nil
@@ -48,8 +65,8 @@ func QuestionErrorEncoder(ctx context.Context, err error, w http.ResponseWriter)
 	log.Println("transport:ErrorEncoder: Inside ErrorEncoder: ")
 	var globalError errors.GlobalError
 	if _, ok := err.(validator.ValidationErrors); ok {
-		log.Println("err ... ", err.Error())
-		var message string
+		// log.Println("err ... ", err.Error())
+		message := err.Error()
 		if strings.Contains(err.Error(), ".Age") {
 			message = "Age should be between 20 and 60"
 		}
@@ -60,5 +77,6 @@ func QuestionErrorEncoder(ctx context.Context, err error, w http.ResponseWriter)
 		}
 	}
 	// finalResponse := map[string]string{"a": "b"}
+	w.WriteHeader(globalError.Status)
 	json.NewEncoder(w).Encode(globalError)
 }

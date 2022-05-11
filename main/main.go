@@ -5,6 +5,7 @@ import (
 	"log"
 
 	config "github.com/sandy0786/skill-assessment-service/configuration"
+	categoryDao "github.com/sandy0786/skill-assessment-service/dao/category"
 	questionDao "github.com/sandy0786/skill-assessment-service/dao/question"
 	userDao "github.com/sandy0786/skill-assessment-service/dao/user"
 	database "github.com/sandy0786/skill-assessment-service/database"
@@ -14,9 +15,6 @@ import (
 	transport "github.com/sandy0786/skill-assessment-service/transport"
 
 	"github.com/go-playground/validator"
-	// "github.com/ArthurHlt/go-eureka-client/eureka"
-	// "github.com/go-playground/validator"
-	// "github.com/ArthurHlt/go-eureka-client/eureka"
 )
 
 func init() {
@@ -43,10 +41,12 @@ func main() {
 
 	empDao := userDao.NewUserDAO(dbObj, "user")
 	qsnDao := questionDao.NewQuestionDAO(dbObj, "questions")
+	ctgDao := categoryDao.NewCategoryDAO(dbObj, "categories")
 
 	// create service
 	userSrv := service.NewUserService(configobj, empDao)
 	qsnSrv := service.NewQuestionService(configobj, qsnDao)
+	ctgSrv := service.NewCategoryService(configobj, ctgDao)
 
 	errChan := make(chan error)
 
@@ -56,8 +56,11 @@ func main() {
 		AddUserEndpoint:     endpoint.MakeAddUserEndpoint(userSrv),
 		GetAllUsersEndpoint: endpoint.MakeGetAllUsersEndpoint(userSrv),
 		// GetEmployeeByIdEndpoint: endpoint.MakeGetEmployeeByIdEndpoint(userSrv),
-		AddQuestionEndpoint:     endpoint.MakeAddQuestionEndpoint(qsnSrv),
-		GetAllQuestionsEndpoint: endpoint.MakeGetAllQuestionsEndpoint(qsnSrv),
+		AddQuestionEndpoint:         endpoint.MakeAddQuestionEndpoint(qsnSrv),
+		AddMultipleQuestionEndpoint: endpoint.MakeAddMultipleQuestionsEndpoint(qsnSrv),
+		GetAllQuestionsEndpoint:     endpoint.MakeGetAllQuestionsEndpoint(qsnSrv),
+		AddCategoryEndpoint:         endpoint.MakeAddCategoryEndpoint(ctgSrv),
+		GetAllCategoriesEndpoint:    endpoint.MakeGetAllCategoriesEndpoint(ctgSrv),
 	}
 
 	// HTTP transport
@@ -67,43 +70,5 @@ func main() {
 	}()
 
 	log.Println("Main: main: Microservice started")
-
-	// client := eureka.NewClient([]string{
-	// 	"http://127.0.0.1:8761/eureka", //From a spring boot based eureka server
-	// 	// add others servers here
-	// })
-	// instance := eureka.NewInstanceInfo("localhost", "test-service", "127.0.0.1", 8084, 30, false) //Create a new instance to register
-	// instance.Metadata = &eureka.MetaData{
-	// 	Map: make(map[string]string),
-	// }
-	// instance.Metadata.Map["foo"] = "bar"        //add metadata for example
-	// client.RegisterInstance("test-service", instance) // Register new instance in your eureka(s)
-	// applications, _ := client.GetApplications() // Retrieves all applications from eureka server(s)
-	// log.Println("applications : ", applications)
-	// client.GetApplication(instance.App)                 // retrieve the application "test"
-	// client.GetInstance(instance.App, instance.HostName) // retrieve the instance from "test.com" inside "test"" app
-
-	// go func() {
-	// 	// send heartbeat every 30sec
-	// client.SendHeartbeat(instance.App, instance.HostName) // say to eureka that your app is alive (here you must send heartbeat before 30 sec)
-	// }()
-
-	// s, err := scheduler.NewScheduler(1)
-	// if err != nil {
-	// 	log.Println(err)
-	// }
-
-	// // s.Every().Do(client.SendHeartbeat, instance.App, instance.HostName)
-	// s.Every().Do(test, client, instance)
-
 	log.Println("msg", <-errChan)
 }
-
-// func test(client *eureka.Client, instance *eureka.InstanceInfo) {
-// 	log.Println("print")
-// 	applications, _ := client.GetApplications() // Retrieves all applications from eureka server(s)
-// 	log.Println("applications : ", applications)
-// 	client.GetApplication(instance.App) // retrieve the application "test"
-// 	client.GetInstance(instance.App, instance.HostName)
-// 	client.SendHeartbeat(instance.App, instance.HostName)
-// }

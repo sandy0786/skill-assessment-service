@@ -25,6 +25,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	Opts := []httptransport.ServerOption{
 		httptransport.ServerErrorEncoder(transport.ErrorEncoder),
 		httptransport.ServerErrorEncoder(transport.QuestionErrorEncoder),
+		httptransport.ServerErrorEncoder(transport.CategoryErrorEncoder),
 	}
 
 	r.Methods("GET").Path(constants.STATUS_PATH).Handler(httptransport.NewServer(
@@ -55,11 +56,32 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[1],
 	))
 
+	r.Methods("POST").Path(constants.ALL_QUESTIONS).Handler(httptransport.NewServer(
+		endpoints.AddMultipleQuestionEndpoint,
+		transport.DecodeAddMutlipleQuestionsRequest,
+		transport.EncodeAddMultipleQuestionsResponse,
+		Opts[1],
+	))
+
 	r.Methods("GET").Path(constants.ALL_QUESTIONS).Handler(httptransport.NewServer(
 		endpoints.GetAllQuestionsEndpoint,
 		transport.DecodeGetAllQuestionsRequest,
 		transport.EncodeGetAllQuestionsResponse,
 		Opts[1],
+	))
+
+	r.Methods("POST").Path(constants.CATEGORY).Handler(httptransport.NewServer(
+		endpoints.AddCategoryEndpoint,
+		transport.DecodeAddCategoryRequest,
+		transport.EncodeAddCategoryResponse,
+		Opts[2],
+	))
+
+	r.Methods("GET").Path(constants.ALL_CATEGORIES).Handler(httptransport.NewServer(
+		endpoints.GetAllCategoriesEndpoint,
+		transport.DecodeGetAllCategoriesRequest,
+		transport.EncodeGetAllCategoriesResponse,
+		Opts[2],
 	))
 
 	// r.Methods("GET").Path(constants.EMPLOYEE).Handler(httptransport.NewServer(

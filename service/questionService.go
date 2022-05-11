@@ -11,6 +11,7 @@ import (
 	questionDocument "github.com/sandy0786/skill-assessment-service/documents/question"
 	questionRequest "github.com/sandy0786/skill-assessment-service/request/question"
 	questionResponse "github.com/sandy0786/skill-assessment-service/response/question"
+	successResponse "github.com/sandy0786/skill-assessment-service/response/success"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/jinzhu/copier"
@@ -18,7 +19,8 @@ import (
 
 type QuestionService interface {
 	// GetServiceStatus(context.Context) (string, error)
-	AddQuestion(context.Context, questionRequest.QuestionRequest) (questionResponse.QuestionSuccessResponse, error)
+	AddQuestion(context.Context, questionRequest.QuestionRequest) (successResponse.SuccessResponse, error)
+	AddMultipleQuestions(context.Context, []questionRequest.QuestionRequest) (successResponse.SuccessResponse, error)
 	GetAllQuestions(context.Context) ([]questionResponse.QuestionResponse, error)
 	// GetEmployeeById(context.Context, int64) (employeeResponse.EmployeeResponse, error)
 }
@@ -36,7 +38,7 @@ func NewQuestionService(c configuration.ConfigurationInterface, dao questionDao.
 	}
 }
 
-func (t *questionService) AddQuestion(_ context.Context, questionRequest questionRequest.QuestionRequest) (questionResponse.QuestionSuccessResponse, error) {
+func (t *questionService) AddQuestion(_ context.Context, questionRequest questionRequest.QuestionRequest) (successResponse.SuccessResponse, error) {
 	log.Println("Inside Add question")
 	// var userResponse userResponse.UserSuccessResponse
 	var question questionDocument.Question
@@ -47,13 +49,37 @@ func (t *questionService) AddQuestion(_ context.Context, questionRequest questio
 	questionCreated, err := t.dao.Save(&question)
 	// copier.Copy(&userResponse, &userRequest)
 	if questionCreated {
-		return questionResponse.QuestionSuccessResponse{
+		return successResponse.SuccessResponse{
 			Status:    http.StatusOK,
 			Message:   "Questions submitted successfully",
 			TimeStamp: time.Now().UTC().String(),
 		}, err
 	}
-	return questionResponse.QuestionSuccessResponse{}, err
+	return successResponse.SuccessResponse{}, err
+}
+
+func (t *questionService) AddMultipleQuestions(_ context.Context, questionsRequests []questionRequest.QuestionRequest) (successResponse.SuccessResponse, error) {
+	log.Println("Inside Add MultipleQuestions")
+	var questions []questionDocument.Question
+	for _, questionsRequest := range questionsRequests {
+		var question questionDocument.Question
+		copier.Copy(&question, &questionsRequest)
+		question.CreatedAt = time.Now().UTC()
+		question.UpdatedAt = time.Now().UTC()
+		question.ID = primitive.NewObjectID()
+		questions = append(questions, question)
+	}
+
+	questionsCreated, err := t.dao.SaveAll(questions)
+
+	if questionsCreated {
+		return successResponse.SuccessResponse{
+			Status:    http.StatusOK,
+			Message:   "Questions submitted successfully",
+			TimeStamp: time.Now().UTC().String(),
+		}, err
+	}
+	return successResponse.SuccessResponse{}, err
 }
 
 func (t *questionService) GetAllQuestions(_ context.Context) ([]questionResponse.QuestionResponse, error) {

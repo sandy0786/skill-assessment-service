@@ -11,6 +11,7 @@ import (
 
 type QuestionDAO interface {
 	Save(*questionDocument.Question) (bool, error)
+	SaveAll([]questionDocument.Question) (bool, error)
 	// FindById(int64) (userModel.User, error)
 	FindAll() ([]questionDocument.Question, error)
 }
@@ -29,10 +30,25 @@ func NewQuestionDAO(db Database.DatabaseInterface, collectionName string) *quest
 	}
 }
 
-func (q *questionDAOImpl) Save(user *questionDocument.Question) (bool, error) {
+func (q *questionDAOImpl) Save(question *questionDocument.Question) (bool, error) {
 	log.Println("Save questions")
-	_, err := q.mongoCollection.InsertOne(q.db.GetMongoDbContext(), user)
+	_, err := q.mongoCollection.InsertOne(q.db.GetMongoDbContext(), question)
 	if err != nil {
+		return false, err
+	}
+	return true, err
+}
+
+func (q *questionDAOImpl) SaveAll(questions []questionDocument.Question) (bool, error) {
+	log.Println("Save all questions")
+	tempQuestions := []interface{}{}
+	for _, question := range questions {
+		tempQuestions = append(tempQuestions, question)
+	}
+	_, err := q.mongoCollection.InsertMany(q.db.GetMongoDbContext(), tempQuestions)
+
+	if err != nil {
+		log.Println("err >> ", err)
 		return false, err
 	}
 	return true, err

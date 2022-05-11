@@ -10,6 +10,7 @@ import (
 	userDao "github.com/sandy0786/skill-assessment-service/dao/user"
 	userDocument "github.com/sandy0786/skill-assessment-service/documents/user"
 	userRequest "github.com/sandy0786/skill-assessment-service/request/user"
+	successResponse "github.com/sandy0786/skill-assessment-service/response/success"
 	userResponse "github.com/sandy0786/skill-assessment-service/response/user"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
@@ -18,7 +19,7 @@ import (
 
 type UserService interface {
 	GetServiceStatus(context.Context) (string, error)
-	AddUser(context.Context, userRequest.UserRequest) (userResponse.UserSuccessResponse, error)
+	AddUser(context.Context, userRequest.UserRequest) (successResponse.SuccessResponse, error)
 	GetAllUsers(context.Context) ([]userResponse.UserResponse, error)
 	// GetEmployeeById(context.Context, int64) (employeeResponse.EmployeeResponse, error)
 }
@@ -41,7 +42,7 @@ func (t *userService) GetServiceStatus(ctx context.Context) (string, error) {
 	return `ok`, nil
 }
 
-func (t *userService) AddUser(ctx context.Context, userRequest userRequest.UserRequest) (userResponse.UserSuccessResponse, error) {
+func (t *userService) AddUser(ctx context.Context, userRequest userRequest.UserRequest) (successResponse.SuccessResponse, error) {
 	log.Println("Inside Add user")
 	// var userResponse userResponse.UserSuccessResponse
 	var user userDocument.User
@@ -52,13 +53,13 @@ func (t *userService) AddUser(ctx context.Context, userRequest userRequest.UserR
 	userCreated, err := t.dao.Save(&user)
 	// copier.Copy(&userResponse, &userRequest)
 	if userCreated {
-		return userResponse.UserSuccessResponse{
+		return successResponse.SuccessResponse{
 			Status:    http.StatusOK,
 			Message:   "User created successfully",
 			TimeStamp: time.Now().UTC().String(),
 		}, err
 	}
-	return userResponse.UserSuccessResponse{}, err
+	return successResponse.SuccessResponse{}, err
 }
 
 func (t *userService) GetAllUsers(context.Context) ([]userResponse.UserResponse, error) {

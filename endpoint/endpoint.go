@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	categoryRequest "github.com/sandy0786/skill-assessment-service/request/category"
 	questionRequest "github.com/sandy0786/skill-assessment-service/request/question"
 	userRequest "github.com/sandy0786/skill-assessment-service/request/user"
 	service "github.com/sandy0786/skill-assessment-service/service"
@@ -19,8 +20,11 @@ type Endpoints struct {
 	AddUserEndpoint     endpoint.Endpoint
 	GetAllUsersEndpoint endpoint.Endpoint
 	// GetEmployeeByIdEndpoint endpoint.Endpoint
-	AddQuestionEndpoint     endpoint.Endpoint
-	GetAllQuestionsEndpoint endpoint.Endpoint
+	AddQuestionEndpoint         endpoint.Endpoint
+	AddMultipleQuestionEndpoint endpoint.Endpoint
+	GetAllQuestionsEndpoint     endpoint.Endpoint
+	AddCategoryEndpoint         endpoint.Endpoint
+	GetAllCategoriesEndpoint    endpoint.Endpoint
 }
 
 //MakeStatusEndpoint returns response
@@ -74,11 +78,40 @@ func MakeAddQuestionEndpoint(srv service.QuestionService) endpoint.Endpoint {
 	}
 }
 
+//MakeAddMultipleQuestionsEndpoint returns response
+func MakeAddMultipleQuestionsEndpoint(srv service.QuestionService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		log.Println("MakeAddMultipleQuestionsEndpoint")
+		questionsRequest := request.([]questionRequest.QuestionRequest)
+		responseFromService, err := srv.AddMultipleQuestions(ctx, questionsRequest)
+		return responseFromService, err
+	}
+}
+
 // MakeGetAllQuestionsEndpoint returns response
 func MakeGetAllQuestionsEndpoint(srv service.QuestionService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		log.Println("MakeGetAllQuestionsEndpoint")
 		responseFromService, err := srv.GetAllQuestions(ctx)
+		return responseFromService, err
+	}
+}
+
+//MakeAddCategoryEndpoint returns response
+func MakeAddCategoryEndpoint(srv service.CategoryService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		log.Println("MakeAddCategoryEndpoint")
+		categoryRequest := request.(categoryRequest.CategoryRequest)
+		responseFromService, err := srv.AddCategory(ctx, categoryRequest)
+		return responseFromService, err
+	}
+}
+
+//MakeGetAllCategoriesEndpoint returns response
+func MakeGetAllCategoriesEndpoint(srv service.CategoryService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		log.Println("MakeGetAllCategoriesEndpoint")
+		responseFromService, err := srv.GetAllCategories(ctx)
 		return responseFromService, err
 	}
 }

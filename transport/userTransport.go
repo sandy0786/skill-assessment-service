@@ -85,7 +85,7 @@ func ErrorEncoder(ctx context.Context, err error, w http.ResponseWriter) {
 	var globalError errors.GlobalError
 	if _, ok := err.(validator.ValidationErrors); ok {
 		log.Println("err ... ", err.Error())
-		var message string
+		message := err.Error()
 		if strings.Contains(err.Error(), ".Age") {
 			message = "Age should be between 20 and 60"
 		}
@@ -95,6 +95,6 @@ func ErrorEncoder(ctx context.Context, err error, w http.ResponseWriter) {
 			Message:   message,
 		}
 	}
-	// finalResponse := map[string]string{"a": "b"}
+	w.WriteHeader(globalError.Status)
 	json.NewEncoder(w).Encode(globalError)
 }

@@ -6,10 +6,4 @@ type UserResponse struct {
 	Role     string `json:"role"`
 }
 
-// User success created
-type UserSuccessResponse struct {
-	TimeStamp string `json:"timestamp"`
-	Status    int    `json:status"`
-	Message   string `json:"message"`
-}
 
