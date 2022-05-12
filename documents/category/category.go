@@ -8,8 +8,8 @@ import (
 
 type Category struct {
 	ID             primitive.ObjectID `bson:"_id"`
-	CreatedAt      time.Time          `bson:"created_at"`
-	UpdatedAt      time.Time          `bson:"updated_at"`
+	CreatedAt      time.Time          `bson:"createdAt"`
+	UpdatedAt      time.Time          `bson:"updatedAt"`
 	CategoryName   string             `bson:"categoryName"`
 	CollectionName string             `bson:"collectionName"`
 	Author         string             `bson:"author"`

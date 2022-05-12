@@ -8,10 +8,12 @@ import (
 	"strings"
 	"time"
 
+	questionDTO "github.com/sandy0786/skill-assessment-service/dto/question"
 	errors "github.com/sandy0786/skill-assessment-service/errors"
 	questionRequest "github.com/sandy0786/skill-assessment-service/request/question"
 
 	"github.com/go-playground/validator"
+	"github.com/gorilla/mux"
 )
 
 //DecodeAddQuestionRequest - decodes status GET request
@@ -23,7 +25,15 @@ func DecodeAddQuestionRequest(ctx context.Context, r *http.Request) (interface{}
 	log.Println("aa >> ", err)
 	log.Println("path >> ", r.URL.Path)
 
-	return qRequest, err
+	category := mux.Vars(r)["category"]
+	// pathSplit := strings.Split(req.URL.Path, "/")
+	// dataSourceName := pathSplit[len(pathSplit)-1]
+	// log.Println("category >> ", category)
+	qstnDto := questionDTO.QuestionDTO{
+		category: category,
+		Question: qRequest,
+	}
+	return qstnDto, err
 }
 
 // EncodeAddQuestionResponse - encodes status service response

@@ -4,5 +4,7 @@
   "options": ["good", "bad", "amazing", "ok"],
   "answer": "amazing",
   "questionType": "radio/checkbox",
-  "author": "Sandilya Anisetty"
+  "author": "Sandilya Anisetty",
+  "deleted": false,
+  "deletedBy": ""
 }

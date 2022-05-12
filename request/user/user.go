@@ -1,8 +1,8 @@
 package user
 
 type UserRequest struct {
-	Username string `validate:"required"`
-	Password string `validate:"required"`
-	Email    string `validate:"required"`
-	Role     string `validate:"required"`
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
+	Email    string `json:"email" validate:"required"`
+	Role     string `json:"role" validate:"required"`
 }

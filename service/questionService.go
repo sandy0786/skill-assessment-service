@@ -9,6 +9,7 @@ import (
 	configuration "github.com/sandy0786/skill-assessment-service/configuration"
 	questionDao "github.com/sandy0786/skill-assessment-service/dao/question"
 	questionDocument "github.com/sandy0786/skill-assessment-service/documents/question"
+	questionDTO "github.com/sandy0786/skill-assessment-service/dto/question"
 	questionRequest "github.com/sandy0786/skill-assessment-service/request/question"
 	questionResponse "github.com/sandy0786/skill-assessment-service/response/question"
 	successResponse "github.com/sandy0786/skill-assessment-service/response/success"
@@ -19,7 +20,7 @@ import (
 
 type QuestionService interface {
 	// GetServiceStatus(context.Context) (string, error)
-	AddQuestion(context.Context, questionRequest.QuestionRequest) (successResponse.SuccessResponse, error)
+	AddQuestion(context.Context, questionDTO.QuestionDTO) (successResponse.SuccessResponse, error)
 	AddMultipleQuestions(context.Context, []questionRequest.QuestionRequest) (successResponse.SuccessResponse, error)
 	GetAllQuestions(context.Context) ([]questionResponse.QuestionResponse, error)
 	// GetEmployeeById(context.Context, int64) (employeeResponse.EmployeeResponse, error)
@@ -38,11 +39,11 @@ func NewQuestionService(c configuration.ConfigurationInterface, dao questionDao.
 	}
 }
 
-func (t *questionService) AddQuestion(_ context.Context, questionRequest questionRequest.QuestionRequest) (successResponse.SuccessResponse, error) {
-	log.Println("Inside Add question")
+func (t *questionService) AddQuestion(_ context.Context, questionDto questionDTO.QuestionDTO) (successResponse.SuccessResponse, error) {
+	log.Println("Inside Add question : ", questionDto.Category)
 	// var userResponse userResponse.UserSuccessResponse
 	var question questionDocument.Question
-	copier.Copy(&question, &questionRequest)
+	copier.Copy(&question, &questionDto.questionRequest)
 	question.CreatedAt = time.Now().UTC()
 	question.UpdatedAt = time.Now().UTC()
 	question.ID = primitive.NewObjectID()
