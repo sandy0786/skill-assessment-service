@@ -42,7 +42,7 @@ func EncodeGetAllCategoriesResponse(ctx context.Context, w http.ResponseWriter, 
 
 //CategoryErrorEncoder will encode error to our format
 func CategoryErrorEncoder(ctx context.Context, err error, w http.ResponseWriter) {
-	log.Println("transport:ErrorEncoder: Inside CategoryErrorEncoder ")
+	log.Println("transport:ErrorEncoder: Inside CategoryErrorEncoder ", err)
 	var globalError errors.GlobalError
 	if _, ok := err.(validator.ValidationErrors); ok {
 		// log.Println("err ... ", err.Error())
@@ -51,9 +51,17 @@ func CategoryErrorEncoder(ctx context.Context, err error, w http.ResponseWriter)
 			message = "Age should be between 20 and 60"
 		}
 		globalError = errors.GlobalError{
-			TimeStamp: time.Now().UTC().String(),
-			Status:    400,
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusBadRequest,
 			Message:   message,
+		}
+	}
+
+	if strings.Contains(err.Error(), "Collection already exists") {
+		globalError = errors.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusConflict,
+			Message:   "Category already exist",
 		}
 	}
 	// finalResponse := map[string]string{"a": "b"}

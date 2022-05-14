@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 
 	questionDTO "github.com/sandy0786/skill-assessment-service/dto/question"
 	errors "github.com/sandy0786/skill-assessment-service/errors"
 	questionRequest "github.com/sandy0786/skill-assessment-service/request/question"
+	questionResponse "github.com/sandy0786/skill-assessment-service/response/question"
 
 	"github.com/go-playground/validator"
 	"github.com/gorilla/mux"
@@ -22,15 +22,15 @@ func DecodeAddQuestionRequest(ctx context.Context, r *http.Request) (interface{}
 	var qRequest questionRequest.QuestionRequest
 	err := json.NewDecoder(r.Body).Decode(&qRequest)
 	err = Validate.Struct(qRequest)
-	log.Println("aa >> ", err)
-	log.Println("path >> ", r.URL.Path)
+	// log.Println("aa >> ", err)
+	// log.Println("path >> ", r.URL.Path)
 
 	category := mux.Vars(r)["category"]
 	// pathSplit := strings.Split(req.URL.Path, "/")
 	// dataSourceName := pathSplit[len(pathSplit)-1]
 	// log.Println("category >> ", category)
 	qstnDto := questionDTO.QuestionDTO{
-		category: category,
+		Category: category,
 		Question: qRequest,
 	}
 	return qstnDto, err
@@ -50,7 +50,13 @@ func DecodeAddMutlipleQuestionsRequest(ctx context.Context, r *http.Request) (in
 	for _, qRequest := range qRequests {
 		err = Validate.Struct(qRequest)
 	}
-	return qRequests, err
+
+	category := mux.Vars(r)["category"]
+	qstnsDto := questionDTO.QuestionsDTO{
+		Category: category,
+		Question: qRequests,
+	}
+	return qstnsDto, err
 }
 
 // EncodeAddMultipleQuestionsResponse - encodes status service response
@@ -61,13 +67,22 @@ func EncodeAddMultipleQuestionsResponse(ctx context.Context, w http.ResponseWrit
 
 func DecodeGetAllQuestionsRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	log.Println("transport:DecodeGetAllQuestionsRequest")
-	return r, nil
+	// extract category name
+	category := mux.Vars(r)["category"]
+	return category, nil
 }
 
 // EncodeGetAllQuestionsResponse - encodes status service response
 func EncodeGetAllQuestionsResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
 	log.Println("transport:EncodeGetAllQuestionsResponse")
-	return json.NewEncoder(w).Encode(response)
+	resp := response.([]questionResponse.QuestionResponse)
+	if len(resp) == 0 {
+		// if no questions found return empty response with 404 status code
+		w.WriteHeader(http.StatusNotFound)
+		return json.NewEncoder(w).Encode([]interface{}{})
+	}
+	w.WriteHeader(http.StatusOK)
+	return json.NewEncoder(w).Encode(resp)
 }
 
 //QuestionErrorEncoder will encode error to our format
@@ -77,12 +92,10 @@ func QuestionErrorEncoder(ctx context.Context, err error, w http.ResponseWriter)
 	if _, ok := err.(validator.ValidationErrors); ok {
 		// log.Println("err ... ", err.Error())
 		message := err.Error()
-		if strings.Contains(err.Error(), ".Age") {
-			message = "Age should be between 20 and 60"
-		}
+
 		globalError = errors.GlobalError{
-			TimeStamp: time.Now().UTC().String(),
-			Status:    400,
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusBadRequest,
 			Message:   message,
 		}
 	}

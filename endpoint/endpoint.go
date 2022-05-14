@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
+	questionDTO "github.com/sandy0786/skill-assessment-service/dto/question"
 	categoryRequest "github.com/sandy0786/skill-assessment-service/request/category"
-	questionRequest "github.com/sandy0786/skill-assessment-service/request/question"
 	userRequest "github.com/sandy0786/skill-assessment-service/request/user"
 	service "github.com/sandy0786/skill-assessment-service/service"
 	transport "github.com/sandy0786/skill-assessment-service/transport"
@@ -72,8 +72,8 @@ func MakeGetAllUsersEndpoint(srv service.UserService) endpoint.Endpoint {
 func MakeAddQuestionEndpoint(srv service.QuestionService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		log.Println("MakeAddQuestionEndpoint")
-		questionRequest := request.(questionRequest.QuestionRequest)
-		responseFromService, err := srv.AddQuestion(ctx, questionRequest)
+		questionDto := request.(questionDTO.QuestionDTO)
+		responseFromService, err := srv.AddQuestion(ctx, questionDto)
 		return responseFromService, err
 	}
 }
@@ -82,8 +82,9 @@ func MakeAddQuestionEndpoint(srv service.QuestionService) endpoint.Endpoint {
 func MakeAddMultipleQuestionsEndpoint(srv service.QuestionService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		log.Println("MakeAddMultipleQuestionsEndpoint")
-		questionsRequest := request.([]questionRequest.QuestionRequest)
-		responseFromService, err := srv.AddMultipleQuestions(ctx, questionsRequest)
+		// questionsRequest := request.([]questionRequest.QuestionRequest)
+		questionsDto := request.(questionDTO.QuestionsDTO)
+		responseFromService, err := srv.AddMultipleQuestions(ctx, questionsDto)
 		return responseFromService, err
 	}
 }
@@ -92,7 +93,8 @@ func MakeAddMultipleQuestionsEndpoint(srv service.QuestionService) endpoint.Endp
 func MakeGetAllQuestionsEndpoint(srv service.QuestionService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		log.Println("MakeGetAllQuestionsEndpoint")
-		responseFromService, err := srv.GetAllQuestions(ctx)
+		category := request.(string)
+		responseFromService, err := srv.GetAllQuestions(ctx, category)
 		return responseFromService, err
 	}
 }

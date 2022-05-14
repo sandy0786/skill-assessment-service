@@ -10,7 +10,6 @@ import (
 	questionDao "github.com/sandy0786/skill-assessment-service/dao/question"
 	questionDocument "github.com/sandy0786/skill-assessment-service/documents/question"
 	questionDTO "github.com/sandy0786/skill-assessment-service/dto/question"
-	questionRequest "github.com/sandy0786/skill-assessment-service/request/question"
 	questionResponse "github.com/sandy0786/skill-assessment-service/response/question"
 	successResponse "github.com/sandy0786/skill-assessment-service/response/success"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -21,8 +20,8 @@ import (
 type QuestionService interface {
 	// GetServiceStatus(context.Context) (string, error)
 	AddQuestion(context.Context, questionDTO.QuestionDTO) (successResponse.SuccessResponse, error)
-	AddMultipleQuestions(context.Context, []questionRequest.QuestionRequest) (successResponse.SuccessResponse, error)
-	GetAllQuestions(context.Context) ([]questionResponse.QuestionResponse, error)
+	AddMultipleQuestions(context.Context, questionDTO.QuestionsDTO) (successResponse.SuccessResponse, error)
+	GetAllQuestions(context.Context, string) ([]questionResponse.QuestionResponse, error)
 	// GetEmployeeById(context.Context, int64) (employeeResponse.EmployeeResponse, error)
 }
 
@@ -39,14 +38,20 @@ func NewQuestionService(c configuration.ConfigurationInterface, dao questionDao.
 	}
 }
 
-func (t *questionService) AddQuestion(_ context.Context, questionDto questionDTO.QuestionDTO) (successResponse.SuccessResponse, error) {
-	log.Println("Inside Add question : ", questionDto.Category)
+func (t *questionService) AddQuestion(ctx context.Context, questionDto questionDTO.QuestionDTO) (successResponse.SuccessResponse, error) {
+	log.Println("Inside Add question ")
 	// var userResponse userResponse.UserSuccessResponse
 	var question questionDocument.Question
-	copier.Copy(&question, &questionDto.questionRequest)
+	copier.Copy(&question, &questionDto.Question)
 	question.CreatedAt = time.Now().UTC()
 	question.UpdatedAt = time.Now().UTC()
 	question.ID = primitive.NewObjectID()
+
+	// set collection name
+	// t.dao = questionDao.NewQuestionDAO(t.dao.GetDbObject(), questionDto.Category)
+	t.dao = t.dao.GetDaoObject(questionDto.Category)
+
+	// save data in the provided collection
 	questionCreated, err := t.dao.Save(&question)
 	// copier.Copy(&userResponse, &userRequest)
 	if questionCreated {
@@ -59,10 +64,11 @@ func (t *questionService) AddQuestion(_ context.Context, questionDto questionDTO
 	return successResponse.SuccessResponse{}, err
 }
 
-func (t *questionService) AddMultipleQuestions(_ context.Context, questionsRequests []questionRequest.QuestionRequest) (successResponse.SuccessResponse, error) {
+func (t *questionService) AddMultipleQuestions(_ context.Context, questionsDto questionDTO.QuestionsDTO) (successResponse.SuccessResponse, error) {
 	log.Println("Inside Add MultipleQuestions")
+	t.dao = t.dao.GetDaoObject(questionsDto.Category)
 	var questions []questionDocument.Question
-	for _, questionsRequest := range questionsRequests {
+	for _, questionsRequest := range questionsDto.Question {
 		var question questionDocument.Question
 		copier.Copy(&question, &questionsRequest)
 		question.CreatedAt = time.Now().UTC()
@@ -83,8 +89,9 @@ func (t *questionService) AddMultipleQuestions(_ context.Context, questionsReque
 	return successResponse.SuccessResponse{}, err
 }
 
-func (t *questionService) GetAllQuestions(_ context.Context) ([]questionResponse.QuestionResponse, error) {
+func (t *questionService) GetAllQuestions(_ context.Context, category string) ([]questionResponse.QuestionResponse, error) {
 	log.Println("Inside GetAllQuestions")
+	t.dao = t.dao.GetDaoObject(category)
 	var questionResponses []questionResponse.QuestionResponse
 	questions, err := t.dao.FindAll()
 	copier.Copy(&questionResponses, &questions)

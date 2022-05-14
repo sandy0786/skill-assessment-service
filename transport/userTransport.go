@@ -90,8 +90,8 @@ func ErrorEncoder(ctx context.Context, err error, w http.ResponseWriter) {
 			message = "Age should be between 20 and 60"
 		}
 		globalError = errors.GlobalError{
-			TimeStamp: time.Now().UTC().String(),
-			Status:    400,
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusBadRequest,
 			Message:   message,
 		}
 	}

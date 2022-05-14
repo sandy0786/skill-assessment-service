@@ -40,20 +40,29 @@ func NewCategoryService(c configuration.ConfigurationInterface, dao categoryDao.
 
 func (t *categoryService) AddCategory(_ context.Context, categoryRequest categoryRequest.CategoryRequest) (successResponse.SuccessResponse, error) {
 	log.Println("Inside Add Category")
+
+	// create collection with provided collection name
+	_, err := t.dao.CreateCollection(categoryRequest.CollectionName)
+	if err != nil {
+		return successResponse.SuccessResponse{}, err
+	}
+
+	// update category details in db
 	var category categoryDocument.Category
 	copier.Copy(&category, &categoryRequest)
 	category.CreatedAt = time.Now().UTC()
 	category.UpdatedAt = time.Now().UTC()
 	category.ID = primitive.NewObjectID()
 	categoryCreated, err := t.dao.Save(&category)
-	if categoryCreated {
-		return successResponse.SuccessResponse{
-			Status:    http.StatusOK,
-			Message:   "Category submitted successfully",
-			TimeStamp: time.Now().UTC().String(),
-		}, err
+	if !categoryCreated {
+		return successResponse.SuccessResponse{}, err
 	}
-	return successResponse.SuccessResponse{}, err
+
+	return successResponse.SuccessResponse{
+		Status:    http.StatusOK,
+		Message:   "Category submitted successfully",
+		TimeStamp: time.Now().UTC().String(),
+	}, err
 }
 
 // func (t *categoryService) AddMultipleQuestions(_ context.Context, questionsRequests []questionRequest.QuestionRequest) (successResponse.SuccessResponse, error) {

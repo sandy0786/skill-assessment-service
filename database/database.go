@@ -13,6 +13,7 @@ type DatabaseInterface interface {
 	Close() error
 	GetMongoDbObject() *mongo.Database
 	GetMongoDbContext() context.Context
+	GetDabaseObject() *mongoDB
 }
 
 type mongoDB struct {
@@ -71,4 +72,8 @@ func (m *mongoDB) GetMongoDbObject() *mongo.Database {
 
 func (m *mongoDB) GetMongoDbContext() context.Context {
 	return m.ctx
+}
+
+func (m *mongoDB) GetDabaseObject() *mongoDB {
+	return m
 }

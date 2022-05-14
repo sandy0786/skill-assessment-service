@@ -1,6 +1,7 @@
 package question
 
 import (
+	"context"
 	"log"
 
 	Database "github.com/sandy0786/skill-assessment-service/database"
@@ -14,6 +15,11 @@ type QuestionDAO interface {
 	SaveAll([]questionDocument.Question) (bool, error)
 	// FindById(int64) (userModel.User, error)
 	FindAll() ([]questionDocument.Question, error)
+	SetCollectionName(string)
+	GetCollectionObject(string) *mongo.Collection
+	GetDbObject() Database.DatabaseInterface
+	CreateCollection(string) *questionDAOImpl
+	GetDaoObject(string) *questionDAOImpl
 }
 
 type questionDAOImpl struct {
@@ -75,4 +81,42 @@ func (q *questionDAOImpl) FindAll() ([]questionDocument.Question, error) {
 		return questions, err
 	}
 	return questions, err
+}
+
+func (q *questionDAOImpl) SetCollectionName(collectionName string) {
+	q.collectionName = collectionName
+	q.mongoCollection = q.mongoCollection.Database().Collection(collectionName)
+}
+
+func (q *questionDAOImpl) GetCollectionObject(collectionName string) *mongo.Collection {
+	q.collectionName = collectionName
+	// err := q.mongoCollection.Database().CreateCollection(collectionName)
+	return q.mongoCollection.Database().Collection(collectionName)
+}
+
+func (q *questionDAOImpl) GetDbObject() Database.DatabaseInterface {
+	return q.db
+}
+
+func (q *questionDAOImpl) CreateCollection(collectionName string) *questionDAOImpl {
+	ctx := context.TODO()
+	err := q.db.GetMongoDbObject().CreateCollection(ctx, collectionName)
+	if err != nil {
+		log.Println("Error while creating collection : ", err)
+	}
+	q.mongoCollection = q.mongoCollection.Database().Collection(collectionName)
+	return q
+}
+
+func (q *questionDAOImpl) GetDaoObject(collectionName string) *questionDAOImpl {
+	if q.collectionName != collectionName {
+		return &questionDAOImpl{
+			db:              q.db,
+			collectionName:  collectionName,
+			mongoCollection: q.db.GetMongoDbObject().Collection(collectionName),
+		}
+	} else {
+		return q
+	}
+
 }

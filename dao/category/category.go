@@ -1,6 +1,7 @@
 package category
 
 import (
+	"context"
 	"log"
 
 	Database "github.com/sandy0786/skill-assessment-service/database"
@@ -14,6 +15,7 @@ type CategoryDAO interface {
 	// SaveAll([]questionDocument.Question) (bool, error)
 	// FindById(int64) (userModel.User, error)
 	FindAll() ([]categoryDocument.Category, error)
+	CreateCollection(string) (*categoryDAOImpl, error)
 }
 
 type categoryDAOImpl struct {
@@ -33,6 +35,7 @@ func NewCategoryDAO(db Database.DatabaseInterface, collectionName string) *categ
 func (q *categoryDAOImpl) Save(category *categoryDocument.Category) (bool, error) {
 	log.Println("Save category")
 	_, err := q.mongoCollection.InsertOne(q.db.GetMongoDbContext(), category)
+	log.Println("cat save err : ", err)
 	if err != nil {
 		return false, err
 	}
@@ -73,4 +76,15 @@ func (q *categoryDAOImpl) FindAll() ([]categoryDocument.Category, error) {
 		return categories, err
 	}
 	return categories, err
+}
+
+func (c *categoryDAOImpl) CreateCollection(collectionName string) (*categoryDAOImpl, error) {
+	ctx := context.TODO()
+	err := c.db.GetMongoDbObject().CreateCollection(ctx, collectionName)
+	if err != nil {
+		log.Println("Error while creating collection : ", err)
+		return nil, err
+	}
+	// c.mongoCollection = c.mongoCollection.Database().Collection(collectionName)
+	return c, err
 }

@@ -8,3 +8,8 @@ type QuestionDTO struct {
 	Category string
 	Question questionRequest.QuestionRequest
 }
+
+type QuestionsDTO struct {
+	Category string
+	Question []questionRequest.QuestionRequest
+}
