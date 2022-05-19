@@ -14,7 +14,7 @@
   "host": "localhost:8084",
   "basePath": "/",
   "paths": {
-    "/admin/company/": {
+    "/api/health": {
       "get": {
         "security": [
           {
@@ -23,18 +23,244 @@
             ]
           }
         ],
-        "description": "Get companies list",
+        "description": "Health of the application",
         "tags": [
           "admin"
         ],
-        "operationId": "listCompany",
+        "operationId": "health",
         "responses": {
           "200": {
-            "$ref": "#/responses/GetCompanies"
+            "$ref": "#/responses/HealthResponse"
           },
           "401": {
-            "$ref": "#/responses/CommonError"
+            "$ref": "#/responses/ErrorResponse"
           }
+        }
+      }
+    },
+    "/api/user": {
+      "post": {
+        "security": [
+          {
+            "SecurityDefinitions": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
+            ]
+          },
+          {
+            "requests": []
+          }
+        ],
+        "description": "Create new user",
+        "tags": [
+          "admin"
+        ],
+        "operationId": "UserRequest",
+        "parameters": [
+          {
+            "x-go-name": "Username",
+            "name": "username",
+            "in": "body",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "type": "string",
+            "x-go-name": "Password",
+            "name": "password",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "x-go-name": "Email",
+            "name": "email",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "x-go-name": "Role",
+            "name": "role",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "security": [
+          {
+            "SecurityDefinitions": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
+            ]
+          }
+        ],
+        "description": "Fetch all available users",
+        "tags": [
+          "admin"
+        ],
+        "operationId": "users",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UsersResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ObjectID": {
+      "type": "array",
+      "title": "ObjectID is the BSON ObjectID type.",
+      "items": {
+        "type": "integer",
+        "format": "uint8"
+      },
+      "x-go-package": "go.mongodb.org/mongo-driver/bson/primitive"
+    },
+    "UserResponse": {
+      "description": "User Response",
+      "type": "object",
+      "properties": {
+        "_id": {
+          "$ref": "#/definitions/ObjectID"
+        },
+        "email": {
+          "type": "string",
+          "x-go-name": "Email"
+        },
+        "role": {
+          "type": "string",
+          "x-go-name": "Role"
+        },
+        "username": {
+          "type": "string",
+          "x-go-name": "Username"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
+    }
+  },
+  "responses": {
+    "ErrorResponse": {
+      "description": "Common error",
+      "headers": {
+        "message": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "HealthResponse": {
+      "description": "",
+      "headers": {
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "SuccessResponse": {
+      "description": "Success response",
+      "headers": {
+        "message": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "UserResponse": {
+      "description": "User Response",
+      "schema": {
+        "$ref": "#/definitions/ObjectID"
+      },
+      "headers": {
+        "_id": {},
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "UsersResponse": {
+      "description": "List of Users",
+      "headers": {
+        "UsersResponse": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserResponse"
+          },
+          "description": "list of Users\nout: []UserResponse"
         }
       }
     }

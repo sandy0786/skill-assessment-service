@@ -12,7 +12,6 @@ import (
 	userRequest "github.com/sandy0786/skill-assessment-service/request/user"
 
 	"github.com/go-playground/validator"
-	"github.com/gorilla/mux"
 )
 
 var Validate *validator.Validate
@@ -26,6 +25,14 @@ type StatusResponse struct {
 	Status string `json:"status"`
 }
 
+// swagger:route GET /api/health admin health
+// Health of the application
+//
+// security:
+// - apiKey: []
+// responses:
+//  401: ErrorResponse
+//  200: HealthResponse
 //DecodeStatusRequest - decodes status GET request
 func DecodeStatusRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	log.Println("transport:DecodeStatusRequest: Inside DecodeStatusRequest")
@@ -40,6 +47,24 @@ func EncodeStatusResponse(ctx context.Context, w http.ResponseWriter, response i
 	return json.NewEncoder(w).Encode(finalResponse)
 }
 
+// swagger:route POST /api/user admin UserRequest
+// Create new user
+//
+//     Security:
+//     - bearer
+//
+//     SecurityDefinitions:
+//     bearer:
+//          type: apiKey
+//          name: Authorization
+//          in: header
+//
+// requests:
+// responses:
+//  409: ErrorResponse
+//  500: ErrorResponse
+//  400: ErrorResponse
+//  200: SuccessResponse
 //DecodeAddUserRequest - decodes status GET request
 func DecodeAddUserRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	log.Println("transport:DecodeAddUserRequest")
@@ -58,6 +83,21 @@ func EncodeAddUserResponse(ctx context.Context, w http.ResponseWriter, response 
 	return json.NewEncoder(w).Encode(response)
 }
 
+// swagger:route GET /api/users admin users
+// Fetch all available users
+//
+// Security:
+// - bearer
+// SecurityDefinitions:
+// bearer:
+//      type: apiKey
+//      name: Authorization
+//      in: header
+// responses:
+//  409: ErrorResponse
+//  500: ErrorResponse
+//  400: ErrorResponse
+//  200: UsersResponse
 func DecodeGetAllUsersRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	log.Println("transport:DecodeGetAllUsersRequest")
 	return r, nil
@@ -69,15 +109,15 @@ func EncodeGetAllUsersResponse(ctx context.Context, w http.ResponseWriter, respo
 	return json.NewEncoder(w).Encode(response)
 }
 
-func DecodeGetEmpByIdRequest(ctx context.Context, r *http.Request) (interface{}, error) {
-	log.Println("transport:DecodeGetEmpByIdRequest")
-	vars := mux.Vars(r)
-	empId, ok := vars["id"]
-	if !ok {
-		log.Println("id is missing in parameters")
-	}
-	return empId, nil
-}
+// func DecodeGetEmpByIdRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+// 	log.Println("transport:DecodeGetEmpByIdRequest")
+// 	vars := mux.Vars(r)
+// 	empId, ok := vars["id"]
+// 	if !ok {
+// 		log.Println("id is missing in parameters")
+// 	}
+// 	return empId, nil
+// }
 
 //ErrorEncoder will encode error to our format
 func ErrorEncoder(ctx context.Context, err error, w http.ResponseWriter) {

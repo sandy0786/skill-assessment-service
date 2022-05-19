@@ -1,6 +1,8 @@
 package errors
 
-//GlobalError is an exported type
+// Common error
+// swagger:response ErrorResponse
+// GlobalError is an exported type
 type GlobalError struct {
 	TimeStamp string `json:"timestamp"`
 	Status    int    `json:"status"`

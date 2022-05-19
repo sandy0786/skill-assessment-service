@@ -16,14 +16,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// swagger:route GET /admin/company/ admin listCompany
-// Get companies list
-//
-// security:
-// - apiKey: []
-// responses:
-//  401: CommonError
-//  200: GetCompanies
 //DecodeAddQuestionRequest - decodes status GET request
 func DecodeAddQuestionRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	log.Println("transport:DecodeAddUserRequest")
