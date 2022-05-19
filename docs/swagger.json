@@ -1,0 +1,49 @@
+{
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "title": "Skill assessment service:",
+    "version": "0.0.1"
+  },
+  "host": "localhost:8084",
+  "basePath": "/",
+  "paths": {
+    "/admin/company/": {
+      "get": {
+        "security": [
+          {
+            "apiKey": [
+              "[]"
+            ]
+          }
+        ],
+        "description": "Get companies list",
+        "tags": [
+          "admin"
+        ],
+        "operationId": "listCompany",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetCompanies"
+          },
+          "401": {
+            "$ref": "#/responses/CommonError"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "apiKey": {
+      "type": "apiKey",
+      "name": "authorization",
+      "in": "header"
+    }
+  }
+}

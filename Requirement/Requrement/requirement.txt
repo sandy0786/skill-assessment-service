@@ -1,0 +1,6 @@
+1. There are three roles (admin/manager/candidate)
+2. admin is able to give access to manager, candidate and has the full access.
+3. Manager role has the ability to create a test procedure based on the category. He can add the new questions,
+    prepare the question paper manually or make it random. He can view candidate result and reports.
+4. Candidate can only submit the answers.
+5. 

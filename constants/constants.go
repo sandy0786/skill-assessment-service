@@ -10,5 +10,5 @@ const (
 	ALL_QUESTIONS  = "/api/questions/{category}" // GET|POST
 	CATEGORY       = "/api/category"             // POST
 	ALL_CATEGORIES = "/api/categories"           // GET
-	DOC_PATH       = "/api/swagger/docs"         // GET
+	DOC_PATH       = "/docs"                     // GET
 )

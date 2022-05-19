@@ -30,3 +30,9 @@ These tools are necessary to build, test and deploy the services:
 ## Running test cases
 * Run : go test -tags=all  -v -coverpkg=./... -coverprofile=profile.cov ./...
 * To run specific test file : go test -tags=<tag-name>  -v -coverpkg=./... -coverprofile=profile.cov ./...
+
+## Swagger documentation
+> swagger generate spec -o ./docs/swagger.json --scan-models
+> swagger serve -F=swagger swagger.json
+> http://localhost:8084/docs
+

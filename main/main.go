@@ -1,3 +1,18 @@
+//  Skill assessment service:
+//   version: 0.0.1
+//   title: skill-assessment-service
+//  Schemes: http, https
+//  Host: localhost:8084
+//  BasePath: /
+//  Produces:
+//    - application/json
+//
+// securityDefinitions:
+//  apiKey:
+//    type: apiKey
+//    in: header
+//    name: authorization
+// swagger:meta
 package main
 
 import (
