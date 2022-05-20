@@ -29,6 +29,12 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		httptransport.ServerErrorEncoder(transport.CategoryErrorEncoder),
 	}
 
+	// swagger:route GET /api/health miscellaneous health
+	// Health of the application
+	//
+	// responses:
+	//  500: InternalServerErrorResponse
+	//  200: HealthResponse
 	r.Methods("GET").Path(constants.STATUS_PATH).Handler(httptransport.NewServer(
 		endpoints.StatusEndpoint,
 		transport.DecodeStatusRequest,
@@ -36,6 +42,24 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[0],
 	))
 
+	// swagger:route POST /api/user admin users
+	// Create new user
+	//
+	//     Security:
+	//     - bearer
+	//
+	//     SecurityDefinitions:
+	//     bearer:
+	//          type: apiKey
+	//          name: Authorization
+	//          in: header
+	//
+	// requests:
+	// responses:
+	//  409: ConflictErrorResponse
+	//  500: InternalServerErrorResponse
+	//  400: BadRequestErrorResponse
+	//  200: SuccessResponse
 	r.Methods("POST").Path(constants.USER).Handler(httptransport.NewServer(
 		endpoints.AddUserEndpoint,
 		transport.DecodeAddUserRequest,
@@ -43,6 +67,20 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[0],
 	))
 
+	// swagger:route GET /api/users admin listUsers
+	// Fetch all available users
+	//
+	// Security:
+	// - bearer
+	// SecurityDefinitions:
+	// bearer:
+	//      type: apiKey
+	//      name: Authorization
+	//      in: header
+	// responses:
+	//  500: InternalServerErrorResponse
+	//  400: BadRequestErrorResponse
+	//  200: UsersResponse
 	r.Methods("GET").Path(constants.ALL_USERS).Handler(httptransport.NewServer(
 		endpoints.GetAllUsersEndpoint,
 		transport.DecodeGetAllUsersRequest,
@@ -50,6 +88,21 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[0],
 	))
 
+	// swagger:route POST /api/question/{Category} questions QuestionRequest
+	// Add new question based on category
+	//
+	// Security:
+	// - bearer
+	// SecurityDefinitions:
+	// bearer:
+	//      type: apiKey
+	//      name: Authorization
+	//      in: header
+	// responses:
+	//  500: InternalServerErrorResponse
+	//  400: BadRequestErrorResponse
+	//  409: ConflictErrorResponse
+	//  200: SuccessResponse
 	r.Methods("POST").Path(constants.QUESTION).Handler(httptransport.NewServer(
 		endpoints.AddQuestionEndpoint,
 		transport.DecodeAddQuestionRequest,
@@ -57,6 +110,20 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[1],
 	))
 
+	// swagger:route POST /api/questions/{Category} questions QuestionsRequest
+	// Fetch all categories
+	//
+	// Security:
+	// - bearer
+	// SecurityDefinitions:
+	// bearer:
+	//      type: apiKey
+	//      name: Authorization
+	//      in: header
+	// responses:
+	//  500: InternalServerErrorResponse
+	//  400: BadRequestErrorResponse
+	//  200: SuccessResponse
 	r.Methods("POST").Path(constants.ALL_QUESTIONS).Handler(httptransport.NewServer(
 		endpoints.AddMultipleQuestionEndpoint,
 		transport.DecodeAddMutlipleQuestionsRequest,
@@ -64,6 +131,21 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[1],
 	))
 
+	// swagger:route GET /api/questions/{Category} questions GetQuestionRequest
+	// Add new question based on category
+	//
+	// Security:
+	// - bearer
+	// SecurityDefinitions:
+	// bearer:
+	//      type: apiKey
+	//      name: Authorization
+	//      in: header
+	// responses:
+	//  500: InternalServerErrorResponse
+	//  400: BadRequestErrorResponse
+	//  409: ConflictErrorResponse
+	//  200: CategoriesResponse
 	r.Methods("GET").Path(constants.ALL_QUESTIONS).Handler(httptransport.NewServer(
 		endpoints.GetAllQuestionsEndpoint,
 		transport.DecodeGetAllQuestionsRequest,
@@ -71,6 +153,21 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[1],
 	))
 
+	// swagger:route POST /api/category category users
+	// Add new category
+	//
+	// Security:
+	// - bearer
+	// SecurityDefinitions:
+	// bearer:
+	//      type: apiKey
+	//      name: Authorization
+	//      in: header
+	// responses:
+	//  500: InternalServerErrorResponse
+	//  400: BadRequestErrorResponse
+	//  409: ConflictErrorResponse
+	//  200: SuccessResponse
 	r.Methods("POST").Path(constants.CATEGORY).Handler(httptransport.NewServer(
 		endpoints.AddCategoryEndpoint,
 		transport.DecodeAddCategoryRequest,
@@ -78,6 +175,20 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[2],
 	))
 
+	// swagger:route GET /api/categories category listCategories
+	// Fetch all categories
+	//
+	// Security:
+	// - bearer
+	// SecurityDefinitions:
+	// bearer:
+	//      type: apiKey
+	//      name: Authorization
+	//      in: header
+	// responses:
+	//  500: InternalServerErrorResponse
+	//  400: BadRequestErrorResponse
+	//  200: CategoriesResponse
 	r.Methods("GET").Path(constants.ALL_CATEGORIES).Handler(httptransport.NewServer(
 		endpoints.GetAllCategoriesEndpoint,
 		transport.DecodeGetAllCategoriesRequest,

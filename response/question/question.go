@@ -1,14 +1,26 @@
 package question
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
-
+// swagger:model
 type QuestionResponse struct {
-	ID           primitive.ObjectID `json:"_id"`
-	Question     string             `json:"username"`
-	Options      []string           `json:"options"`
-	Answer       string             `json:"answer"`
-	QuestionType string             `json:"questionType"`
-	Author       string             `json:"author"`
-	Deleted      bool               `json:"deleted"`
-	DeletedBy    string             `json:"deletedBy"`
+	// example: How are you?
+	Question string `json:"question"`
+	// example: ["good", "Excellent"]
+	Options []string `json:"options"`
+	// example: good
+	Answer string `json:"answer"`
+	// example: radio
+	QuestionType string `json:"questionType"`
+	// example: admin
+	Author string `json:"author"`
+	// example: false
+	Deleted bool `json:"deleted"`
+	// example: admin
+	DeletedBy string `json:"deletedBy"`
+}
+
+// List of questions
+// swagger:response CategoriesResponse
+type CategoriesResponse struct {
+	// in: body
+	Body []QuestionResponse
 }

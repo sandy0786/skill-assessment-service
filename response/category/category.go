@@ -1,10 +1,20 @@
 package category
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+// import "go.mongodb.org/mongo-driver/bson/primitive"
 
+// swagger:model
 type CategoryResponse struct {
-	ID             primitive.ObjectID `json:"_id"`
-	CategoryName   string             `json:"categoryName"`
-	CollectionName string             `json:"collectionName"`
-	Author         string             `json:"author"`
+	// example: go
+	CategoryName string `json:"categoryName"`
+	// example: go
+	CollectionName string `json:"collectionName"`
+	// example: admin
+	Author string `json:"author"`
+}
+
+// List of Categories
+// swagger:response CategoriesResponse
+type CategoriesResponse struct {
+	// in: body
+	Body []CategoryResponse
 }

@@ -35,4 +35,6 @@ These tools are necessary to build, test and deploy the services:
 > swagger generate spec -o ./docs/swagger.json --scan-models
 > swagger serve -F=swagger swagger.json
 > http://localhost:8084/docs
+> https://swagger.io/specification/
+> https://goswagger.io/use/spec/model.html
 

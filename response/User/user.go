@@ -1,20 +1,21 @@
 package user
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+// import "go.mongodb.org/mongo-driver/bson/primitive"
 
 // User Response
-// swagger:response UserResponse
+// swagger:model
 type UserResponse struct {
-	ID       primitive.ObjectID `json:"_id"`
-	Username string             `json:"username"`
-	Email    string             `json:"email"`
-	Role     string             `json:"role"`
+	// example: admin
+	Username string `json:"username"`
+	// example: admin@provider.com
+	Email string `json:"email"`
+	// example: admin
+	Role string `json:"role"`
 }
 
 // List of Users
-// swagger:response UsersResponse
+// swagger:response UserResponse
 type UsersResponse struct {
-	// list of Users
-	// out: []UserResponse
-	UsersResponse []UserResponse
+	// in: body
+	Body []UserResponse
 }

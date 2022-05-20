@@ -1,11 +1,63 @@
 package question
 
+// swagger:model
 type QuestionRequest struct {
-	Question     string   `json:"question" validate:"required"`
-	Options      []string `json:"options" validate:"required"`
-	Answer       string   `json:"answer" validate:"required"`
-	QuestionType string   `json:"questionType" validate:"required"`
-	Author       string   `json:"author" validate:"required"`
-	Deleted      bool     `json:"deleted" validate:"required"`
-	DeletedBy    string   `json:"deletedBy" validate:"required"`
+	// Provide Question
+	// required: true
+	// example: How are you
+	Question string `json:"question" validate:"required"`
+	// provide options to choose
+	// required: true
+	// example: ["good", "excellent"]
+	Options []string `json:"options" validate:"required"`
+	// Provide correct answer
+	// required: true
+	// example: good
+	Answer string `json:"answer" validate:"required"`
+	// Provide Question type
+	// required: true
+	// example: checkbox/radio
+	QuestionType string `json:"questionType" validate:"required"`
+	// Provide username of the user who has created this question
+	// required: true
+	// example: admin
+	Author string `json:"author" validate:"required"`
+	// Is this question deleted?
+	// required: true
+	// example: false
+	Deleted bool `json:"deleted" validate:"required"`
+	// Provide username of the user who has deleted this question
+	// required: true
+	// example: admin
+	DeletedBy string `json:"deletedBy" validate:"required"`
+}
+
+// swagger:parameters QuestionRequest
+type QuestionRequestSwagger struct {
+	// in: path
+	// required: true
+	// example: go
+	Category string
+	// in:body
+	// required: true
+	Body QuestionRequest
+}
+
+// swagger:parameters QuestionsRequest
+type QuestionsRequestSwagger struct {
+	// in: path
+	// required: true
+	// example: go
+	Category string
+	// in:body
+	// required: true
+	Body []QuestionRequest
+}
+
+// swagger:parameters GetQuestionRequest
+type GetQuestionRequestSwagger struct {
+	// in: path
+	// required: true
+	// example: go
+	Category string
 }

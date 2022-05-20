@@ -1,4 +1,4 @@
-//  Skill assessment service:
+//  Skill Assessment Service:
 //   version: 0.0.1
 //   title: skill-assessment-service
 //  Schemes: http, https

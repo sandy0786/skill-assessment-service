@@ -39,7 +39,7 @@ func NewUserService(c configuration.ConfigurationInterface, dao userDao.UserDAO)
 
 func (t *userService) GetServiceStatus(ctx context.Context) (string, error) {
 	log.Println("Inside getServiceStatus")
-	return `ok`, nil
+	return `UP`, nil
 }
 
 func (t *userService) AddUser(ctx context.Context, userRequest userRequest.UserRequest) (successResponse.SuccessResponse, error) {

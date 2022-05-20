@@ -8,32 +8,293 @@
   ],
   "swagger": "2.0",
   "info": {
-    "title": "Skill assessment service:",
+    "title": "Skill Assessment Service:",
     "version": "0.0.1"
   },
   "host": "localhost:8084",
   "basePath": "/",
   "paths": {
-    "/api/health": {
+    "/api/categories": {
       "get": {
         "security": [
           {
-            "apiKey": [
-              "[]"
+            "SecurityDefinitions": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
             ]
           }
         ],
+        "description": "Fetch all categories",
+        "tags": [
+          "category"
+        ],
+        "operationId": "listCategories",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CategoriesResponse"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    },
+    "/api/category": {
+      "post": {
+        "security": [
+          {
+            "SecurityDefinitions": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
+            ]
+          }
+        ],
+        "description": "Add new category",
+        "tags": [
+          "category"
+        ],
+        "operationId": "users",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/ConflictErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
         "description": "Health of the application",
         "tags": [
-          "admin"
+          "miscellaneous"
         ],
         "operationId": "health",
         "responses": {
           "200": {
             "$ref": "#/responses/HealthResponse"
           },
-          "401": {
-            "$ref": "#/responses/ErrorResponse"
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    },
+    "/api/question/{Category}": {
+      "post": {
+        "security": [
+          {
+            "SecurityDefinitions": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
+            ]
+          }
+        ],
+        "description": "Add new question based on category",
+        "tags": [
+          "questions"
+        ],
+        "operationId": "QuestionRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "go",
+            "name": "Category",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QuestionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/ConflictErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    },
+    "/api/questions/{Category}": {
+      "get": {
+        "security": [
+          {
+            "SecurityDefinitions": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
+            ]
+          }
+        ],
+        "description": "Add new question based on category",
+        "tags": [
+          "questions"
+        ],
+        "operationId": "GetQuestionRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "go",
+            "name": "Category",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CategoriesResponse"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/ConflictErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "SecurityDefinitions": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
+            ]
+          }
+        ],
+        "description": "Fetch all categories",
+        "tags": [
+          "questions"
+        ],
+        "operationId": "QuestionsRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "go",
+            "name": "Category",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/QuestionRequest"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
           }
         }
       }
@@ -70,47 +331,19 @@
         "tags": [
           "admin"
         ],
-        "operationId": "UserRequest",
-        "parameters": [
-          {
-            "x-go-name": "Username",
-            "name": "username",
-            "in": "body",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "type": "string",
-            "x-go-name": "Password",
-            "name": "password",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "x-go-name": "Email",
-            "name": "email",
-            "in": "query"
-          },
-          {
-            "type": "string",
-            "x-go-name": "Role",
-            "name": "role",
-            "in": "query"
-          }
-        ],
+        "operationId": "users",
         "responses": {
           "200": {
             "$ref": "#/responses/SuccessResponse"
           },
           "400": {
-            "$ref": "#/responses/ErrorResponse"
+            "$ref": "#/responses/BadRequestErrorResponse"
           },
           "409": {
-            "$ref": "#/responses/ErrorResponse"
+            "$ref": "#/responses/ConflictErrorResponse"
           },
           "500": {
-            "$ref": "#/responses/ErrorResponse"
+            "$ref": "#/responses/InternalServerErrorResponse"
           }
         }
       }
@@ -144,123 +377,354 @@
         "tags": [
           "admin"
         ],
-        "operationId": "users",
+        "operationId": "listUsers",
         "responses": {
           "200": {
             "$ref": "#/responses/UsersResponse"
           },
           "400": {
-            "$ref": "#/responses/ErrorResponse"
-          },
-          "409": {
-            "$ref": "#/responses/ErrorResponse"
+            "$ref": "#/responses/BadRequestErrorResponse"
           },
           "500": {
-            "$ref": "#/responses/ErrorResponse"
+            "$ref": "#/responses/InternalServerErrorResponse"
           }
         }
       }
     }
   },
   "definitions": {
-    "ObjectID": {
-      "type": "array",
-      "title": "ObjectID is the BSON ObjectID type.",
-      "items": {
-        "type": "integer",
-        "format": "uint8"
+    "BadRequestError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message",
+          "example": "Invalid parameters"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status",
+          "example": 400
+        },
+        "timestamp": {
+          "type": "string",
+          "x-go-name": "TimeStamp",
+          "example": "2022-05-20 16:59:05"
+        }
       },
-      "x-go-package": "go.mongodb.org/mongo-driver/bson/primitive"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
+    },
+    "CategoryResponse": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string",
+          "x-go-name": "Author",
+          "example": "admin"
+        },
+        "categoryName": {
+          "type": "string",
+          "x-go-name": "CategoryName",
+          "example": "go"
+        },
+        "collectionName": {
+          "type": "string",
+          "x-go-name": "CollectionName",
+          "example": "go"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/category"
+    },
+    "ConflictError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message",
+          "example": "Already exist"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status",
+          "example": 409
+        },
+        "timestamp": {
+          "type": "string",
+          "x-go-name": "TimeStamp",
+          "example": "2022-05-20 16:59:05"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
+    },
+    "GlobalError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message",
+          "example": "Something went wrong"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status",
+          "example": 500
+        },
+        "timestamp": {
+          "type": "string",
+          "x-go-name": "TimeStamp",
+          "example": "2022-05-20 16:59:05"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
+    },
+    "QuestionRequest": {
+      "type": "object",
+      "required": [
+        "question",
+        "options",
+        "answer",
+        "questionType",
+        "author",
+        "deleted",
+        "deletedBy"
+      ],
+      "properties": {
+        "answer": {
+          "description": "Provide correct answer",
+          "type": "string",
+          "x-go-name": "Answer",
+          "example": "good"
+        },
+        "author": {
+          "description": "Provide username of the user who has created this question",
+          "type": "string",
+          "x-go-name": "Author",
+          "example": "admin"
+        },
+        "deleted": {
+          "description": "Is this question deleted?",
+          "type": "boolean",
+          "x-go-name": "Deleted",
+          "example": false
+        },
+        "deletedBy": {
+          "description": "Provide username of the user who has deleted this question",
+          "type": "string",
+          "x-go-name": "DeletedBy",
+          "example": "admin"
+        },
+        "options": {
+          "description": "provide options to choose",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Options",
+          "example": [
+            "good",
+            "excellent"
+          ]
+        },
+        "question": {
+          "description": "Provide Question",
+          "type": "string",
+          "x-go-name": "Question",
+          "example": "How are you"
+        },
+        "questionType": {
+          "description": "Provide Question type",
+          "type": "string",
+          "x-go-name": "QuestionType",
+          "example": "checkbox/radio"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/request/question"
+    },
+    "QuestionResponse": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string",
+          "x-go-name": "Answer",
+          "example": "good"
+        },
+        "author": {
+          "type": "string",
+          "x-go-name": "Author",
+          "example": "admin"
+        },
+        "deleted": {
+          "type": "boolean",
+          "x-go-name": "Deleted",
+          "example": false
+        },
+        "deletedBy": {
+          "type": "string",
+          "x-go-name": "DeletedBy",
+          "example": "admin"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Options",
+          "example": [
+            "good",
+            "Excellent"
+          ]
+        },
+        "question": {
+          "type": "string",
+          "x-go-name": "Question",
+          "example": "How are you?"
+        },
+        "questionType": {
+          "type": "string",
+          "x-go-name": "QuestionType",
+          "example": "radio"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/question"
+    },
+    "SuccessResponse": {
+      "description": "Success response",
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message",
+          "example": "Data saved successfully"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status",
+          "example": 200
+        },
+        "timestamp": {
+          "type": "string",
+          "x-go-name": "TimeStamp",
+          "example": "2022-05-20 16:59:05"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/success"
+    },
+    "UserRequest": {
+      "description": "User Request",
+      "type": "object",
+      "required": [
+        "username",
+        "password",
+        "email",
+        "role"
+      ],
+      "properties": {
+        "email": {
+          "description": "the email for this user",
+          "type": "string",
+          "x-go-name": "Email",
+          "example": "user@provider.com"
+        },
+        "password": {
+          "description": "the password for this user",
+          "type": "string",
+          "minLength": 8,
+          "x-go-name": "Password"
+        },
+        "role": {
+          "description": "the role for this user",
+          "type": "string",
+          "x-go-name": "Role",
+          "example": "manager"
+        },
+        "username": {
+          "description": "the username for this user",
+          "type": "string",
+          "x-go-name": "Username"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/request/user"
     },
     "UserResponse": {
       "description": "User Response",
       "type": "object",
       "properties": {
-        "_id": {
-          "$ref": "#/definitions/ObjectID"
-        },
         "email": {
           "type": "string",
-          "x-go-name": "Email"
+          "x-go-name": "Email",
+          "example": "admin@provider.com"
         },
         "role": {
           "type": "string",
-          "x-go-name": "Role"
+          "x-go-name": "Role",
+          "example": "admin"
         },
         "username": {
           "type": "string",
-          "x-go-name": "Username"
+          "x-go-name": "Username",
+          "example": "admin"
         }
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
     }
   },
   "responses": {
-    "ErrorResponse": {
-      "description": "Common error",
-      "headers": {
-        "message": {
-          "type": "string"
-        },
-        "status": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "timestamp": {
-          "type": "string"
+    "BadRequestErrorResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/BadRequestError"
+      }
+    },
+    "CategoriesResponse": {
+      "description": "List of questions",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/QuestionResponse"
         }
+      }
+    },
+    "ConflictErrorResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/ConflictError"
       }
     },
     "HealthResponse": {
       "description": "",
-      "headers": {
-        "status": {
-          "type": "string"
+      "schema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "x-go-name": "Status",
+            "example": "UP"
+          }
         }
+      }
+    },
+    "InternalServerErrorResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/GlobalError"
       }
     },
     "SuccessResponse": {
-      "description": "Success response",
-      "headers": {
-        "message": {
-          "type": "string"
-        },
-        "status": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "timestamp": {
-          "type": "string"
-        }
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/SuccessResponse"
       }
     },
     "UserResponse": {
-      "description": "User Response",
-      "schema": {
-        "$ref": "#/definitions/ObjectID"
-      },
-      "headers": {
-        "_id": {},
-        "email": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string"
-        }
-      }
-    },
-    "UsersResponse": {
       "description": "List of Users",
-      "headers": {
-        "UsersResponse": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/UserResponse"
-          },
-          "description": "list of Users\nout: []UserResponse"
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/UserResponse"
         }
       }
     }
