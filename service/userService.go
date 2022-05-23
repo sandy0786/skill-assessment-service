@@ -22,6 +22,7 @@ type UserService interface {
 	AddUser(context.Context, userRequest.UserRequest) (successResponse.SuccessResponse, error)
 	GetAllUsers(context.Context) ([]userResponse.UserResponse, error)
 	DeleteUserByUserName(context.Context, string) (successResponse.SuccessResponse, error)
+	RevokeUserByUserName(context.Context, string) (successResponse.SuccessResponse, error)
 	// GetEmployeeById(context.Context, int64) (employeeResponse.EmployeeResponse, error)
 }
 
@@ -79,6 +80,19 @@ func (t *userService) DeleteUserByUserName(_ context.Context, username string) (
 		return successResponse.SuccessResponse{
 			Status:    http.StatusOK,
 			Message:   "User deleted successfully",
+			TimeStamp: time.Now().UTC().String(),
+		}, err
+	}
+	return successResponse.SuccessResponse{}, err
+}
+
+func (t *userService) RevokeUserByUserName(_ context.Context, username string) (successResponse.SuccessResponse, error) {
+	log.Println("Inside RevokeUserByUserName")
+	userDeleted, err := t.dao.RevokeByUserName(username)
+	if userDeleted {
+		return successResponse.SuccessResponse{
+			Status:    http.StatusOK,
+			Message:   "User revoked successfully",
 			TimeStamp: time.Now().UTC().String(),
 		}, err
 	}

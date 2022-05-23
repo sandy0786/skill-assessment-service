@@ -15,6 +15,7 @@ type UserDAO interface {
 	// FindById(int64) (userModel.User, error)
 	FindAll() ([]userDocument.User, error)
 	DeleteByUserName(string) (bool, error)
+	RevokeByUserName(string) (bool, error)
 }
 
 type userDAOImpl struct {
@@ -76,6 +77,20 @@ func (u *userDAOImpl) DeleteByUserName(username string) (bool, error) {
 		},
 	)
 	log.Println("Delete user : ", err)
+	if err != nil {
+		return false, err
+	}
+	return true, err
+}
+
+func (u *userDAOImpl) RevokeByUserName(username string) (bool, error) {
+	log.Println("Revoke user")
+	_, err := u.mongoCollection.UpdateOne(u.db.GetMongoDbContext(), bson.M{"username": username},
+		bson.D{
+			{"$set", bson.D{{"active", true}}},
+		},
+	)
+	log.Println("Revoke user : ", err)
 	if err != nil {
 		return false, err
 	}

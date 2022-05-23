@@ -22,6 +22,17 @@ type UserDeleteSuccessResponse struct {
 	Message string `json:"message"`
 }
 
+// Success response
+// swagger:model
+type UserRevokeSuccessResponse struct {
+	// example: 2022-05-20 16:59:05
+	TimeStamp string `json:"timestamp"`
+	// example: 200
+	Status int `json:"status"`
+	// example: User revoked successfully
+	Message string `json:"message"`
+}
+
 // swagger:response HealthResponse
 type Health struct {
 	// in: body
@@ -40,5 +51,11 @@ type UserSuccessResponse struct {
 // swagger:response UserDeleteSuccessResponse
 type UserDeleteSuccessResp struct {
 	// in: body
-	Body SuccessResponse
+	Body UserDeleteSuccessResponse
+}
+
+// swagger:response UserRevokeSuccessResponse
+type UserRevokeSuccessResp struct {
+	// in: body
+	Body UserRevokeSuccessResponse
 }

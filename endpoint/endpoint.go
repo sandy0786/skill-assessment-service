@@ -20,6 +20,7 @@ type Endpoints struct {
 	AddUserEndpoint     endpoint.Endpoint
 	DeleteUserEndpoint  endpoint.Endpoint
 	GetAllUsersEndpoint endpoint.Endpoint
+	RevokeUserEndpoint  endpoint.Endpoint
 	// GetEmployeeByIdEndpoint endpoint.Endpoint
 	AddQuestionEndpoint         endpoint.Endpoint
 	AddMultipleQuestionEndpoint endpoint.Endpoint
@@ -122,9 +123,19 @@ func MakeGetAllCategoriesEndpoint(srv service.CategoryService) endpoint.Endpoint
 //MakeDeleteUserEndpoint returns response
 func MakeDeleteUserEndpoint(srv service.UserService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		log.Println("MakeGetAllCategoriesEndpoint")
+		log.Println("MakeDeleteUserEndpoint")
 		username := request.(string)
 		responseFromService, err := srv.DeleteUserByUserName(ctx, username)
+		return responseFromService, err
+	}
+}
+
+//MakeRevokeUserEndpoint returns response
+func MakeRevokeUserEndpoint(srv service.UserService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		log.Println("MakeRevokeUserEndpoint")
+		username := request.(string)
+		responseFromService, err := srv.RevokeUserByUserName(ctx, username)
 		return responseFromService, err
 	}
 }

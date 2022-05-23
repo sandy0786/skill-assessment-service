@@ -71,6 +71,7 @@ func main() {
 		AddUserEndpoint:     endpoint.MakeAddUserEndpoint(userSrv),
 		DeleteUserEndpoint:  endpoint.MakeDeleteUserEndpoint(userSrv),
 		GetAllUsersEndpoint: endpoint.MakeGetAllUsersEndpoint(userSrv),
+		RevokeUserEndpoint:  endpoint.MakeRevokeUserEndpoint(userSrv),
 		// GetEmployeeByIdEndpoint: endpoint.MakeGetEmployeeByIdEndpoint(userSrv),
 		AddQuestionEndpoint:         endpoint.MakeAddQuestionEndpoint(qsnSrv),
 		AddMultipleQuestionEndpoint: endpoint.MakeAddMultipleQuestionsEndpoint(qsnSrv),

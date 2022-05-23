@@ -68,7 +68,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	))
 
 	// swagger:route DELETE /api/user/{Username} admin DeleteUserRequest
-	// Create new user
+	// Delete user
 	//
 	//     Security:
 	//     - bearer
@@ -110,6 +110,31 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		endpoints.GetAllUsersEndpoint,
 		transport.DecodeGetAllUsersRequest,
 		transport.EncodeGetAllUsersResponse,
+		Opts[0],
+	))
+
+	// swagger:route PUT /api/user/{Username}/revoke admin RevokeUserRequest
+	// Revoke user
+	//
+	//     Security:
+	//     - bearer
+	//
+	//     SecurityDefinitions:
+	//     bearer:
+	//          type: apiKey
+	//          name: Authorization
+	//          in: header
+	//
+	// requests:
+	// responses:
+	//  404: NotFoundErrorResponse
+	//  500: InternalServerErrorResponse
+	//  400: BadRequestErrorResponse
+	//  200: UserRevokeSuccessResponse
+	r.Methods("PUT").Path(constants.REVOKE_USER).Handler(httptransport.NewServer(
+		endpoints.RevokeUserEndpoint,
+		transport.DecodeDeleteUserRequest,
+		transport.EncodeDeleteUserResponse,
 		Opts[0],
 	))
 

@@ -385,7 +385,7 @@
             "requests": []
           }
         ],
-        "description": "Create new user",
+        "description": "Delete user",
         "tags": [
           "admin"
         ],
@@ -402,6 +402,64 @@
         "responses": {
           "200": {
             "$ref": "#/responses/UserDeleteSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "404": {
+            "$ref": "#/responses/NotFoundErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    },
+    "/api/user/{Username}/revoke": {
+      "put": {
+        "security": [
+          {
+            "SecurityDefinitions": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
+            ]
+          },
+          {
+            "requests": []
+          }
+        ],
+        "description": "Revoke user",
+        "tags": [
+          "admin"
+        ],
+        "operationId": "RevokeUserRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "username",
+            "name": "Username",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UserRevokeSuccessResponse"
           },
           "400": {
             "$ref": "#/responses/BadRequestErrorResponse"
@@ -787,6 +845,29 @@
         }
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/response/user"
+    },
+    "UserRevokeSuccessResponse": {
+      "description": "Success response",
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message",
+          "example": "User revoked successfully"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status",
+          "example": 200
+        },
+        "timestamp": {
+          "type": "string",
+          "x-go-name": "TimeStamp",
+          "example": "2022-05-20 16:59:05"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/success"
     }
   },
   "responses": {
@@ -845,7 +926,13 @@
     "UserDeleteSuccessResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/SuccessResponse"
+        "$ref": "#/definitions/UserDeleteSuccessResponse"
+      }
+    },
+    "UserRevokeSuccessResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/UserRevokeSuccessResponse"
       }
     },
     "UsersResponse": {
