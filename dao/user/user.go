@@ -2,6 +2,7 @@ package user
 
 import (
 	"log"
+	"reflect"
 
 	Database "github.com/sandy0786/skill-assessment-service/database"
 	userDocument "github.com/sandy0786/skill-assessment-service/documents/user"
@@ -13,6 +14,7 @@ type UserDAO interface {
 	Save(*userDocument.User) (bool, error)
 	// FindById(int64) (userModel.User, error)
 	FindAll() ([]userDocument.User, error)
+	DeleteByUserName(string) (bool, error)
 }
 
 type userDAOImpl struct {
@@ -31,7 +33,11 @@ func NewUserDAO(db Database.DatabaseInterface, collectionName string) *userDAOIm
 
 func (u *userDAOImpl) Save(user *userDocument.User) (bool, error) {
 	log.Println("save user")
+	// var err2 mongo.WriteException
 	_, err := u.mongoCollection.InsertOne(u.db.GetMongoDbContext(), user)
+	err2, _ := err.(mongo.WriteException)
+	log.Println("save user : ", err2.Raw)
+	log.Println("save user : ", reflect.TypeOf(err))
 	if err != nil {
 		return false, err
 	}
@@ -59,4 +65,19 @@ func (u *userDAOImpl) FindAll() ([]userDocument.User, error) {
 		return users, err
 	}
 	return users, err
+}
+
+func (u *userDAOImpl) DeleteByUserName(username string) (bool, error) {
+	log.Println("Delete user")
+	// _, err := u.mongoCollection.DeleteOne(u.db.GetMongoDbContext(), bson.M{"username": username})
+	_, err := u.mongoCollection.UpdateOne(u.db.GetMongoDbContext(), bson.M{"username": username},
+		bson.D{
+			{"$set", bson.D{{"active", false}}},
+		},
+	)
+	log.Println("Delete user : ", err)
+	if err != nil {
+		return false, err
+	}
+	return true, err
 }

@@ -21,6 +21,7 @@ type UserService interface {
 	GetServiceStatus(context.Context) (string, error)
 	AddUser(context.Context, userRequest.UserRequest) (successResponse.SuccessResponse, error)
 	GetAllUsers(context.Context) ([]userResponse.UserResponse, error)
+	DeleteUserByUserName(context.Context, string) (successResponse.SuccessResponse, error)
 	// GetEmployeeById(context.Context, int64) (employeeResponse.EmployeeResponse, error)
 }
 
@@ -50,6 +51,7 @@ func (t *userService) AddUser(ctx context.Context, userRequest userRequest.UserR
 	user.CreatedAt = time.Now().UTC()
 	user.UpdatedAt = time.Now().UTC()
 	user.ID = primitive.NewObjectID()
+	user.Active = true
 	userCreated, err := t.dao.Save(&user)
 	// copier.Copy(&userResponse, &userRequest)
 	if userCreated {
@@ -68,6 +70,19 @@ func (t *userService) GetAllUsers(context.Context) ([]userResponse.UserResponse,
 	users, err := t.dao.FindAll()
 	copier.Copy(&userResponses, &users)
 	return userResponses, err
+}
+
+func (t *userService) DeleteUserByUserName(_ context.Context, username string) (successResponse.SuccessResponse, error) {
+	log.Println("Inside DeleteUserByUserName")
+	userDeleted, err := t.dao.DeleteByUserName(username)
+	if userDeleted {
+		return successResponse.SuccessResponse{
+			Status:    http.StatusOK,
+			Message:   "User deleted successfully",
+			TimeStamp: time.Now().UTC().String(),
+		}, err
+	}
+	return successResponse.SuccessResponse{}, err
 }
 
 // func (t *userService) GetEmployeeById(_ context.Context, id int64) (employeeResponse.EmployeeResponse, error) {

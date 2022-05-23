@@ -1,5 +1,5 @@
 //  Skill Assessment Service:
-//   version: 0.0.1
+//   version: 1.0.0
 //   title: skill-assessment-service
 //  Schemes: http, https
 //  Host: localhost:8084
@@ -69,6 +69,7 @@ func main() {
 	endpoints := endpoint.Endpoints{
 		StatusEndpoint:      endpoint.MakeStatusEndpoint(userSrv),
 		AddUserEndpoint:     endpoint.MakeAddUserEndpoint(userSrv),
+		DeleteUserEndpoint:  endpoint.MakeDeleteUserEndpoint(userSrv),
 		GetAllUsersEndpoint: endpoint.MakeGetAllUsersEndpoint(userSrv),
 		// GetEmployeeByIdEndpoint: endpoint.MakeGetEmployeeByIdEndpoint(userSrv),
 		AddQuestionEndpoint:         endpoint.MakeAddQuestionEndpoint(qsnSrv),

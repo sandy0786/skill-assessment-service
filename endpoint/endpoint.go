@@ -18,6 +18,7 @@ import (
 type Endpoints struct {
 	StatusEndpoint      endpoint.Endpoint
 	AddUserEndpoint     endpoint.Endpoint
+	DeleteUserEndpoint  endpoint.Endpoint
 	GetAllUsersEndpoint endpoint.Endpoint
 	// GetEmployeeByIdEndpoint endpoint.Endpoint
 	AddQuestionEndpoint         endpoint.Endpoint
@@ -114,6 +115,16 @@ func MakeGetAllCategoriesEndpoint(srv service.CategoryService) endpoint.Endpoint
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		log.Println("MakeGetAllCategoriesEndpoint")
 		responseFromService, err := srv.GetAllCategories(ctx)
+		return responseFromService, err
+	}
+}
+
+//MakeDeleteUserEndpoint returns response
+func MakeDeleteUserEndpoint(srv service.UserService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		log.Println("MakeGetAllCategoriesEndpoint")
+		username := request.(string)
+		responseFromService, err := srv.DeleteUserByUserName(ctx, username)
 		return responseFromService, err
 	}
 }

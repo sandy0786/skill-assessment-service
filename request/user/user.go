@@ -26,3 +26,11 @@ type UserRequestSwagger struct {
 	// in:body
 	Body UserRequest
 }
+
+// swagger:parameters DeleteUserRequest
+type DeleteUserRequestSwagger struct {
+	// in: path
+	// required: true
+	// example: username
+	Username string
+}

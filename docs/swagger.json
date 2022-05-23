@@ -9,7 +9,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Skill Assessment Service:",
-    "version": "0.0.1"
+    "version": "1.0.0"
   },
   "host": "localhost:8084",
   "basePath": "/",
@@ -331,7 +331,16 @@
         "tags": [
           "admin"
         ],
-        "operationId": "users",
+        "operationId": "UserRequest",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UserRequest"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "$ref": "#/responses/SuccessResponse"
@@ -341,6 +350,64 @@
           },
           "409": {
             "$ref": "#/responses/ConflictErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    },
+    "/api/user/{Username}": {
+      "delete": {
+        "security": [
+          {
+            "SecurityDefinitions": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
+            ]
+          },
+          {
+            "requests": []
+          }
+        ],
+        "description": "Create new user",
+        "tags": [
+          "admin"
+        ],
+        "operationId": "DeleteUserRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "username",
+            "name": "Username",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UserDeleteSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "404": {
+            "$ref": "#/responses/NotFoundErrorResponse"
           },
           "500": {
             "$ref": "#/responses/InternalServerErrorResponse"
@@ -471,6 +538,28 @@
           "format": "int64",
           "x-go-name": "Status",
           "example": 500
+        },
+        "timestamp": {
+          "type": "string",
+          "x-go-name": "TimeStamp",
+          "example": "2022-05-20 16:59:05"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
+    },
+    "NotFoundError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message",
+          "example": "Not found"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status",
+          "example": 404
         },
         "timestamp": {
           "type": "string",
@@ -613,6 +702,29 @@
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/response/success"
     },
+    "UserDeleteSuccessResponse": {
+      "description": "Success response",
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message",
+          "example": "User Deleted successfully"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status",
+          "example": 200
+        },
+        "timestamp": {
+          "type": "string",
+          "x-go-name": "TimeStamp",
+          "example": "2022-05-20 16:59:05"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/success"
+    },
     "UserRequest": {
       "description": "User Request",
       "type": "object",
@@ -653,6 +765,11 @@
       "description": "User Response",
       "type": "object",
       "properties": {
+        "active": {
+          "type": "boolean",
+          "x-go-name": "Active",
+          "example": true
+        },
         "email": {
           "type": "string",
           "x-go-name": "Email",
@@ -669,7 +786,7 @@
           "example": "admin"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/user"
     }
   },
   "responses": {
@@ -713,13 +830,25 @@
         "$ref": "#/definitions/GlobalError"
       }
     },
+    "NotFoundErrorResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/NotFoundError"
+      }
+    },
     "SuccessResponse": {
       "description": "",
       "schema": {
         "$ref": "#/definitions/SuccessResponse"
       }
     },
-    "UserResponse": {
+    "UserDeleteSuccessResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/SuccessResponse"
+      }
+    },
+    "UsersResponse": {
       "description": "List of Users",
       "schema": {
         "type": "array",

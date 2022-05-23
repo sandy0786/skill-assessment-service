@@ -11,10 +11,12 @@ type UserResponse struct {
 	Email string `json:"email"`
 	// example: admin
 	Role string `json:"role"`
+	// example: true
+	Active bool `json:"active"`
 }
 
 // List of Users
-// swagger:response UserResponse
+// swagger:response UsersResponse
 type UsersResponse struct {
 	// in: body
 	Body []UserResponse

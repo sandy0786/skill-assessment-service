@@ -20,6 +20,16 @@ type BadRequestError struct {
 	Message string `json:"message"`
 }
 
+// swagger:model
+type NotFoundError struct {
+	// example: 2022-05-20 16:59:05
+	TimeStamp string `json:"timestamp"`
+	// example: 404
+	Status int `json:"status"`
+	// example: Not found
+	Message string `json:"message"`
+}
+
 // swagger:response InternalServerErrorResponse
 type InternalErrorStruct struct {
 	// in: body
@@ -36,4 +46,10 @@ type BadRequestErrorStruct struct {
 type ConflictErrorStruct struct {
 	// in: body
 	Body ConflictError
+}
+
+// swagger:response NotFoundErrorResponse
+type NotFoundErrorStruct struct {
+	// in: body
+	Body NotFoundError
 }
