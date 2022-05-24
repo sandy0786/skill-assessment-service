@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	userDTO "github.com/sandy0786/skill-assessment-service/dto/user"
 	err "github.com/sandy0786/skill-assessment-service/errors"
 	userRequest "github.com/sandy0786/skill-assessment-service/request/user"
 	userResponse "github.com/sandy0786/skill-assessment-service/response/user"
@@ -99,6 +100,26 @@ func DecodeDeleteUserRequest(ctx context.Context, r *http.Request) (interface{},
 
 // EncodeDeleteUserResponse - encodes status service response
 func EncodeDeleteUserResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	log.Println("transport:EncodeDeleteUserResponse")
+	return json.NewEncoder(w).Encode(response)
+}
+
+//DecodePasswordResetRequest
+func DecodePasswordResetRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	log.Println("transport:DecodePasswordResetRequest")
+	username := mux.Vars(r)["username"]
+	if len(username) == 0 {
+		return "", errors.New("Path variable 'username' not found")
+	}
+	var userDto userDTO.UserDTO
+	err := json.NewDecoder(r.Body).Decode(&userDto)
+	err = Validate.Struct(userDto)
+	log.Println("aa >> ", err)
+	return userDto, nil
+}
+
+// EncodePasswordResetRequest
+func EncodePasswordResetRequest(ctx context.Context, w http.ResponseWriter, response interface{}) error {
 	log.Println("transport:EncodeDeleteUserResponse")
 	return json.NewEncoder(w).Encode(response)
 }

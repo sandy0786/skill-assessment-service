@@ -138,6 +138,30 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[0],
 	))
 
+	// swagger:route PUT /api/user/{Username}/password user ResetUserPasswordRequest
+	// Revoke user
+	//
+	//     Security:
+	//     - bearer
+	//
+	//     SecurityDefinitions:
+	//     bearer:
+	//          type: apiKey
+	//          name: Authorization
+	//          in: header
+	//
+	// responses:
+	//  404: NotFoundErrorResponse
+	//  500: InternalServerErrorResponse
+	//  400: BadRequestErrorResponse
+	//  200: ResetUserPasswordRequest
+	r.Methods("PUT").Path(constants.RESET_PASSWORD).Handler(httptransport.NewServer(
+		endpoints.ResetPasswordEndpoint,
+		transport.DecodePasswordResetRequest,
+		transport.EncodePasswordResetRequest,
+		Opts[0],
+	))
+
 	// swagger:route POST /api/question/{Category} questions QuestionRequest
 	// Add new question based on category
 	//

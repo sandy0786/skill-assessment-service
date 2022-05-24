@@ -5,6 +5,7 @@ import (
 	"log"
 
 	questionDTO "github.com/sandy0786/skill-assessment-service/dto/question"
+	userDTO "github.com/sandy0786/skill-assessment-service/dto/user"
 	categoryRequest "github.com/sandy0786/skill-assessment-service/request/category"
 	userRequest "github.com/sandy0786/skill-assessment-service/request/user"
 	service "github.com/sandy0786/skill-assessment-service/service"
@@ -16,12 +17,12 @@ import (
 //Endpoints are exposed here
 //Contains endpoints that map request from client to our service
 type Endpoints struct {
-	StatusEndpoint      endpoint.Endpoint
-	AddUserEndpoint     endpoint.Endpoint
-	DeleteUserEndpoint  endpoint.Endpoint
-	GetAllUsersEndpoint endpoint.Endpoint
-	RevokeUserEndpoint  endpoint.Endpoint
-	// GetEmployeeByIdEndpoint endpoint.Endpoint
+	StatusEndpoint              endpoint.Endpoint
+	AddUserEndpoint             endpoint.Endpoint
+	DeleteUserEndpoint          endpoint.Endpoint
+	GetAllUsersEndpoint         endpoint.Endpoint
+	RevokeUserEndpoint          endpoint.Endpoint
+	ResetPasswordEndpoint       endpoint.Endpoint
 	AddQuestionEndpoint         endpoint.Endpoint
 	AddMultipleQuestionEndpoint endpoint.Endpoint
 	GetAllQuestionsEndpoint     endpoint.Endpoint
@@ -136,6 +137,16 @@ func MakeRevokeUserEndpoint(srv service.UserService) endpoint.Endpoint {
 		log.Println("MakeRevokeUserEndpoint")
 		username := request.(string)
 		responseFromService, err := srv.RevokeUserByUserName(ctx, username)
+		return responseFromService, err
+	}
+}
+
+//MakeResetPasswordEndpoint returns response
+func MakeResetPasswordEndpoint(srv service.UserService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		log.Println("MakeResetPasswordEndpoint")
+		userDto := request.(userDTO.UserDTO)
+		responseFromService, err := srv.ResetUserPassword(ctx, userDto)
 		return responseFromService, err
 	}
 }

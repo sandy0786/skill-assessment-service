@@ -67,12 +67,12 @@ func main() {
 
 	// mapping endpoints
 	endpoints := endpoint.Endpoints{
-		StatusEndpoint:      endpoint.MakeStatusEndpoint(userSrv),
-		AddUserEndpoint:     endpoint.MakeAddUserEndpoint(userSrv),
-		DeleteUserEndpoint:  endpoint.MakeDeleteUserEndpoint(userSrv),
-		GetAllUsersEndpoint: endpoint.MakeGetAllUsersEndpoint(userSrv),
-		RevokeUserEndpoint:  endpoint.MakeRevokeUserEndpoint(userSrv),
-		// GetEmployeeByIdEndpoint: endpoint.MakeGetEmployeeByIdEndpoint(userSrv),
+		StatusEndpoint:              endpoint.MakeStatusEndpoint(userSrv),
+		AddUserEndpoint:             endpoint.MakeAddUserEndpoint(userSrv),
+		DeleteUserEndpoint:          endpoint.MakeDeleteUserEndpoint(userSrv),
+		GetAllUsersEndpoint:         endpoint.MakeGetAllUsersEndpoint(userSrv),
+		RevokeUserEndpoint:          endpoint.MakeRevokeUserEndpoint(userSrv),
+		ResetPasswordEndpoint:       endpoint.MakeResetPasswordEndpoint(userSrv),
 		AddQuestionEndpoint:         endpoint.MakeAddQuestionEndpoint(qsnSrv),
 		AddMultipleQuestionEndpoint: endpoint.MakeAddMultipleQuestionsEndpoint(qsnSrv),
 		GetAllQuestionsEndpoint:     endpoint.MakeGetAllQuestionsEndpoint(qsnSrv),

@@ -33,6 +33,17 @@ type UserRevokeSuccessResponse struct {
 	Message string `json:"message"`
 }
 
+// Success response
+// swagger:model
+type PasswordResetSuccessResponse struct {
+	// example: 2022-05-20 16:59:05
+	TimeStamp string `json:"timestamp"`
+	// example: 200
+	Status int `json:"status"`
+	// example: Password reset success
+	Message string `json:"message"`
+}
+
 // swagger:response HealthResponse
 type Health struct {
 	// in: body
@@ -58,4 +69,10 @@ type UserDeleteSuccessResp struct {
 type UserRevokeSuccessResp struct {
 	// in: body
 	Body UserRevokeSuccessResponse
+}
+
+// swagger:response PasswordResetSuccessResponse
+type PasswordResetSuccessResp struct {
+	// in: body
+	Body PasswordResetSuccessResponse
 }

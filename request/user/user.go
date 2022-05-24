@@ -42,3 +42,23 @@ type RevokeUserRequestSwagger struct {
 	// example: username
 	Username string
 }
+
+// swagger:model
+type PasswordReset struct {
+	// the old password for this user
+	// required: true
+	OldPassword string `json:"oldPassword" validate:"required"`
+	// the new password for this user
+	// required: true
+	NewPassword string `json:"newPassword" validate:"required"`
+}
+
+// swagger:parameters ResetUserPasswordRequest
+type ResetPasswordRequestSwagger struct {
+	// in: path
+	// required: true
+	// example: admin
+	Username string
+	// in: body
+	Body PasswordReset
+}

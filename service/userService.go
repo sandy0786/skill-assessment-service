@@ -9,6 +9,7 @@ import (
 	configuration "github.com/sandy0786/skill-assessment-service/configuration"
 	userDao "github.com/sandy0786/skill-assessment-service/dao/user"
 	userDocument "github.com/sandy0786/skill-assessment-service/documents/user"
+	userDto "github.com/sandy0786/skill-assessment-service/dto/user"
 	userRequest "github.com/sandy0786/skill-assessment-service/request/user"
 	successResponse "github.com/sandy0786/skill-assessment-service/response/success"
 	userResponse "github.com/sandy0786/skill-assessment-service/response/user"
@@ -23,7 +24,7 @@ type UserService interface {
 	GetAllUsers(context.Context) ([]userResponse.UserResponse, error)
 	DeleteUserByUserName(context.Context, string) (successResponse.SuccessResponse, error)
 	RevokeUserByUserName(context.Context, string) (successResponse.SuccessResponse, error)
-	// GetEmployeeById(context.Context, int64) (employeeResponse.EmployeeResponse, error)
+	ResetUserPassword(context.Context, userDto.UserDTO) (successResponse.SuccessResponse, error)
 }
 
 // service for druid
@@ -99,10 +100,15 @@ func (t *userService) RevokeUserByUserName(_ context.Context, username string) (
 	return successResponse.SuccessResponse{}, err
 }
 
-// func (t *userService) GetEmployeeById(_ context.Context, id int64) (employeeResponse.EmployeeResponse, error) {
-// 	log.Println("Inside GetEmployeeById : ", id)
-// 	var employeeResponse employeeResponse.EmployeeResponse
-// 	employee, err := t.dao.FindById(id)
-// 	copier.Copy(&employeeResponse, &employee)
-// 	return employeeResponse, err
-// }
+func (t *userService) ResetUserPassword(_ context.Context, userdto userDto.UserDTO) (successResponse.SuccessResponse, error) {
+	log.Println("Inside ResetUserPassword ")
+	resetSuccess, err := t.dao.ResetUserPassword(userdto.Username, userdto.OldPassword, userdto.NewPassword)
+	if resetSuccess {
+		return successResponse.SuccessResponse{
+			Status:    http.StatusOK,
+			Message:   "Password reset success",
+			TimeStamp: time.Now().UTC().String(),
+		}, err
+	}
+	return successResponse.SuccessResponse{}, err
+}

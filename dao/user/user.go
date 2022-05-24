@@ -16,6 +16,7 @@ type UserDAO interface {
 	FindAll() ([]userDocument.User, error)
 	DeleteByUserName(string) (bool, error)
 	RevokeByUserName(string) (bool, error)
+	ResetUserPassword(string, string, string) (bool, error)
 }
 
 type userDAOImpl struct {
@@ -91,6 +92,20 @@ func (u *userDAOImpl) RevokeByUserName(username string) (bool, error) {
 		},
 	)
 	log.Println("Revoke user : ", err)
+	if err != nil {
+		return false, err
+	}
+	return true, err
+}
+
+func (u *userDAOImpl) ResetUserPassword(username string, oldpassword string, newPassword string) (bool, error) {
+	log.Println("Reset user password")
+	_, err := u.mongoCollection.UpdateOne(u.db.GetMongoDbContext(), bson.M{"username": username, "password": oldpassword},
+		bson.D{
+			{"$set", bson.D{{"password", newPassword}}},
+		},
+	)
+	log.Println("Reset user password : ", err)
 	if err != nil {
 		return false, err
 	}

@@ -415,6 +415,68 @@
         }
       }
     },
+    "/api/user/{Username}/password": {
+      "put": {
+        "security": [
+          {
+            "SecurityDefinitions": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
+            ]
+          }
+        ],
+        "description": "Revoke user",
+        "tags": [
+          "user"
+        ],
+        "operationId": "ResetUserPasswordRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "admin",
+            "name": "Username",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/PasswordReset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ResetUserPasswordRequest"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "404": {
+            "$ref": "#/responses/NotFoundErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    },
     "/api/user/{Username}/revoke": {
       "put": {
         "security": [
@@ -626,6 +688,49 @@
         }
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
+    },
+    "PasswordReset": {
+      "type": "object",
+      "required": [
+        "oldPassword",
+        "newPassword"
+      ],
+      "properties": {
+        "newPassword": {
+          "description": "the new password for this user",
+          "type": "string",
+          "x-go-name": "NewPassword"
+        },
+        "oldPassword": {
+          "description": "the old password for this user",
+          "type": "string",
+          "x-go-name": "OldPassword"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/request/user"
+    },
+    "PasswordResetSuccessResponse": {
+      "description": "Success response",
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message",
+          "example": "Password reset success"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status",
+          "example": 200
+        },
+        "timestamp": {
+          "type": "string",
+          "x-go-name": "TimeStamp",
+          "example": "2022-05-20 16:59:05"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/success"
     },
     "QuestionRequest": {
       "type": "object",
@@ -844,7 +949,7 @@
           "example": "admin"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/user"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
     },
     "UserRevokeSuccessResponse": {
       "description": "Success response",
@@ -915,6 +1020,12 @@
       "description": "",
       "schema": {
         "$ref": "#/definitions/NotFoundError"
+      }
+    },
+    "PasswordResetSuccessResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/PasswordResetSuccessResponse"
       }
     },
     "SuccessResponse": {
