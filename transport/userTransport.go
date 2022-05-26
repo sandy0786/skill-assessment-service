@@ -6,7 +6,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
-	"strings"
+	"reflect"
 	"time"
 
 	userDTO "github.com/sandy0786/skill-assessment-service/dto/user"
@@ -47,12 +47,22 @@ func EncodeStatusResponse(ctx context.Context, w http.ResponseWriter, response i
 func DecodeAddUserRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	log.Println("transport:DecodeAddUserRequest")
 	var uRequest userRequest.UserRequest
-	err := json.NewDecoder(r.Body).Decode(&uRequest)
-	err = Validate.Struct(uRequest)
-	log.Println("aa >> ", err)
-	log.Println("path >> ", r.URL.Path)
-
-	return uRequest, err
+	decodeErr := json.NewDecoder(r.Body).Decode(&uRequest)
+	if decodeErr != nil {
+		var errorMessage string
+		if reflect.TypeOf(decodeErr).String() == "*json.SyntaxError" {
+			errorMessage = "Invalid request body"
+		} else {
+			errorMessage = "Request body parse error"
+		}
+		return uRequest, err.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusBadRequest,
+			Message:   errorMessage,
+		}
+	}
+	validateErr := Validate.Struct(uRequest)
+	return uRequest, validateErr
 }
 
 // EncodeAddUserResponse - encodes status service response
@@ -128,18 +138,38 @@ func EncodePasswordResetRequest(ctx context.Context, w http.ResponseWriter, resp
 func ErrorEncoder(ctx context.Context, err1 error, w http.ResponseWriter) {
 	log.Println("transport:ErrorEncoder: Inside ErrorEncoder: ")
 	var globalError err.GlobalError
-	if _, ok := err1.(validator.ValidationErrors); ok {
-		log.Println("err ... ", err1.Error())
-		message := err1.Error()
-		if strings.Contains(err1.Error(), ".Age") {
-			message = "Age should be between 20 and 60"
+
+	// Return proper validation error message
+	if errorFields, ok := err1.(validator.ValidationErrors); ok {
+		var message string
+
+		switch errorFields[0].Field() {
+		case "Username":
+			message = "Username should not contain any special characters and should be atleast 5 characters"
+		case "Password":
+			message = "Password should have the length of atleast 8 characters"
+		case "Email":
+			message = "Invalid email"
+		case "Role":
+			message = "Provide valid role"
 		}
+
 		globalError = err.GlobalError{
 			TimeStamp: time.Now().UTC().String()[0:19],
 			Status:    http.StatusBadRequest,
 			Message:   message,
 		}
+	} else {
+		globalError, ok = err1.(err.GlobalError)
+		if !ok {
+			globalError = err.GlobalError{
+				TimeStamp: time.Now().UTC().String()[0:19],
+				Status:    http.StatusInternalServerError,
+				Message:   "Something went wrong. Please try again after sometime",
+			}
+		}
 	}
+
 	w.WriteHeader(globalError.Status)
 	json.NewEncoder(w).Encode(globalError)
 }

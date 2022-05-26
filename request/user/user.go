@@ -5,19 +5,19 @@ package user
 type UserRequest struct {
 	// the username for this user
 	// required: true
-	Username string `json:"username" validate:"required"`
+	Username string `json:"username" validate:"required,min=5"`
 	// the password for this user
 	// required: true
 	// min length: 8
-	Password string `json:"password" validate:"required"`
+	Password string `json:"password" validate:"required,min=8"`
 	// the email for this user
 	// required: true
 	// example: user@provider.com
-	Email string `json:"email" validate:"required"`
+	Email string `json:"email" validate:"required,email"`
 	// the role for this user
 	// required: true
 	// example: manager
-	Role string `json:"role" validate:"required"`
+	Role string `json:"role" validate:"required,min=3"`
 }
 
 // User Request

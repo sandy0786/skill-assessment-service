@@ -2,10 +2,13 @@ package user
 
 import (
 	"log"
-	"reflect"
+	"net/http"
+	"strings"
+	"time"
 
 	Database "github.com/sandy0786/skill-assessment-service/database"
 	userDocument "github.com/sandy0786/skill-assessment-service/documents/user"
+	err "github.com/sandy0786/skill-assessment-service/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -35,24 +38,32 @@ func NewUserDAO(db Database.DatabaseInterface, collectionName string) *userDAOIm
 
 func (u *userDAOImpl) Save(user *userDocument.User) (bool, error) {
 	log.Println("save user")
-	// var err2 mongo.WriteException
-	_, err := u.mongoCollection.InsertOne(u.db.GetMongoDbContext(), user)
-	err2, _ := err.(mongo.WriteException)
-	log.Println("save user : ", err2.Raw)
-	log.Println("save user : ", reflect.TypeOf(err))
-	if err != nil {
-		return false, err
+	_, writeError := u.mongoCollection.InsertOne(u.db.GetMongoDbContext(), user)
+	if writeError != nil {
+		writeException, ok := writeError.(mongo.WriteException)
+		// handle mongo errors
+		if ok {
+			var errMessage string
+			switch writeException.WriteErrors[0].Code {
+			case 11000: // duplicate error
+				if strings.Contains(writeException.WriteErrors[0].Error(), "email") {
+					errMessage = "Email already exists"
+				} else if strings.Contains(writeException.WriteErrors[0].Error(), "username") {
+					errMessage = "Username already exists"
+				} else {
+					errMessage = writeException.WriteErrors[0].Error()
+				}
+				return false, err.GlobalError{
+					TimeStamp: time.Now().UTC().String()[0:19],
+					Status:    http.StatusConflict,
+					Message:   errMessage,
+				}
+			}
+		}
 	}
-	return true, err
-}
 
-// func (e *userDAOImpl) FindById(idint64) (model.Employee, error) {
-// 	log.Println("FindById employee : ", id)
-// 	var employeemodel.Employee
-// 	// db := e.db.GtDbObject().Find(&employee, id)
-//	db := e.db.GetDbObject().Model(&employee).Preload("Address").Find(&employee, id)
-// 	return employe, db.Error
-// }
+	return true, nil
+}
 
 func (u *userDAOImpl) FindAll() ([]userDocument.User, error) {
 	log.Println("FindAll Users")
