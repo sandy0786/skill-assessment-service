@@ -21,6 +21,7 @@ import (
 
 	config "github.com/sandy0786/skill-assessment-service/configuration"
 	categoryDao "github.com/sandy0786/skill-assessment-service/dao/category"
+	initDatabase "github.com/sandy0786/skill-assessment-service/dao/init"
 	questionDao "github.com/sandy0786/skill-assessment-service/dao/question"
 	userDao "github.com/sandy0786/skill-assessment-service/dao/user"
 	database "github.com/sandy0786/skill-assessment-service/database"
@@ -54,7 +55,10 @@ func main() {
 		log.Fatal("Db connection error : ", err)
 	}
 
-	empDao := userDao.NewUserDAO(dbObj, "user")
+	// init database
+	initDatabase.InitMongoDBCollections(dbObj)
+
+	empDao := userDao.NewUserDAO(dbObj, "users")
 	qsnDao := questionDao.NewQuestionDAO(dbObj, "questions")
 	ctgDao := categoryDao.NewCategoryDAO(dbObj, "categories")
 
