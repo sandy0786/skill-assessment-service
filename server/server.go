@@ -104,6 +104,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	//      in: header
 	// responses:
 	//  500: InternalServerErrorResponse
+	//  404: NotFoundEmptyErrorResponse
 	//  400: BadRequestErrorResponse
 	//  200: UsersResponse
 	r.Methods("GET").Path(constants.ALL_USERS).Handler(httptransport.NewServer(

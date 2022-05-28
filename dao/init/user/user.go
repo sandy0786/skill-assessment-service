@@ -1,7 +1,11 @@
 package user
 
 import (
+	"time"
+
+	userModel "github.com/sandy0786/skill-assessment-service/documents/user"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -23,10 +27,13 @@ var UserIndexEmail = mongo.IndexModel{
 	}, Options: options.Index().SetUnique(true),
 }
 
-// var MongoIndexes []mongo.IndexModel
-// MongoIndexes = (MongoIndexes, userIndexUsername)
-
-// var Indexes = []mongo.IndexModel [
-// 	userIndexUsername,
-// 	userIndexPassword
-// ]
+var AdminUser = userModel.User{
+	ID:        primitive.ObjectID{},
+	CreatedAt: time.Now().UTC(),
+	UpdatedAt: time.Now().UTC(),
+	Username:  "admin",
+	Password:  "admin@123",
+	Email:     "admin@admin.com",
+	Role:      "admin",
+	Active:    true,
+}

@@ -572,6 +572,9 @@
           "400": {
             "$ref": "#/responses/BadRequestErrorResponse"
           },
+          "404": {
+            "$ref": "#/responses/NotFoundEmptyErrorResponse"
+          },
           "500": {
             "$ref": "#/responses/InternalServerErrorResponse"
           }
@@ -949,7 +952,7 @@
           "example": "admin"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/user"
     },
     "UserRevokeSuccessResponse": {
       "description": "Success response",
@@ -1014,6 +1017,15 @@
       "description": "",
       "schema": {
         "$ref": "#/definitions/GlobalError"
+      }
+    },
+    "NotFoundEmptyErrorResponse": {
+      "description": "",
+      "schema": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
       }
     },
     "NotFoundErrorResponse": {

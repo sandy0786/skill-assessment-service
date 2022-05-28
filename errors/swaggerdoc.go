@@ -36,6 +36,13 @@ type InternalErrorStruct struct {
 	Body GlobalError
 }
 
+// swagger:response NotFoundEmptyErrorResponse
+type NotFoundEmptyErrorStruct struct {
+	// in: body
+	// example: []
+	Body []interface{}
+}
+
 // swagger:response BadRequestErrorResponse
 type BadRequestErrorStruct struct {
 	// in: body
