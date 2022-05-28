@@ -19,8 +19,8 @@ type QuestionResponse struct {
 }
 
 // List of questions
-// swagger:response CategoriesResponse
-type CategoriesResponse struct {
+// swagger:response QuestionsResponse
+type QuestionsResponse struct {
 	// in: body
 	Body []QuestionResponse
 }

@@ -6,30 +6,31 @@ import (
 	"io/ioutil"
 	"log"
 
+	category "github.com/sandy0786/skill-assessment-service/dao/init/category"
 	user "github.com/sandy0786/skill-assessment-service/dao/init/user"
 	database "github.com/sandy0786/skill-assessment-service/database"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type mongoMetadata []struct {
+type MongoMetadata []struct {
 	collection        string
 	validatorFilePath string
 	indexes           []mongo.IndexModel
 	documents         []interface{}
 }
 
-var mongoMetadataObj mongoMetadata
+// var mongoMetadataObj MongoMetadata
 
-func initializeMongoMetadataObject() {
-	mongoMetadataObj = []struct {
+func InitializeMongoMetadataObject() MongoMetadata {
+	mongoMetadataObj := []struct {
 		collection        string
 		validatorFilePath string
 		indexes           []mongo.IndexModel
 		documents         []interface{}
 	}{
 		{
-			collection:        "users",
+			collection:        user.UserCollectionName,
 			validatorFilePath: user.UserValidatorFilePath,
 			indexes: []mongo.IndexModel{
 				user.UserIndexEmail,
@@ -39,14 +40,25 @@ func initializeMongoMetadataObject() {
 				user.AdminUser,
 			},
 		},
+		{
+			collection:        category.CollectionName,
+			validatorFilePath: category.ValidatorFilePath,
+			indexes: []mongo.IndexModel{
+				category.CategoryNameIndex,
+				category.CollectionNameIndex,
+			},
+			documents: []interface{}{},
+		},
 	}
+
+	return mongoMetadataObj
 }
 
-func InitMongoDBCollections(db database.DatabaseInterface) {
+func InitMongoDBCollections(db database.DatabaseInterface, mongoMetadataObj MongoMetadata) {
 	log.Println("InitMongoDBCollections")
 
 	// Initialize mongo metadata
-	initializeMongoMetadataObject()
+	// initializeMongoMetadataObject()
 
 	// Create new context object
 	ctx := context.TODO()

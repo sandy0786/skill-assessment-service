@@ -55,8 +55,11 @@ func main() {
 		log.Fatal("Db connection error : ", err)
 	}
 
+	// Create and Get mongodb metadata
+	metadata := initDatabase.InitializeMongoMetadataObject()
+
 	// init database
-	initDatabase.InitMongoDBCollections(dbObj)
+	initDatabase.InitMongoDBCollections(dbObj, metadata)
 
 	empDao := userDao.NewUserDAO(dbObj, "users")
 	qsnDao := questionDao.NewQuestionDAO(dbObj, "questions")

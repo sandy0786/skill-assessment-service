@@ -2,6 +2,7 @@ package category
 
 // import "go.mongodb.org/mongo-driver/bson/primitive"
 
+// List of Categories
 // swagger:model
 type CategoryResponse struct {
 	// example: go
@@ -12,7 +13,6 @@ type CategoryResponse struct {
 	Author string `json:"author"`
 }
 
-// List of Categories
 // swagger:response CategoriesResponse
 type CategoriesResponse struct {
 	// in: body

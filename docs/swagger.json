@@ -48,9 +48,6 @@
           "200": {
             "$ref": "#/responses/CategoriesResponse"
           },
-          "400": {
-            "$ref": "#/responses/BadRequestErrorResponse"
-          },
           "500": {
             "$ref": "#/responses/InternalServerErrorResponse"
           }
@@ -86,7 +83,16 @@
         "tags": [
           "category"
         ],
-        "operationId": "users",
+        "operationId": "CategoryRequest",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CategoryRequest"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "$ref": "#/responses/SuccessResponse"
@@ -224,7 +230,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/CategoriesResponse"
+            "$ref": "#/responses/QuestionsResponse"
           },
           "400": {
             "$ref": "#/responses/BadRequestErrorResponse"
@@ -605,7 +611,41 @@
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
     },
+    "CategoryRequest": {
+      "description": "Category Request",
+      "type": "object",
+      "required": [
+        "categoryName",
+        "collectionName",
+        "author"
+      ],
+      "properties": {
+        "author": {
+          "description": "Author of this category",
+          "type": "string",
+          "minLength": 5,
+          "x-go-name": "Author",
+          "example": "admin"
+        },
+        "categoryName": {
+          "description": "the category name",
+          "type": "string",
+          "minLength": 2,
+          "x-go-name": "CategoryName",
+          "example": "go"
+        },
+        "collectionName": {
+          "description": "the collection name",
+          "type": "string",
+          "minLength": 2,
+          "x-go-name": "CollectionName",
+          "example": "go"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/request/category"
+    },
     "CategoryResponse": {
+      "description": "List of Categories",
       "type": "object",
       "properties": {
         "author": {
@@ -986,11 +1026,11 @@
       }
     },
     "CategoriesResponse": {
-      "description": "List of questions",
+      "description": "",
       "schema": {
         "type": "array",
         "items": {
-          "$ref": "#/definitions/QuestionResponse"
+          "$ref": "#/definitions/CategoryResponse"
         }
       }
     },
@@ -1038,6 +1078,15 @@
       "description": "",
       "schema": {
         "$ref": "#/definitions/PasswordResetSuccessResponse"
+      }
+    },
+    "QuestionsResponse": {
+      "description": "List of questions",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/QuestionResponse"
+        }
       }
     },
     "SuccessResponse": {

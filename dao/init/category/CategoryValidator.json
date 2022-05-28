@@ -2,36 +2,33 @@
     "$jsonSchema": {
         "bsonType": "object",
         "required": [
-            "username",
-            "password",
-            "email",
-            "role",
+            "categoryName",
+            "collectionName",
+            "author",
             "createdAt",
             "updatedAt"
         ],
         "properties": {
-            "username": {
+            "categoryName": {
                 "bsonType": "string",
+                "minLength": 2,
                 "description": "must be a string and is required"
             },
-            "password": {
+            "collectionName": {
                 "bsonType": "string",
-                "minLength": 8,
-                "description": "must be an string with atlease 8 characters and is required"
+                "minLength": 2,
+                "description": "must be an string with atlease 1 character and is required"
             },
-            "email": {
+            "author": {
                 "bsonType": "string",
-                "description": "Email required"
+                "minLength": 5,
+                "description": "Author is required"
             },
-            "role": {
-                "bsonType": "string",
-                "description": "must be a role of the user"
-            },
-            "CreatedAt": {
+            "createdAt": {
                 "bsonType": "date",
                 "description": "must be created date and required"
             },
-            "UpdatedAt": {
+            "updatedAt": {
                 "bsonType": "date",
                 "description": "must be updated date and required"
             }

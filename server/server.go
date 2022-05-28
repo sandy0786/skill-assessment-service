@@ -220,7 +220,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	//  500: InternalServerErrorResponse
 	//  400: BadRequestErrorResponse
 	//  409: ConflictErrorResponse
-	//  200: CategoriesResponse
+	//  200: QuestionsResponse
 	r.Methods("GET").Path(constants.ALL_QUESTIONS).Handler(httptransport.NewServer(
 		endpoints.GetAllQuestionsEndpoint,
 		transport.DecodeGetAllQuestionsRequest,
@@ -228,7 +228,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[1],
 	))
 
-	// swagger:route POST /api/category category users
+	// swagger:route POST /api/category category CategoryRequest
 	// Add new category
 	//
 	// Security:
@@ -262,7 +262,6 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	//      in: header
 	// responses:
 	//  500: InternalServerErrorResponse
-	//  400: BadRequestErrorResponse
 	//  200: CategoriesResponse
 	r.Methods("GET").Path(constants.ALL_CATEGORIES).Handler(httptransport.NewServer(
 		endpoints.GetAllCategoriesEndpoint,
