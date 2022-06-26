@@ -20,10 +20,16 @@ type DatabaseDetails struct {
 	ConnectionString string `mapstructure:"connectionString"`
 }
 
+type JWT struct {
+	Secret     string `mapstructure:"secret"`
+	ExpiryTime int    `mapstructure:"expiryTime"`
+}
+
 type ConfigurationDetails struct {
 	ServiceName     string          `mapstructure:"serviceName"`
 	ServerPort      string          `mapstructure:"serverPort"`
 	DatabaseDetails DatabaseDetails `mapstructure:"database"`
+	Jwt             JWT             `mapstructure:"jwt"`
 }
 
 type config struct {

@@ -363,6 +363,64 @@
         }
       }
     },
+    "/api/user/login": {
+      "post": {
+        "security": [
+          {
+            "SecurityDefinitions": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
+            ]
+          },
+          {
+            "requests": []
+          }
+        ],
+        "description": "Login with username and password",
+        "tags": [
+          "user"
+        ],
+        "operationId": "LoginRequest",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/LoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LoginResponse"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "401": {
+            "$ref": "#/responses/UnAuthorizedResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    },
     "/api/user/{Username}": {
       "delete": {
         "security": [
@@ -710,6 +768,42 @@
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
     },
+    "LoginRequest": {
+      "description": "login Request",
+      "type": "object",
+      "required": [
+        "username",
+        "password"
+      ],
+      "properties": {
+        "password": {
+          "description": "the password for this user",
+          "type": "string",
+          "minLength": 8,
+          "x-go-name": "Password",
+          "example": "admin@123"
+        },
+        "username": {
+          "description": "the username for this user",
+          "type": "string",
+          "x-go-name": "Username",
+          "example": "admin"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/request/auth"
+    },
+    "LoginResponse": {
+      "description": "Login Response",
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "x-go-name": "Token",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNjU2MjQxNDE4fQ.Apq5YRkhS5UWr7bYgMKihH-GfcdDygKr777zdU5YWmI"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/auth"
+    },
     "NotFoundError": {
       "type": "object",
       "properties": {
@@ -908,6 +1002,28 @@
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/response/success"
     },
+    "UnAuthorizedError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message",
+          "example": "Invalid username or password"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status",
+          "example": 400
+        },
+        "timestamp": {
+          "type": "string",
+          "x-go-name": "TimeStamp",
+          "example": "2022-05-20 16:59:05"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
+    },
     "UserDeleteSuccessResponse": {
       "description": "Success response",
       "type": "object",
@@ -992,7 +1108,7 @@
           "example": "admin"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/user"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
     },
     "UserRevokeSuccessResponse": {
       "description": "Success response",
@@ -1059,6 +1175,12 @@
         "$ref": "#/definitions/GlobalError"
       }
     },
+    "LoginResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/LoginResponse"
+      }
+    },
     "NotFoundEmptyErrorResponse": {
       "description": "",
       "schema": {
@@ -1093,6 +1215,12 @@
       "description": "",
       "schema": {
         "$ref": "#/definitions/SuccessResponse"
+      }
+    },
+    "UnAuthorizedResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/UnAuthorizedError"
       }
     },
     "UserDeleteSuccessResponse": {

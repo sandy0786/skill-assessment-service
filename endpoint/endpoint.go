@@ -6,6 +6,7 @@ import (
 
 	questionDTO "github.com/sandy0786/skill-assessment-service/dto/question"
 	userDTO "github.com/sandy0786/skill-assessment-service/dto/user"
+	authRequest "github.com/sandy0786/skill-assessment-service/request/auth"
 	categoryRequest "github.com/sandy0786/skill-assessment-service/request/category"
 	userRequest "github.com/sandy0786/skill-assessment-service/request/user"
 	service "github.com/sandy0786/skill-assessment-service/service"
@@ -23,6 +24,7 @@ type Endpoints struct {
 	GetAllUsersEndpoint         endpoint.Endpoint
 	RevokeUserEndpoint          endpoint.Endpoint
 	ResetPasswordEndpoint       endpoint.Endpoint
+	LoginEndpoint               endpoint.Endpoint
 	AddQuestionEndpoint         endpoint.Endpoint
 	AddMultipleQuestionEndpoint endpoint.Endpoint
 	GetAllQuestionsEndpoint     endpoint.Endpoint
@@ -147,6 +149,16 @@ func MakeResetPasswordEndpoint(srv service.UserService) endpoint.Endpoint {
 		log.Println("MakeResetPasswordEndpoint")
 		userDto := request.(userDTO.UserDTO)
 		responseFromService, err := srv.ResetUserPassword(ctx, userDto)
+		return responseFromService, err
+	}
+}
+
+//MakeLoginEndpoint returns response
+func MakeLoginEndpoint(srv service.AuthService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		log.Println("MakeLoginEndpoint")
+		authRequest := request.(authRequest.LoginRequest)
+		responseFromService, err := srv.Login(ctx, authRequest)
 		return responseFromService, err
 	}
 }

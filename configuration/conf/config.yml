@@ -4,6 +4,7 @@ serviceName: skill-assessment
 # API port number
 serverPort: 8084
 
+# database information
 database:
   host: localhost
   port: 27017
@@ -11,4 +12,11 @@ database:
   user: mongo
   password: mongo
   connectionString: mongodb://localhost:27017/
+
+jwt: 
+  # Secret key used to create the signature
+  secret: t%682@#90
+
+  # Token expiry time in minutes
+  expiryTime: 5
 

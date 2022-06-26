@@ -27,6 +27,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		httptransport.ServerErrorEncoder(transport.ErrorEncoder),
 		httptransport.ServerErrorEncoder(transport.QuestionErrorEncoder),
 		httptransport.ServerErrorEncoder(transport.CategoryErrorEncoder),
+		httptransport.ServerErrorEncoder(transport.AuthErrorEncoder),
 	}
 
 	// swagger:route GET /api/health miscellaneous health
@@ -161,6 +162,31 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		transport.DecodePasswordResetRequest,
 		transport.EncodePasswordResetRequest,
 		Opts[0],
+	))
+
+	// swagger:route POST /api/user/login user LoginRequest
+	// Login with username and password
+	//
+	//     Security:
+	//     - bearer
+	//
+	//     SecurityDefinitions:
+	//     bearer:
+	//          type: apiKey
+	//          name: Authorization
+	//          in: header
+	//
+	// requests:
+	// responses:
+	//  401: UnAuthorizedResponse
+	//  500: InternalServerErrorResponse
+	//  400: BadRequestErrorResponse
+	//  200: LoginResponse
+	r.Methods("POST").Path(constants.LOGIN).Handler(httptransport.NewServer(
+		endpoints.LoginEndpoint,
+		transport.DecodeAuthRequest,
+		transport.EncodeAuthResponse,
+		Opts[3],
 	))
 
 	// swagger:route POST /api/question/{Category} questions QuestionRequest

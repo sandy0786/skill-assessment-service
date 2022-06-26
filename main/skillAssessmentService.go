@@ -20,6 +20,7 @@ import (
 	"log"
 
 	config "github.com/sandy0786/skill-assessment-service/configuration"
+	authDao "github.com/sandy0786/skill-assessment-service/dao/auth"
 	categoryDao "github.com/sandy0786/skill-assessment-service/dao/category"
 	initDatabase "github.com/sandy0786/skill-assessment-service/dao/init"
 	questionDao "github.com/sandy0786/skill-assessment-service/dao/question"
@@ -64,11 +65,13 @@ func main() {
 	empDao := userDao.NewUserDAO(dbObj, "users")
 	qsnDao := questionDao.NewQuestionDAO(dbObj, "questions")
 	ctgDao := categoryDao.NewCategoryDAO(dbObj, "categories")
+	authhDao := authDao.NewAuthDAO(dbObj, "users")
 
 	// create service
 	userSrv := service.NewUserService(configobj, empDao)
 	qsnSrv := service.NewQuestionService(configobj, qsnDao)
 	ctgSrv := service.NewCategoryService(configobj, ctgDao)
+	authSrv := service.NewAuthService(configobj, authhDao)
 
 	errChan := make(chan error)
 
@@ -80,6 +83,7 @@ func main() {
 		GetAllUsersEndpoint:         endpoint.MakeGetAllUsersEndpoint(userSrv),
 		RevokeUserEndpoint:          endpoint.MakeRevokeUserEndpoint(userSrv),
 		ResetPasswordEndpoint:       endpoint.MakeResetPasswordEndpoint(userSrv),
+		LoginEndpoint:               endpoint.MakeLoginEndpoint(authSrv),
 		AddQuestionEndpoint:         endpoint.MakeAddQuestionEndpoint(qsnSrv),
 		AddMultipleQuestionEndpoint: endpoint.MakeAddMultipleQuestionsEndpoint(qsnSrv),
 		GetAllQuestionsEndpoint:     endpoint.MakeGetAllQuestionsEndpoint(qsnSrv),
