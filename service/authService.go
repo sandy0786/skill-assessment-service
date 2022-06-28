@@ -47,6 +47,7 @@ func (a *authService) Login(ctx context.Context, userRequest authRequest.LoginRe
 		// Create the JWT claims, which includes the username and expiry time
 		claims := &jwtP.Claims{
 			Username: userRequest.Username,
+			Role:     "admin",
 			StandardClaims: jwt.StandardClaims{
 				// In JWT, the expiry time is expressed as unix milliseconds
 				ExpiresAt: expirationTime.Unix(),
