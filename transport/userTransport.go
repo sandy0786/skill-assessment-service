@@ -7,13 +7,16 @@ import (
 	"log"
 	"net/http"
 	"reflect"
+	"strings"
 	"time"
 
 	userDTO "github.com/sandy0786/skill-assessment-service/dto/user"
 	err "github.com/sandy0786/skill-assessment-service/errors"
+	jwtP "github.com/sandy0786/skill-assessment-service/jwt"
 	userRequest "github.com/sandy0786/skill-assessment-service/request/user"
 	userResponse "github.com/sandy0786/skill-assessment-service/response/user"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/go-playground/validator"
 	"github.com/gorilla/mux"
 )
@@ -73,6 +76,45 @@ func EncodeAddUserResponse(ctx context.Context, w http.ResponseWriter, response 
 
 func DecodeGetAllUsersRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	log.Println("transport:DecodeGetAllUsersRequest")
+
+	if len(r.Header["Authorization"]) == 0 {
+		return r, err.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusBadRequest,
+			Message:   "Authorization header is missing",
+		}
+	}
+
+	Bearertoken := r.Header["Authorization"][0]
+	token := strings.Split(Bearertoken, "Bearer ")[1]
+
+	// Initialize a new instance of `Claims`
+	claims := &jwtP.Claims{}
+
+	// Parse the JWT string and store the result in `claims`.
+	// Note that we are passing the key in this method as well. This method will return an error
+	// if the token is invalid (if it has expired according to the expiry time we set on sign in),
+	// or if the signature does not match
+	tkn, err1 := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte("t%682@#90"), nil
+	})
+
+	if err1 != nil {
+		return r, err.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusUnauthorized,
+			Message:   "User is not authorized",
+		}
+	}
+
+	if !tkn.Valid {
+		return r, err.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusForbidden,
+			Message:   "User has no rights to access",
+		}
+	}
+
 	return r, nil
 }
 

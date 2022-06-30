@@ -11,7 +11,7 @@
 //  apiKey:
 //    type: apiKey
 //    in: header
-//    name: authorization
+//    name: Authorization
 // swagger:meta
 package main
 

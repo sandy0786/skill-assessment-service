@@ -18,5 +18,5 @@ jwt:
   secret: t%682@#90
 
   # Token expiry time in minutes
-  expiryTime: 5
+  expiryTime: 30
 

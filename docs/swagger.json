@@ -601,48 +601,12 @@
     },
     "/api/users": {
       "get": {
-        "security": [
-          {
-            "SecurityDefinitions": []
-          },
-          {
-            "bearer": []
-          },
-          {
-            "type": [
-              "apiKey"
-            ]
-          },
-          {
-            "name": [
-              "Authorization"
-            ]
-          },
-          {
-            "in": [
-              "header"
-            ]
-          }
-        ],
-        "description": "Fetch all available users",
+        "description": "@securityDefinitions.apikey ApiKeyAuth\n@in header\n@name Authorization",
         "tags": [
           "admin"
         ],
-        "operationId": "listUsers",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/UsersResponse"
-          },
-          "400": {
-            "$ref": "#/responses/BadRequestErrorResponse"
-          },
-          "404": {
-            "$ref": "#/responses/NotFoundEmptyErrorResponse"
-          },
-          "500": {
-            "$ref": "#/responses/InternalServerErrorResponse"
-          }
-        }
+        "summary": "Get all available users",
+        "operationId": "listUsers"
       }
     }
   },
@@ -1248,7 +1212,7 @@
   "securityDefinitions": {
     "apiKey": {
       "type": "apiKey",
-      "name": "authorization",
+      "name": "Authorization",
       "in": "header"
     }
   }

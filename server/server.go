@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"strings"
 
 	config "github.com/sandy0786/skill-assessment-service/configuration"
 	constants "github.com/sandy0786/skill-assessment-service/constants"
@@ -94,15 +93,12 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	))
 
 	// swagger:route GET /api/users admin listUsers
-	// Fetch all available users
+	// Get all available users
 	//
-	// Security:
-	// - bearer
-	// SecurityDefinitions:
-	// bearer:
-	//      type: apiKey
-	//      name: Authorization
-	//      in: header
+	// @securityDefinitions.apikey ApiKeyAuth
+	// @in header
+	// @name Authorization
+
 	// responses:
 	//  500: InternalServerErrorResponse
 	//  404: NotFoundEmptyErrorResponse
@@ -318,18 +314,10 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 
 func commonMiddleWare(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		if strings.Contains(r.RequestURI, "docs") {
-			w.Header().Set("Content-Type", "text/html")
-		} else {
-			w.Header().Set("Content-Type", "application/json")
-		}
-
+		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
-		// w.Header().Set("Access-Control-Expose-Headers", "Message,RowsInResult,Status,TimeStamp,Content-Disposition")
-
 		next.ServeHTTP(w, r)
 	})
 }
