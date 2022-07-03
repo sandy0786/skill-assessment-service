@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/casbin/casbin"
 	config "github.com/sandy0786/skill-assessment-service/configuration"
 	constants "github.com/sandy0786/skill-assessment-service/constants"
 	endpoint "github.com/sandy0786/skill-assessment-service/endpoint"
@@ -60,7 +61,8 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	//  409: ConflictErrorResponse
 	//  500: InternalServerErrorResponse
 	//  400: BadRequestErrorResponse
-	//  401: UnAuthorizedAccessResponse
+	//  401: UnAuthenticatedAccessResponse
+	// 	403: UnAuthorizedAccessResponse
 	//  200: SuccessResponse
 	r.Methods(http.MethodPost).Path(constants.USER).Handler(httptransport.NewServer(
 		endpoints.AddUserEndpoint,
@@ -325,8 +327,67 @@ func commonMiddleWare(next http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
+
 		next.ServeHTTP(w, r)
+		// Authorizer()
 	})
+}
+
+func Authorizer(e *casbin.Enforcer) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		fn := func(w http.ResponseWriter, r *http.Request) {
+			// role := session.GetString(r, "role")
+			// if err != nil {
+			//     writeError(http.StatusInternalServerError, "ERROR", w, err)
+			//     return
+			// }
+
+			// if role == "" {
+			// role = "anonymous"
+			// }
+			// setup casbin auth rules
+			authEnforcer, err := casbin.NewEnforcerSafe("./configuration/conf/auth_model.conf", "./configuration/conf/policy.csv")
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			log.Println("authEnforcer >> ", authEnforcer)
+
+			log.Println("authorizer >>>>>")
+			role := "admin"
+
+			// if it's a member, check if the user still exists
+			// if role == "member" {
+			// 	uid, err := session.GetInt(r, "userID")
+			// 	if err != nil {
+			// 		writeError(http.StatusInternalServerError, "ERROR", w, err)
+			// 		return
+			// 	}
+			// 	exists := users.Exists(uid)
+			// 	if !exists {
+			// 		writeError(http.StatusForbidden, "FORBIDDEN", w, errors.New("user does not exist"))
+			// 		return
+			// 	}
+			// }
+
+			// casbin rule enforcing
+			res, err := e.EnforceSafe(role, r.URL.Path, r.Method)
+			if err != nil {
+				// writeError(http.StatusInternalServerError, "ERROR", w, err)
+				log.Println("1 >> ", err)
+				return
+			}
+			if res {
+				next.ServeHTTP(w, r)
+			} else {
+				// writeError(http.StatusForbidden, "FORBIDDEN", w, errors.New("unauthorized"))
+				log.Println("2 >> ", err)
+				return
+			}
+		}
+
+		return http.HandlerFunc(fn)
+	}
 }
 
 //CreateNewServer is a function to return server

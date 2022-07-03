@@ -41,6 +41,16 @@ type UnAuthorizedError struct {
 }
 
 // swagger:model
+type UnAuthenticatedAccessError struct {
+	// example: 2022-05-20 16:59:05
+	TimeStamp string `json:"timestamp"`
+	// example: 401
+	Status int `json:"status"`
+	// example: User is not authenticated
+	Message string `json:"message"`
+}
+
+// swagger:model
 type UnAuthorizedAccessError struct {
 	// example: 2022-05-20 16:59:05
 	TimeStamp string `json:"timestamp"`
@@ -78,6 +88,13 @@ type UnAuthorizedAccessErrorStruct struct {
 	// in: body
 	// example: []
 	Body UnAuthorizedAccessError
+}
+
+// swagger:response UnAuthenticatedAccessResponse
+type UnAuthenticatedAccessErrorStruct struct {
+	// in: body
+	// example: []
+	Body UnAuthenticatedAccessError
 }
 
 // swagger:response BadRequestErrorResponse

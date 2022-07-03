@@ -37,4 +37,5 @@ These tools are necessary to build, test and deploy the services:
 > http://localhost:8084/docs
 > https://swagger.io/specification/
 > https://goswagger.io/use/spec/model.html
-
+> https://zupzup.org/casbin-http-role-auth/
+> https://github.com/casbin/casbin

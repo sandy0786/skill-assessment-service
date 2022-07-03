@@ -19,9 +19,9 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
-func VerifyToken(r *http.Request) error {
+func VerifyToken(r *http.Request) (string, error) {
 	if len(r.Header["Authorization"]) == 0 {
-		return err.GlobalError{
+		return "", err.GlobalError{
 			TimeStamp: time.Now().UTC().String()[0:19],
 			Status:    http.StatusBadRequest,
 			Message:   "Authorization header is missing",
@@ -31,7 +31,7 @@ func VerifyToken(r *http.Request) error {
 	Bearertoken := r.Header["Authorization"][0]
 
 	if !strings.Contains(Bearertoken, "Bearer") {
-		return err.GlobalError{
+		return "", err.GlobalError{
 			TimeStamp: time.Now().UTC().String()[0:19],
 			Status:    http.StatusBadRequest,
 			Message:   "Invalid token",
@@ -52,7 +52,7 @@ func VerifyToken(r *http.Request) error {
 	})
 
 	if err1 != nil {
-		return err.GlobalError{
+		return "", err.GlobalError{
 			TimeStamp: time.Now().UTC().String()[0:19],
 			Status:    http.StatusUnauthorized,
 			Message:   "User is not authorized",
@@ -60,11 +60,12 @@ func VerifyToken(r *http.Request) error {
 	}
 
 	if !tkn.Valid {
-		return err.GlobalError{
+		return "", err.GlobalError{
 			TimeStamp: time.Now().UTC().String()[0:19],
 			Status:    http.StatusForbidden,
 			Message:   "User has no rights to access",
 		}
 	}
-	return nil
+
+	return claims.Role, nil
 }

@@ -10,7 +10,7 @@ import (
 )
 
 type AuthDAO interface {
-	Login(*authDocument.User) (bool, error)
+	Login(*authDocument.User) (string, bool, error)
 }
 
 type authDAOImpl struct {
@@ -27,7 +27,7 @@ func NewAuthDAO(db Database.DatabaseInterface, collectionName string) *authDAOIm
 	}
 }
 
-func (u *authDAOImpl) Login(user *authDocument.User) (bool, error) {
+func (u *authDAOImpl) Login(user *authDocument.User) (string, bool, error) {
 	log.Println("user login")
 	cursor := u.mongoCollection.FindOne(u.db.GetMongoDbContext(), bson.M{"username": user.Username, "password": user.Password})
 	var validUser authDocument.User
@@ -35,8 +35,8 @@ func (u *authDAOImpl) Login(user *authDocument.User) (bool, error) {
 	if err != nil {
 		// if err.Error() == "mongo: no documents in result"
 		log.Println("error , ", err)
-		return false, err
+		return "", false, err
 	}
 
-	return true, nil
+	return validUser.Role, true, nil
 }

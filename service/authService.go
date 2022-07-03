@@ -39,7 +39,7 @@ func (a *authService) Login(ctx context.Context, userRequest authRequest.LoginRe
 	var authDoc authDocument.User
 	copier.Copy(&authDoc, &userRequest)
 	// user.Active = true
-	validUser, err := a.dao.Login(&authDoc)
+	role, validUser, err := a.dao.Login(&authDoc)
 	if validUser {
 		// Declare the expiration time of the token
 		// here, we have kept it as 5 minutes
@@ -47,7 +47,7 @@ func (a *authService) Login(ctx context.Context, userRequest authRequest.LoginRe
 		// Create the JWT claims, which includes the username and expiry time
 		claims := &jwtP.Claims{
 			Username: userRequest.Username,
-			Role:     "admin",
+			Role:     role,
 			StandardClaims: jwt.StandardClaims{
 				// In JWT, the expiry time is expressed as unix milliseconds
 				ExpiresAt: expirationTime.Unix(),

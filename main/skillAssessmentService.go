@@ -53,6 +53,15 @@ func main() {
 
 	// log.Println("config > ", configobj.GetConfigDetails())
 	dbDetails := configobj.GetConfigDetails().DatabaseDetails
+
+	// // setup casbin auth rules
+	// authEnforcer, err := casbin.NewEnforcerSafe("./configuration/conf/auth_model.conf", "./configuration/conf/policy.csv")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// log.Println("authEnforcer >> ", authEnforcer)
+
 	// connect to db
 	dbObj := database.NewMongoObj(dbDetails.Host, dbDetails.Port, dbDetails.User, dbDetails.Password, dbDetails.Name, dbDetails.ConnectionString)
 	err := dbObj.Connect()

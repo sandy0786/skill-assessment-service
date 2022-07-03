@@ -1,0 +1,4 @@
+p, admin, /*, *
+p, anonymous, /api/login, *
+p, member, /logout, *
+p, member, /member/*, *

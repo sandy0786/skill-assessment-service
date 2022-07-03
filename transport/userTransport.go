@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/casbin/casbin"
 	userDTO "github.com/sandy0786/skill-assessment-service/dto/user"
 	err "github.com/sandy0786/skill-assessment-service/errors"
 	jwtP "github.com/sandy0786/skill-assessment-service/jwt"
@@ -45,10 +46,63 @@ func DecodeAddUserRequest(ctx context.Context, r *http.Request) (interface{}, er
 	log.Println("transport:DecodeAddUserRequest")
 
 	// verify token
-	tokenErr := jwtP.VerifyToken(r)
+	role, tokenErr := jwtP.VerifyToken(r)
 	if tokenErr != nil {
 		return r, tokenErr
 	}
+
+	///////////////////
+	authEnforcer, authErr := casbin.NewEnforcerSafe("./configuration/conf/auth/auth_model.conf", "./configuration/conf/auth/policy.csv")
+	if authErr != nil {
+		log.Fatal(authErr)
+	}
+
+	// log.Println("authEnforcer >> ", authEnforcer)
+
+	log.Println("authorizer >>>>> ", role)
+	// role := "admin"
+
+	// if it's a member, check if the user still exists
+	// if role == "member" {
+	// 	uid, err := session.GetInt(r, "userID")
+	// 	if err != nil {
+	// 		writeError(http.StatusInternalServerError, "ERROR", w, err)
+	// 		return
+	// 	}
+	// 	exists := users.Exists(uid)
+	// 	if !exists {
+	// 		writeError(http.StatusForbidden, "FORBIDDEN", w, errors.New("user does not exist"))
+	// 		return
+	// 	}
+	// }
+
+	// casbin rule enforcing
+	res, err2 := authEnforcer.EnforceSafe(role, r.URL.Path, r.Method)
+	if err2 != nil {
+		// writeError(http.StatusInternalServerError, "ERROR", w, err)
+		log.Println("1 >> ", err2)
+		return r, err.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusInternalServerError,
+			Message:   "Something went wrong",
+		}
+		// return
+	}
+	if res {
+		log.Println("2 >> ", err2)
+		// next.ServeHTTP(w, r)
+	} else {
+		// writeError(http.StatusForbidden, "FORBIDDEN", w, errors.New("unauthorized"))
+		log.Println("3 >> ", err2)
+		return r, err.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusForbidden,
+			Message:   "User is not authorized",
+		}
+		// return
+	}
+
+	///////////////////
 
 	var uRequest userRequest.UserRequest
 	decodeErr := json.NewDecoder(r.Body).Decode(&uRequest)
@@ -79,7 +133,7 @@ func DecodeGetAllUsersRequest(ctx context.Context, r *http.Request) (interface{}
 	log.Println("transport:DecodeGetAllUsersRequest")
 
 	// verify token
-	err := jwtP.VerifyToken(r)
+	_, err := jwtP.VerifyToken(r)
 	if err != nil {
 		return r, err
 	}
@@ -104,7 +158,7 @@ func DecodeDeleteUserRequest(ctx context.Context, r *http.Request) (interface{},
 	log.Println("transport:DecodeDeleteUserRequest")
 
 	// verify token
-	err := jwtP.VerifyToken(r)
+	_, err := jwtP.VerifyToken(r)
 	if err != nil {
 		return r, err
 	}
@@ -127,7 +181,7 @@ func DecodePasswordResetRequest(ctx context.Context, r *http.Request) (interface
 	log.Println("transport:DecodePasswordResetRequest")
 
 	// verify token
-	err := jwtP.VerifyToken(r)
+	_, err := jwtP.VerifyToken(r)
 	if err != nil {
 		return r, err
 	}

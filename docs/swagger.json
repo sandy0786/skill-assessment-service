@@ -360,6 +360,9 @@
             "$ref": "#/responses/BadRequestErrorResponse"
           },
           "401": {
+            "$ref": "#/responses/UnAuthenticatedAccessResponse"
+          },
+          "403": {
             "$ref": "#/responses/UnAuthorizedAccessResponse"
           },
           "409": {
@@ -1034,6 +1037,28 @@
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/response/success"
     },
+    "UnAuthenticatedAccessError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message",
+          "example": "User is not authenticated"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status",
+          "example": 401
+        },
+        "timestamp": {
+          "type": "string",
+          "x-go-name": "TimeStamp",
+          "example": "2022-05-20 16:59:05"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
+    },
     "UnAuthorizedAccessError": {
       "type": "object",
       "properties": {
@@ -1162,7 +1187,7 @@
           "example": "admin"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/user"
     },
     "UserRevokeSuccessResponse": {
       "description": "Success response",
@@ -1275,6 +1300,12 @@
       "description": "",
       "schema": {
         "$ref": "#/definitions/SuccessResponse"
+      }
+    },
+    "UnAuthenticatedAccessResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/UnAuthenticatedAccessError"
       }
     },
     "UnAuthorizedAccessResponse": {
