@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"strings"
 
 	config "github.com/sandy0786/skill-assessment-service/configuration"
 	constants "github.com/sandy0786/skill-assessment-service/constants"
@@ -314,10 +315,15 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 
 func commonMiddleWare(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
+		if strings.Contains(r.RequestURI, "docs") {
+			w.Header().Set("Content-Type", "text/html")
+		} else {
+			w.Header().Set("Content-Type", "application/json")
+		}
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
 		next.ServeHTTP(w, r)
 	})
 }
