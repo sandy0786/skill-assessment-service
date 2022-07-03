@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"reflect"
-	"strings"
 	"time"
 
 	userDTO "github.com/sandy0786/skill-assessment-service/dto/user"
@@ -16,16 +15,11 @@ import (
 	userRequest "github.com/sandy0786/skill-assessment-service/request/user"
 	userResponse "github.com/sandy0786/skill-assessment-service/response/user"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/go-playground/validator"
 	"github.com/gorilla/mux"
 )
 
 var Validate *validator.Validate
-
-type getDruidRequest struct {
-	queryRequest http.Request
-}
 
 type StatusRequest struct{}
 type StatusResponse struct {
@@ -49,6 +43,13 @@ func EncodeStatusResponse(ctx context.Context, w http.ResponseWriter, response i
 //DecodeAddUserRequest - decodes status GET request
 func DecodeAddUserRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	log.Println("transport:DecodeAddUserRequest")
+
+	// verify token
+	tokenErr := jwtP.VerifyToken(r)
+	if tokenErr != nil {
+		return r, tokenErr
+	}
+
 	var uRequest userRequest.UserRequest
 	decodeErr := json.NewDecoder(r.Body).Decode(&uRequest)
 	if decodeErr != nil {
@@ -77,42 +78,10 @@ func EncodeAddUserResponse(ctx context.Context, w http.ResponseWriter, response 
 func DecodeGetAllUsersRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	log.Println("transport:DecodeGetAllUsersRequest")
 
-	if len(r.Header["Authorization"]) == 0 {
-		return r, err.GlobalError{
-			TimeStamp: time.Now().UTC().String()[0:19],
-			Status:    http.StatusBadRequest,
-			Message:   "Authorization header is missing",
-		}
-	}
-
-	Bearertoken := r.Header["Authorization"][0]
-	token := strings.Split(Bearertoken, "Bearer ")[1]
-
-	// Initialize a new instance of `Claims`
-	claims := &jwtP.Claims{}
-
-	// Parse the JWT string and store the result in `claims`.
-	// Note that we are passing the key in this method as well. This method will return an error
-	// if the token is invalid (if it has expired according to the expiry time we set on sign in),
-	// or if the signature does not match
-	tkn, err1 := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte("t%682@#90"), nil
-	})
-
-	if err1 != nil {
-		return r, err.GlobalError{
-			TimeStamp: time.Now().UTC().String()[0:19],
-			Status:    http.StatusUnauthorized,
-			Message:   "User is not authorized",
-		}
-	}
-
-	if !tkn.Valid {
-		return r, err.GlobalError{
-			TimeStamp: time.Now().UTC().String()[0:19],
-			Status:    http.StatusForbidden,
-			Message:   "User has no rights to access",
-		}
+	// verify token
+	err := jwtP.VerifyToken(r)
+	if err != nil {
+		return r, err
 	}
 
 	return r, nil
@@ -130,19 +99,16 @@ func EncodeGetAllUsersResponse(ctx context.Context, w http.ResponseWriter, respo
 	return json.NewEncoder(w).Encode(response)
 }
 
-// func DecodeGetEmpByIdRequest(ctx context.Context, r *http.Request) (interface{}, error) {
-// 	log.Println("transport:DecodeGetEmpByIdRequest")
-// 	vars := mux.Vars(r)
-// 	empId, ok := vars["id"]
-// 	if !ok {
-// 		log.Println("id is missing in parameters")
-// 	}
-// 	return empId, nil
-// }
-
 //DecodeDeleteUserRequest - decodes status GET request
 func DecodeDeleteUserRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	log.Println("transport:DecodeDeleteUserRequest")
+
+	// verify token
+	err := jwtP.VerifyToken(r)
+	if err != nil {
+		return r, err
+	}
+
 	username := mux.Vars(r)["username"]
 	if len(username) == 0 {
 		return "", errors.New("Path variable 'username' not found")
@@ -159,12 +125,19 @@ func EncodeDeleteUserResponse(ctx context.Context, w http.ResponseWriter, respon
 //DecodePasswordResetRequest
 func DecodePasswordResetRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	log.Println("transport:DecodePasswordResetRequest")
+
+	// verify token
+	err := jwtP.VerifyToken(r)
+	if err != nil {
+		return r, err
+	}
+
 	username := mux.Vars(r)["username"]
 	if len(username) == 0 {
 		return "", errors.New("Path variable 'username' not found")
 	}
 	var userDto userDTO.UserDTO
-	err := json.NewDecoder(r.Body).Decode(&userDto)
+	err = json.NewDecoder(r.Body).Decode(&userDto)
 	err = Validate.Struct(userDto)
 	log.Println("aa >> ", err)
 	return userDto, nil

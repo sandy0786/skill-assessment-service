@@ -36,7 +36,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	// responses:
 	//  500: InternalServerErrorResponse
 	//  200: HealthResponse
-	r.Methods("GET").Path(constants.STATUS_PATH).Handler(httptransport.NewServer(
+	r.Methods(http.MethodGet).Path(constants.STATUS_PATH).Handler(httptransport.NewServer(
 		endpoints.StatusEndpoint,
 		transport.DecodeStatusRequest,
 		transport.EncodeStatusResponse,
@@ -46,22 +46,23 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	// swagger:route POST /api/user admin UserRequest
 	// Create new user
 	//
-	//     Security:
-	//     - bearer
+	// Security:
+	// 	- Bearer: []
 	//
-	//     SecurityDefinitions:
-	//     bearer:
-	//          type: apiKey
-	//          name: Authorization
-	//          in: header
+	// securityDefinitions:
+	//   Bearer:
+	//     type: apiKey
+	//     name: Authorization
+	//     in: header
 	//
 	// requests:
 	// responses:
 	//  409: ConflictErrorResponse
 	//  500: InternalServerErrorResponse
 	//  400: BadRequestErrorResponse
+	//  401: UnAuthorizedAccessResponse
 	//  200: SuccessResponse
-	r.Methods("POST").Path(constants.USER).Handler(httptransport.NewServer(
+	r.Methods(http.MethodPost).Path(constants.USER).Handler(httptransport.NewServer(
 		endpoints.AddUserEndpoint,
 		transport.DecodeAddUserRequest,
 		transport.EncodeAddUserResponse,
@@ -71,22 +72,23 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	// swagger:route DELETE /api/user/{Username} admin DeleteUserRequest
 	// Delete user
 	//
-	//     Security:
-	//     - bearer
+	// Security:
+	// 	- Bearer: []
 	//
-	//     SecurityDefinitions:
-	//     bearer:
-	//          type: apiKey
-	//          name: Authorization
-	//          in: header
+	// securityDefinitions:
+	//   Bearer:
+	//     type: apiKey
+	//     name: Authorization
+	//     in: header
 	//
 	// requests:
 	// responses:
 	//  404: NotFoundErrorResponse
 	//  500: InternalServerErrorResponse
 	//  400: BadRequestErrorResponse
+	//  401: UnAuthorizedAccessResponse
 	//  200: UserDeleteSuccessResponse
-	r.Methods("DELETE").Path(constants.USER_NAME).Handler(httptransport.NewServer(
+	r.Methods(http.MethodDelete).Path(constants.USER_NAME).Handler(httptransport.NewServer(
 		endpoints.DeleteUserEndpoint,
 		transport.DecodeDeleteUserRequest,
 		transport.EncodeDeleteUserResponse,
@@ -96,16 +98,22 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	// swagger:route GET /api/users admin listUsers
 	// Get all available users
 	//
-	// @securityDefinitions.apikey ApiKeyAuth
-	// @in header
-	// @name Authorization
-
+	// Security:
+	// 	- Bearer: []
+	//
+	// securityDefinitions:
+	//   Bearer:
+	//     type: apiKey
+	//     name: Authorization
+	//     in: header
+	//
 	// responses:
 	//  500: InternalServerErrorResponse
 	//  404: NotFoundEmptyErrorResponse
+	//  401: UnAuthorizedAccessResponse
 	//  400: BadRequestErrorResponse
 	//  200: UsersResponse
-	r.Methods("GET").Path(constants.ALL_USERS).Handler(httptransport.NewServer(
+	r.Methods(http.MethodGet).Path(constants.ALL_USERS).Handler(httptransport.NewServer(
 		endpoints.GetAllUsersEndpoint,
 		transport.DecodeGetAllUsersRequest,
 		transport.EncodeGetAllUsersResponse,
@@ -129,8 +137,9 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	//  404: NotFoundErrorResponse
 	//  500: InternalServerErrorResponse
 	//  400: BadRequestErrorResponse
+	//  401: UnAuthorizedAccessResponse
 	//  200: UserRevokeSuccessResponse
-	r.Methods("PUT").Path(constants.REVOKE_USER).Handler(httptransport.NewServer(
+	r.Methods(http.MethodPut).Path(constants.REVOKE_USER).Handler(httptransport.NewServer(
 		endpoints.RevokeUserEndpoint,
 		transport.DecodeDeleteUserRequest,
 		transport.EncodeDeleteUserResponse,
@@ -140,21 +149,22 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	// swagger:route PUT /api/user/{Username}/password user ResetUserPasswordRequest
 	// Revoke user
 	//
-	//     Security:
-	//     - bearer
+	// Security:
+	// 	- Bearer: []
 	//
-	//     SecurityDefinitions:
-	//     bearer:
-	//          type: apiKey
-	//          name: Authorization
-	//          in: header
+	// securityDefinitions:
+	//   Bearer:
+	//     type: apiKey
+	//     name: Authorization
+	//     in: header
 	//
 	// responses:
 	//  404: NotFoundErrorResponse
 	//  500: InternalServerErrorResponse
 	//  400: BadRequestErrorResponse
+	//  401: UnAuthorizedAccessResponse
 	//  200: ResetUserPasswordRequest
-	r.Methods("PUT").Path(constants.RESET_PASSWORD).Handler(httptransport.NewServer(
+	r.Methods(http.MethodPut).Path(constants.RESET_PASSWORD).Handler(httptransport.NewServer(
 		endpoints.ResetPasswordEndpoint,
 		transport.DecodePasswordResetRequest,
 		transport.EncodePasswordResetRequest,
@@ -164,22 +174,13 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	// swagger:route POST /api/user/login user LoginRequest
 	// Login with username and password
 	//
-	//     Security:
-	//     - bearer
-	//
-	//     SecurityDefinitions:
-	//     bearer:
-	//          type: apiKey
-	//          name: Authorization
-	//          in: header
-	//
 	// requests:
 	// responses:
 	//  401: UnAuthorizedResponse
 	//  500: InternalServerErrorResponse
 	//  400: BadRequestErrorResponse
 	//  200: LoginResponse
-	r.Methods("POST").Path(constants.LOGIN).Handler(httptransport.NewServer(
+	r.Methods(http.MethodPost).Path(constants.LOGIN).Handler(httptransport.NewServer(
 		endpoints.LoginEndpoint,
 		transport.DecodeAuthRequest,
 		transport.EncodeAuthResponse,
@@ -201,7 +202,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	//  400: BadRequestErrorResponse
 	//  409: ConflictErrorResponse
 	//  200: SuccessResponse
-	r.Methods("POST").Path(constants.QUESTION).Handler(httptransport.NewServer(
+	r.Methods(http.MethodPost).Path(constants.QUESTION).Handler(httptransport.NewServer(
 		endpoints.AddQuestionEndpoint,
 		transport.DecodeAddQuestionRequest,
 		transport.EncodeAddQuestionResponse,
@@ -222,7 +223,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	//  500: InternalServerErrorResponse
 	//  400: BadRequestErrorResponse
 	//  200: SuccessResponse
-	r.Methods("POST").Path(constants.ALL_QUESTIONS).Handler(httptransport.NewServer(
+	r.Methods(http.MethodPost).Path(constants.ALL_QUESTIONS).Handler(httptransport.NewServer(
 		endpoints.AddMultipleQuestionEndpoint,
 		transport.DecodeAddMutlipleQuestionsRequest,
 		transport.EncodeAddMultipleQuestionsResponse,
@@ -244,7 +245,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	//  400: BadRequestErrorResponse
 	//  409: ConflictErrorResponse
 	//  200: QuestionsResponse
-	r.Methods("GET").Path(constants.ALL_QUESTIONS).Handler(httptransport.NewServer(
+	r.Methods(http.MethodGet).Path(constants.ALL_QUESTIONS).Handler(httptransport.NewServer(
 		endpoints.GetAllQuestionsEndpoint,
 		transport.DecodeGetAllQuestionsRequest,
 		transport.EncodeGetAllQuestionsResponse,
@@ -266,7 +267,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	//  400: BadRequestErrorResponse
 	//  409: ConflictErrorResponse
 	//  200: SuccessResponse
-	r.Methods("POST").Path(constants.CATEGORY).Handler(httptransport.NewServer(
+	r.Methods(http.MethodPost).Path(constants.CATEGORY).Handler(httptransport.NewServer(
 		endpoints.AddCategoryEndpoint,
 		transport.DecodeAddCategoryRequest,
 		transport.EncodeAddCategoryResponse,
@@ -286,7 +287,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	// responses:
 	//  500: InternalServerErrorResponse
 	//  200: CategoriesResponse
-	r.Methods("GET").Path(constants.ALL_CATEGORIES).Handler(httptransport.NewServer(
+	r.Methods(http.MethodGet).Path(constants.ALL_CATEGORIES).Handler(httptransport.NewServer(
 		endpoints.GetAllCategoriesEndpoint,
 		transport.DecodeGetAllCategoriesRequest,
 		transport.EncodeGetAllCategoriesResponse,

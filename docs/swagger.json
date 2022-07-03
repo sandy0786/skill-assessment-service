@@ -309,10 +309,15 @@
       "post": {
         "security": [
           {
-            "SecurityDefinitions": []
+            "Bearer": [
+              "[]"
+            ]
           },
           {
-            "bearer": []
+            "securityDefinitions": []
+          },
+          {
+            "Bearer": []
           },
           {
             "type": [
@@ -354,6 +359,9 @@
           "400": {
             "$ref": "#/responses/BadRequestErrorResponse"
           },
+          "401": {
+            "$ref": "#/responses/UnAuthorizedAccessResponse"
+          },
           "409": {
             "$ref": "#/responses/ConflictErrorResponse"
           },
@@ -365,36 +373,11 @@
     },
     "/api/user/login": {
       "post": {
-        "security": [
-          {
-            "SecurityDefinitions": []
-          },
-          {
-            "bearer": []
-          },
-          {
-            "type": [
-              "apiKey"
-            ]
-          },
-          {
-            "name": [
-              "Authorization"
-            ]
-          },
-          {
-            "in": [
-              "header"
-            ]
-          },
-          {
-            "requests": []
-          }
-        ],
-        "description": "Login with username and password",
+        "description": "requests:",
         "tags": [
           "user"
         ],
+        "summary": "Login with username and password",
         "operationId": "LoginRequest",
         "parameters": [
           {
@@ -425,10 +408,15 @@
       "delete": {
         "security": [
           {
-            "SecurityDefinitions": []
+            "Bearer": [
+              "[]"
+            ]
           },
           {
-            "bearer": []
+            "securityDefinitions": []
+          },
+          {
+            "Bearer": []
           },
           {
             "type": [
@@ -470,6 +458,9 @@
           "400": {
             "$ref": "#/responses/BadRequestErrorResponse"
           },
+          "401": {
+            "$ref": "#/responses/UnAuthorizedAccessResponse"
+          },
           "404": {
             "$ref": "#/responses/NotFoundErrorResponse"
           },
@@ -483,10 +474,15 @@
       "put": {
         "security": [
           {
-            "SecurityDefinitions": []
+            "Bearer": [
+              "[]"
+            ]
           },
           {
-            "bearer": []
+            "securityDefinitions": []
+          },
+          {
+            "Bearer": []
           },
           {
             "type": [
@@ -531,6 +527,9 @@
           },
           "400": {
             "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "401": {
+            "$ref": "#/responses/UnAuthorizedAccessResponse"
           },
           "404": {
             "$ref": "#/responses/NotFoundErrorResponse"
@@ -590,6 +589,9 @@
           "400": {
             "$ref": "#/responses/BadRequestErrorResponse"
           },
+          "401": {
+            "$ref": "#/responses/UnAuthorizedAccessResponse"
+          },
           "404": {
             "$ref": "#/responses/NotFoundErrorResponse"
           },
@@ -601,12 +603,56 @@
     },
     "/api/users": {
       "get": {
-        "description": "@securityDefinitions.apikey ApiKeyAuth\n@in header\n@name Authorization",
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          },
+          {
+            "securityDefinitions": []
+          },
+          {
+            "Bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
+            ]
+          }
+        ],
+        "description": "Get all available users",
         "tags": [
           "admin"
         ],
-        "summary": "Get all available users",
-        "operationId": "listUsers"
+        "operationId": "listUsers",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UsersResponse"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "401": {
+            "$ref": "#/responses/UnAuthorizedAccessResponse"
+          },
+          "404": {
+            "$ref": "#/responses/NotFoundEmptyErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
       }
     }
   },
@@ -723,6 +769,28 @@
           "format": "int64",
           "x-go-name": "Status",
           "example": 500
+        },
+        "timestamp": {
+          "type": "string",
+          "x-go-name": "TimeStamp",
+          "example": "2022-05-20 16:59:05"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
+    },
+    "InvalidTokenError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message",
+          "example": "Invalid token"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status",
+          "example": 401
         },
         "timestamp": {
           "type": "string",
@@ -966,6 +1034,28 @@
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/response/success"
     },
+    "UnAuthorizedAccessError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message",
+          "example": "User is not authorized"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status",
+          "example": 401
+        },
+        "timestamp": {
+          "type": "string",
+          "x-go-name": "TimeStamp",
+          "example": "2022-05-20 16:59:05"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
+    },
     "UnAuthorizedError": {
       "type": "object",
       "properties": {
@@ -1139,6 +1229,12 @@
         "$ref": "#/definitions/GlobalError"
       }
     },
+    "InvalidTokenResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/InvalidTokenError"
+      }
+    },
     "LoginResponse": {
       "description": "",
       "schema": {
@@ -1181,6 +1277,12 @@
         "$ref": "#/definitions/SuccessResponse"
       }
     },
+    "UnAuthorizedAccessResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/UnAuthorizedAccessError"
+      }
+    },
     "UnAuthorizedResponse": {
       "description": "",
       "schema": {
@@ -1210,10 +1312,17 @@
     }
   },
   "securityDefinitions": {
-    "apiKey": {
+    "Bearer": {
       "type": "apiKey",
       "name": "Authorization",
       "in": "header"
     }
-  }
+  },
+  "security": [
+    {
+      "Bearer": [
+        "[]"
+      ]
+    }
+  ]
 }
