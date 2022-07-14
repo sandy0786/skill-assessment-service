@@ -25,11 +25,17 @@ type JWT struct {
 	ExpiryTime int    `mapstructure:"expiryTime"`
 }
 
+type Cors struct {
+	Origin string `mapstructure:"origin"`
+	Debug  bool   `mapstructure:"debug"`
+}
+
 type ConfigurationDetails struct {
 	ServiceName     string          `mapstructure:"serviceName"`
 	ServerPort      string          `mapstructure:"serverPort"`
 	DatabaseDetails DatabaseDetails `mapstructure:"database"`
 	Jwt             JWT             `mapstructure:"jwt"`
+	Cors            Cors            `mapstructure:"corsOptions"`
 }
 
 type config struct {

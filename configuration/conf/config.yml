@@ -20,3 +20,8 @@ jwt:
   # Token expiry time in minutes
   expiryTime: 5
 
+# CORS
+corsOptions:
+  origin: '*'
+  debug: false
+

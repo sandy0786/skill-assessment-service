@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/casbin/casbin"
+	"github.com/rs/cors"
 	config "github.com/sandy0786/skill-assessment-service/configuration"
 	constants "github.com/sandy0786/skill-assessment-service/constants"
 	endpoint "github.com/sandy0786/skill-assessment-service/endpoint"
@@ -14,7 +15,6 @@ import (
 
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 )
 
 //NewHTTPServer is an exported function
@@ -324,7 +324,7 @@ func commonMiddleWare(next http.Handler) http.Handler {
 			w.Header().Set("Content-Type", "application/json")
 		}
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,authorization,Access-Control-Allow-Origin")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
 
@@ -393,9 +393,12 @@ func Authorizer(e *casbin.Enforcer) func(next http.Handler) http.Handler {
 //CreateNewServer is a function to return server
 func CreateNewServer(c config.ConfigurationDetails, handler http.Handler) http.Server {
 	cors := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
-		AllowedMethods:   []string{"GET", "POST"},
+		AllowedOrigins: []string{c.Cors.Origin},
+		AllowedMethods: []string{"GET", "POST", "DELETE", "PUT"},
+		AllowedHeaders: []string{"Content-Type", "Authorization", "Access-Control-Allow-Origin"},
+		// ExposedHeaders: []string{"Content-Type,authorization,Access-Control-Allow-Origin"},
 		AllowCredentials: true,
+		Debug:            c.Cors.Debug,
 	})
 
 	newHandler := cors.Handler(handler)
