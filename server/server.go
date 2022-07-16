@@ -148,8 +148,8 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[0],
 	))
 
-	// swagger:route PUT /api/user/{Username}/password user ResetUserPasswordRequest
-	// Revoke user
+	// swagger:route PUT /api/user/{Username}/password admin ResetUserPasswordRequest
+	// Reset user password
 	//
 	// Security:
 	// 	- Bearer: []
@@ -173,7 +173,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[0],
 	))
 
-	// swagger:route POST /api/user/login user LoginRequest
+	// swagger:route POST /api/user/login auth LoginRequest
 	// Login with username and password
 	//
 	// requests:
@@ -186,6 +186,21 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		endpoints.LoginEndpoint,
 		transport.DecodeAuthRequest,
 		transport.EncodeAuthResponse,
+		Opts[3],
+	))
+
+	// swagger:route POST /api/token/refresh auth RefreshTokenRequest
+	// Refresh token with existing token
+	//
+	// requests:
+	// responses:
+	//  500: InternalServerErrorResponse
+	//  400: InvalidTokenResponse
+	//  200: LoginResponse
+	r.Methods(http.MethodPost).Path(constants.REFRESH_TOKEN).Handler(httptransport.NewServer(
+		endpoints.RefreshTokenEndpoint,
+		transport.DecodeRefreshTokenRequest,
+		transport.EncodeRefreshTokenRequest,
 		Opts[3],
 	))
 

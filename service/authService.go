@@ -3,11 +3,13 @@ package service
 import (
 	"context"
 	"log"
+	"net/http"
 	"time"
 
 	configuration "github.com/sandy0786/skill-assessment-service/configuration"
 	authDao "github.com/sandy0786/skill-assessment-service/dao/auth"
 	authDocument "github.com/sandy0786/skill-assessment-service/documents/auth"
+	err "github.com/sandy0786/skill-assessment-service/errors"
 	jwtP "github.com/sandy0786/skill-assessment-service/jwt"
 	authRequest "github.com/sandy0786/skill-assessment-service/request/auth"
 	authResponse "github.com/sandy0786/skill-assessment-service/response/auth"
@@ -19,18 +21,19 @@ import (
 type AuthService interface {
 	Login(context.Context, authRequest.LoginRequest) (authResponse.LoginResponse, error)
 	Logout(context.Context) (authResponse.LoginResponse, error)
+	Refresh(context.Context, string) (authResponse.LoginResponse, error)
 }
 
 // authentication and authorisation servvice
 type authService struct {
-	testServiceConfig configuration.ConfigurationInterface
-	dao               authDao.AuthDAO
+	config configuration.ConfigurationInterface
+	dao    authDao.AuthDAO
 }
 
 func NewAuthService(c configuration.ConfigurationInterface, dao authDao.AuthDAO) *authService {
 	return &authService{
-		testServiceConfig: c,
-		dao:               dao,
+		config: c,
+		dao:    dao,
 	}
 }
 
@@ -43,7 +46,7 @@ func (a *authService) Login(ctx context.Context, userRequest authRequest.LoginRe
 	if validUser {
 		// Declare the expiration time of the token
 		// here, we have kept it as 5 minutes
-		expirationTime := time.Now().Add(time.Duration(a.testServiceConfig.GetConfigDetails().Jwt.ExpiryTime) * time.Minute)
+		expirationTime := time.Now().Add(time.Duration(a.config.GetConfigDetails().Jwt.ExpiryTime) * time.Minute)
 		// Create the JWT claims, which includes the username and expiry time
 		claims := &jwtP.Claims{
 			Username: userRequest.Username,
@@ -58,7 +61,7 @@ func (a *authService) Login(ctx context.Context, userRequest authRequest.LoginRe
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 		// Create the JWT string
-		secret := []byte(a.testServiceConfig.GetConfigDetails().Jwt.Secret)
+		secret := []byte(a.config.GetConfigDetails().Jwt.Secret)
 		tokenString, err := token.SignedString(secret)
 		return authResponse.LoginResponse{
 			Token: tokenString,
@@ -71,4 +74,53 @@ func (a *authService) Login(ctx context.Context, userRequest authRequest.LoginRe
 func (a *authService) Logout(_ context.Context) (authResponse.LoginResponse, error) {
 	log.Println("Inside user logout")
 	return authResponse.LoginResponse{}, nil
+}
+
+func (a *authService) Refresh(ctx context.Context, token string) (authResponse.LoginResponse, error) {
+	log.Println("Inside refresh token")
+
+	claims := &jwtP.Claims{}
+	tkn, err1 := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(a.config.GetConfigDetails().Jwt.Secret), nil
+	})
+	if err1 != nil {
+		return authResponse.LoginResponse{}, err.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusBadRequest,
+			Message:   "Invalid token",
+		}
+	}
+	if !tkn.Valid {
+		return authResponse.LoginResponse{}, err.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusBadRequest,
+			Message:   "Invalid token",
+		}
+	}
+
+	// We ensure that a new token is not issued until enough time has elapsed
+	// In this case, a new token will only be issued if the old token is within
+	// 30 seconds of expiry. Otherwise, return a bad request status
+	if time.Unix(claims.ExpiresAt, 0).Sub(time.Now()) > 30*time.Second {
+		return authResponse.LoginResponse{}, err.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusBadRequest,
+			Message:   "Invalid token",
+		}
+	}
+
+	// Now, create a new token for the current use, with a renewed expiration time
+	expirationTime := time.Now().Add(time.Duration(a.config.GetConfigDetails().Jwt.ExpiryTime) * time.Minute)
+	claims.ExpiresAt = expirationTime.Unix()
+	tempToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err1 := tempToken.SignedString([]byte(a.config.GetConfigDetails().Jwt.Secret))
+	if err1 != nil {
+		return authResponse.LoginResponse{}, err.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusInternalServerError,
+			Message:   "Something went wrong",
+		}
+	}
+
+	return authResponse.LoginResponse{Token: tokenString}, nil
 }

@@ -102,6 +102,7 @@ func main() {
 		GetAllQuestionsEndpoint:     endpoint.MakeGetAllQuestionsEndpoint(qsnSrv),
 		AddCategoryEndpoint:         endpoint.MakeAddCategoryEndpoint(ctgSrv),
 		GetAllCategoriesEndpoint:    endpoint.MakeGetAllCategoriesEndpoint(ctgSrv),
+		RefreshTokenEndpoint:        endpoint.MakeRefreshTokenEndpoint(authSrv),
 	}
 
 	// HTTP transport

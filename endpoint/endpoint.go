@@ -30,6 +30,7 @@ type Endpoints struct {
 	GetAllQuestionsEndpoint     endpoint.Endpoint
 	AddCategoryEndpoint         endpoint.Endpoint
 	GetAllCategoriesEndpoint    endpoint.Endpoint
+	RefreshTokenEndpoint        endpoint.Endpoint
 }
 
 //MakeStatusEndpoint returns response
@@ -159,6 +160,16 @@ func MakeLoginEndpoint(srv service.AuthService) endpoint.Endpoint {
 		log.Println("MakeLoginEndpoint")
 		authRequest := request.(authRequest.LoginRequest)
 		responseFromService, err := srv.Login(ctx, authRequest)
+		return responseFromService, err
+	}
+}
+
+//MakeRefreshTokenEndpoint returns response
+func MakeRefreshTokenEndpoint(srv service.AuthService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		log.Println("MakeRefreshTokenEndpoint")
+		token := request.(string)
+		responseFromService, err := srv.Refresh(ctx, token)
 		return responseFromService, err
 	}
 }

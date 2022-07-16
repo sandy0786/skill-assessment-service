@@ -19,4 +19,7 @@ const (
 	CATEGORY       = "/api/category"             // POST
 	ALL_CATEGORIES = "/api/categories"           // GET
 	DOC_PATH       = "/docs"                     // GET
+
+	// token refresh
+	REFRESH_TOKEN = "/api/token/refresh" // POST
 )

@@ -305,6 +305,36 @@
         }
       }
     },
+    "/api/token/refresh": {
+      "post": {
+        "description": "requests:",
+        "tags": [
+          "auth"
+        ],
+        "summary": "Refresh token with existing token",
+        "operationId": "RefreshTokenRequest",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "type": "object"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LoginResponse"
+          },
+          "400": {
+            "$ref": "#/responses/InvalidTokenResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    },
     "/api/user": {
       "post": {
         "security": [
@@ -378,7 +408,7 @@
       "post": {
         "description": "requests:",
         "tags": [
-          "user"
+          "auth"
         ],
         "summary": "Login with username and password",
         "operationId": "LoginRequest",
@@ -503,9 +533,9 @@
             ]
           }
         ],
-        "description": "Revoke user",
+        "description": "Reset user password",
         "tags": [
-          "user"
+          "admin"
         ],
         "operationId": "ResetUserPasswordRequest",
         "parameters": [
@@ -793,7 +823,7 @@
           "type": "integer",
           "format": "int64",
           "x-go-name": "Status",
-          "example": 401
+          "example": 400
         },
         "timestamp": {
           "type": "string",
@@ -801,7 +831,7 @@
           "example": "2022-05-20 16:59:05"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/auth"
     },
     "LoginRequest": {
       "description": "login Request",
@@ -1187,7 +1217,7 @@
           "example": "admin"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/user"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
     },
     "UserRevokeSuccessResponse": {
       "description": "Success response",

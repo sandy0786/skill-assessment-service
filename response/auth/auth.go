@@ -12,3 +12,19 @@ type UsersResponse struct {
 	// in: body
 	Body LoginResponse
 }
+
+// swagger:model
+type InvalidTokenError struct {
+	// example: 2022-05-20 16:59:05
+	TimeStamp string `json:"timestamp"`
+	// example: 400
+	Status int `json:"status"`
+	// example: Invalid token
+	Message string `json:"message"`
+}
+
+// swagger:response InvalidTokenResponse
+type InvalidTokenResponse struct {
+	// in: body
+	Body InvalidTokenError
+}

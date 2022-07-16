@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	err "github.com/sandy0786/skill-assessment-service/errors"
@@ -25,6 +26,37 @@ func DecodeAuthRequest(ctx context.Context, r *http.Request) (interface{}, error
 // EncodeAuthResponse - encodes status service response
 func EncodeAuthResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
 	log.Println("transport:EncodeAuthResponse ")
+	return json.NewEncoder(w).Encode(response)
+}
+
+//DecodeRefreshTokenRequest
+func DecodeRefreshTokenRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	log.Println("transport:DecodeRefreshTokenRequest")
+	if len(r.Header["Authorization"]) == 0 {
+		return "", err.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusBadRequest,
+			Message:   "Authorization header is missing",
+		}
+	}
+
+	Bearertoken := r.Header["Authorization"][0]
+
+	if !strings.Contains(Bearertoken, "Bearer") {
+		return "", err.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusBadRequest,
+			Message:   "Invalid token",
+		}
+	}
+
+	webtoken := strings.Split(Bearertoken, "Bearer ")[1]
+	return webtoken, nil
+}
+
+// EncodeRefreshTokenRequest
+func EncodeRefreshTokenRequest(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	log.Println("transport:EncodeRefreshTokenRequest ")
 	return json.NewEncoder(w).Encode(response)
 }
 

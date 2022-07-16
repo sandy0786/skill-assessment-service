@@ -20,3 +20,9 @@ type LoginRequestSwagger struct {
 	// in:body
 	Body LoginRequest
 }
+
+// swagger:parameters RefreshTokenRequest
+type RefreshTokenRequestSwagger struct {
+	// in:body
+	Body interface{}
+}
