@@ -203,6 +203,26 @@ func EncodePasswordResetRequest(ctx context.Context, w http.ResponseWriter, resp
 	return json.NewEncoder(w).Encode(response)
 }
 
+//DecodeUserPasswordResetRequest
+func DecodeUserPasswordResetRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	log.Println("transport:DecodeUserPasswordResetRequest")
+
+	// verify token
+	claims, err := jwtP.VerifyToken(r)
+	if err != nil {
+		return r, err
+	}
+
+	// username := claims.Username
+
+	var userDto userDTO.UserDTO
+	err = json.NewDecoder(r.Body).Decode(&userDto)
+	userDto.Username = claims.Username
+	err = Validate.Struct(userDto)
+	log.Println("aa >> ", err)
+	return userDto, nil
+}
+
 //ErrorEncoder will encode error to our format
 func ErrorEncoder(ctx context.Context, err1 error, w http.ResponseWriter) {
 	log.Println("transport:ErrorEncoder: Inside ErrorEncoder: ")

@@ -148,7 +148,32 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[0],
 	))
 
-	// swagger:route PUT /api/user/{Username}/password admin ResetUserPasswordRequest
+	// swagger:route PUT /api/user/{Username}/password admin ResetPasswordRequest
+	// Reset user password- only for admin
+	//
+	// Security:
+	// 	- Bearer: []
+	//
+	// securityDefinitions:
+	//   Bearer:
+	//     type: apiKey
+	//     name: Authorization
+	//     in: header
+	//
+	// responses:
+	//  404: NotFoundErrorResponse
+	//  500: InternalServerErrorResponse
+	//  400: BadRequestErrorResponse
+	//  401: UnAuthorizedAccessResponse
+	//  200: ResetUserPasswordResponse
+	r.Methods(http.MethodPut).Path(constants.RESET_PASSWORD).Handler(httptransport.NewServer(
+		endpoints.ResetPasswordEndpoint,
+		transport.DecodePasswordResetRequest,
+		transport.EncodePasswordResetRequest,
+		Opts[0],
+	))
+
+	// swagger:route PUT /api/user/password/reset user ResetUserPasswordRequest
 	// Reset user password
 	//
 	// Security:
@@ -165,10 +190,10 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	//  500: InternalServerErrorResponse
 	//  400: BadRequestErrorResponse
 	//  401: UnAuthorizedAccessResponse
-	//  200: ResetUserPasswordRequest
-	r.Methods(http.MethodPut).Path(constants.RESET_PASSWORD).Handler(httptransport.NewServer(
-		endpoints.ResetPasswordEndpoint,
-		transport.DecodePasswordResetRequest,
+	//  200: ResetUserPasswordResponse
+	r.Methods(http.MethodPut).Path(constants.RESET_PASSWORD_USER).Handler(httptransport.NewServer(
+		endpoints.ResetUserPasswordEndpoint,
+		transport.DecodeUserPasswordResetRequest,
 		transport.EncodePasswordResetRequest,
 		Opts[0],
 	))

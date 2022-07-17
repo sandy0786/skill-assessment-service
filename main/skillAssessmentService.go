@@ -103,6 +103,7 @@ func main() {
 		AddCategoryEndpoint:         endpoint.MakeAddCategoryEndpoint(ctgSrv),
 		GetAllCategoriesEndpoint:    endpoint.MakeGetAllCategoriesEndpoint(ctgSrv),
 		RefreshTokenEndpoint:        endpoint.MakeRefreshTokenEndpoint(authSrv),
+		ResetUserPasswordEndpoint:   endpoint.MakeResetPasswordEndpoint(userSrv),
 	}
 
 	// HTTP transport

@@ -437,6 +437,69 @@
         }
       }
     },
+    "/api/user/password/reset": {
+      "put": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          },
+          {
+            "securityDefinitions": []
+          },
+          {
+            "Bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
+            ]
+          }
+        ],
+        "description": "Reset user password",
+        "tags": [
+          "user"
+        ],
+        "operationId": "ResetUserPasswordRequest",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/PasswordReset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ResetUserPasswordRequest"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "401": {
+            "$ref": "#/responses/UnAuthorizedAccessResponse"
+          },
+          "404": {
+            "$ref": "#/responses/NotFoundErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    },
     "/api/user/{Username}": {
       "delete": {
         "security": [
@@ -533,11 +596,11 @@
             ]
           }
         ],
-        "description": "Reset user password",
+        "description": "Reset user password- only for admin",
         "tags": [
           "admin"
         ],
-        "operationId": "ResetUserPasswordRequest",
+        "operationId": "ResetPasswordRequest",
         "parameters": [
           {
             "type": "string",
@@ -910,6 +973,28 @@
         }
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/request/user"
+    },
+    "PasswordResetSuccess": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message",
+          "example": "Password reset success"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status",
+          "example": 200
+        },
+        "timestamp": {
+          "type": "string",
+          "x-go-name": "TimeStamp",
+          "example": "2022-05-20 16:59:05"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
     },
     "PasswordResetSuccessResponse": {
       "description": "Success response",
@@ -1324,6 +1409,12 @@
         "items": {
           "$ref": "#/definitions/QuestionResponse"
         }
+      }
+    },
+    "ResetUserPasswordResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/PasswordResetSuccess"
       }
     },
     "SuccessResponse": {

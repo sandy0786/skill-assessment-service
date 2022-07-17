@@ -116,7 +116,7 @@ func (u *userDAOImpl) ResetUserPassword(username string, oldpassword string, new
 			{"$set", bson.D{{"password", newPassword}}},
 		},
 	)
-	log.Println("Reset user password : ", err)
+	// log.Println("Reset user password : ", err)
 	if err != nil {
 		return false, err
 	}

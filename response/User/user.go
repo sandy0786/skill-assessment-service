@@ -21,3 +21,19 @@ type UsersResponse struct {
 	// in: body
 	Body []UserResponse
 }
+
+// swagger:model
+type PasswordResetSuccess struct {
+	// example: 2022-05-20 16:59:05
+	TimeStamp string `json:"timestamp"`
+	// example: 200
+	Status int `json:"status"`
+	// example: Password reset success
+	Message string `json:"message"`
+}
+
+// swagger:response ResetUserPasswordResponse
+type UserPasswordResetResponse struct {
+	// in: body
+	Body PasswordResetSuccess
+}

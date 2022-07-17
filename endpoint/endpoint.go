@@ -31,6 +31,7 @@ type Endpoints struct {
 	AddCategoryEndpoint         endpoint.Endpoint
 	GetAllCategoriesEndpoint    endpoint.Endpoint
 	RefreshTokenEndpoint        endpoint.Endpoint
+	ResetUserPasswordEndpoint   endpoint.Endpoint
 }
 
 //MakeStatusEndpoint returns response
