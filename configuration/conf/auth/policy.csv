@@ -7,3 +7,4 @@ p, manager, /api/user/password/reset, *
 p, manager, /api/token/refresh, *
 p, manager, /api/categories, *
 p, manager, /api/category, *
+p, manager, /api/question/types, *

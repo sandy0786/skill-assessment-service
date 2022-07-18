@@ -34,6 +34,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		httptransport.ServerErrorEncoder(transport.CategoryErrorEncoder),
 		httptransport.ServerErrorEncoder(transport.AuthErrorEncoder),
 		httptransport.ServerErrorEncoder(transport.RoleErrorEncoder),
+		httptransport.ServerErrorEncoder(transport.QuestionTypeErrorEncoder),
 	}
 
 	// swagger:route GET /api/health miscellaneous health
@@ -257,7 +258,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[3],
 	))
 
-	// swagger:route POST /api/question/{Category} questions QuestionRequest
+	// swagger:route POST /api/{Category}/question questions QuestionRequest
 	// Add new question based on category
 	//
 	// Security:
@@ -279,7 +280,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[1],
 	))
 
-	// swagger:route POST /api/questions/{Category} questions QuestionsRequest
+	// swagger:route POST /api/{Category}/questions questions QuestionsRequest
 	// Fetch all categories
 	//
 	// Security:
@@ -300,7 +301,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[1],
 	))
 
-	// swagger:route GET /api/questions/{Category} questions GetQuestionRequest
+	// swagger:route GET /api/{Category}/questions questions GetQuestionRequest
 	// Add new question based on category
 	//
 	// Security:
@@ -320,6 +321,29 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		transport.DecodeGetAllQuestionsRequest,
 		transport.EncodeGetAllQuestionsResponse,
 		Opts[1],
+	))
+
+	// swagger:route GET /api/question/types questions listQuestionTypes
+	// Get all question types
+	//
+	// Security:
+	// 	- Bearer: []
+	//
+	// securityDefinitions:
+	//   Bearer:
+	//     type: apiKey
+	//     name: Authorization
+	//     in: header
+	//
+	// responses:
+	//  500: InternalServerErrorResponse
+	//  401: UnAuthorizedAccessResponse
+	//  200: QuestionTypeResponse
+	r.Methods(http.MethodGet).Path(constants.GET_QUESTION_TYPE).Handler(httptransport.NewServer(
+		endpoints.GetAllQuestionTypesEndpoint,
+		transport.DecodeGetAllQuestionTypesRequest,
+		transport.EncodeGetAllQuestionTypesResponse,
+		Opts[5],
 	))
 
 	// swagger:route POST /api/category category CategoryRequest

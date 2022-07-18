@@ -126,77 +126,19 @@
         }
       }
     },
-    "/api/question/{Category}": {
-      "post": {
-        "security": [
-          {
-            "SecurityDefinitions": []
-          },
-          {
-            "bearer": []
-          },
-          {
-            "type": [
-              "apiKey"
-            ]
-          },
-          {
-            "name": [
-              "Authorization"
-            ]
-          },
-          {
-            "in": [
-              "header"
-            ]
-          }
-        ],
-        "description": "Add new question based on category",
-        "tags": [
-          "questions"
-        ],
-        "operationId": "QuestionRequest",
-        "parameters": [
-          {
-            "type": "string",
-            "example": "go",
-            "name": "Category",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "Body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/QuestionRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/SuccessResponse"
-          },
-          "400": {
-            "$ref": "#/responses/BadRequestErrorResponse"
-          },
-          "409": {
-            "$ref": "#/responses/ConflictErrorResponse"
-          },
-          "500": {
-            "$ref": "#/responses/InternalServerErrorResponse"
-          }
-        }
-      }
-    },
-    "/api/questions/{Category}": {
+    "/api/question/types": {
       "get": {
         "security": [
           {
-            "SecurityDefinitions": []
+            "Bearer": [
+              "[]"
+            ]
           },
           {
-            "bearer": []
+            "securityDefinitions": []
+          },
+          {
+            "Bearer": []
           },
           {
             "type": [
@@ -214,90 +156,17 @@
             ]
           }
         ],
-        "description": "Add new question based on category",
+        "description": "Get all question types",
         "tags": [
           "questions"
         ],
-        "operationId": "GetQuestionRequest",
-        "parameters": [
-          {
-            "type": "string",
-            "example": "go",
-            "name": "Category",
-            "in": "path",
-            "required": true
-          }
-        ],
+        "operationId": "listQuestionTypes",
         "responses": {
           "200": {
-            "$ref": "#/responses/QuestionsResponse"
+            "$ref": "#/responses/QuestionTypeResponse"
           },
-          "400": {
-            "$ref": "#/responses/BadRequestErrorResponse"
-          },
-          "409": {
-            "$ref": "#/responses/ConflictErrorResponse"
-          },
-          "500": {
-            "$ref": "#/responses/InternalServerErrorResponse"
-          }
-        }
-      },
-      "post": {
-        "security": [
-          {
-            "SecurityDefinitions": []
-          },
-          {
-            "bearer": []
-          },
-          {
-            "type": [
-              "apiKey"
-            ]
-          },
-          {
-            "name": [
-              "Authorization"
-            ]
-          },
-          {
-            "in": [
-              "header"
-            ]
-          }
-        ],
-        "description": "Fetch all categories",
-        "tags": [
-          "questions"
-        ],
-        "operationId": "QuestionsRequest",
-        "parameters": [
-          {
-            "type": "string",
-            "example": "go",
-            "name": "Category",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "Body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/QuestionRequest"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/SuccessResponse"
-          },
-          "400": {
-            "$ref": "#/responses/BadRequestErrorResponse"
+          "401": {
+            "$ref": "#/responses/UnAuthorizedAccessResponse"
           },
           "500": {
             "$ref": "#/responses/InternalServerErrorResponse"
@@ -798,6 +667,185 @@
           }
         }
       }
+    },
+    "/api/{Category}/question": {
+      "post": {
+        "security": [
+          {
+            "SecurityDefinitions": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
+            ]
+          }
+        ],
+        "description": "Add new question based on category",
+        "tags": [
+          "questions"
+        ],
+        "operationId": "QuestionRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "go",
+            "name": "Category",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/QuestionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/ConflictErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    },
+    "/api/{Category}/questions": {
+      "get": {
+        "security": [
+          {
+            "SecurityDefinitions": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
+            ]
+          }
+        ],
+        "description": "Add new question based on category",
+        "tags": [
+          "questions"
+        ],
+        "operationId": "GetQuestionRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "go",
+            "name": "Category",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/QuestionsResponse"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/ConflictErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "SecurityDefinitions": []
+          },
+          {
+            "bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
+            ]
+          }
+        ],
+        "description": "Fetch all categories",
+        "tags": [
+          "questions"
+        ],
+        "operationId": "QuestionsRequest",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "go",
+            "name": "Category",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/QuestionRequest"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -934,7 +982,7 @@
           "type": "integer",
           "format": "int64",
           "x-go-name": "Status",
-          "example": 401
+          "example": 400
         },
         "timestamp": {
           "type": "string",
@@ -942,7 +990,7 @@
           "example": "2022-05-20 16:59:05"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/auth"
     },
     "LoginRequest": {
       "description": "login Request",
@@ -1177,6 +1225,17 @@
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/response/question"
     },
+    "QuestionTypeResponse": {
+      "type": "object",
+      "properties": {
+        "questionType": {
+          "type": "string",
+          "x-go-name": "QuestionType",
+          "example": "radio"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/questionType"
+    },
     "Role": {
       "description": "User Response",
       "type": "object",
@@ -1362,7 +1421,7 @@
           "example": "admin"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/user"
     },
     "UserRevokeSuccessResponse": {
       "description": "Success response",
@@ -1460,6 +1519,15 @@
       "description": "",
       "schema": {
         "$ref": "#/definitions/PasswordResetSuccessResponse"
+      }
+    },
+    "QuestionTypeResponse": {
+      "description": "List of questions types",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/QuestionTypeResponse"
+        }
       }
     },
     "QuestionsResponse": {

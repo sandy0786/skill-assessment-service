@@ -2,7 +2,10 @@ package constants
 
 // api endpoints
 const (
+
+	// misceleneous
 	STATUS_PATH = "/api/health" // GET
+	DOC_PATH    = "/docs"       // GET
 
 	// users
 	USER                = "/api/user"                     // POST
@@ -12,15 +15,17 @@ const (
 	RESET_PASSWORD      = "/api/user/{username}/password" // PUT
 	RESET_PASSWORD_USER = "/api/user/password/reset"      // PUT
 
-	//role
+	// role
 	All_ROLES = "/api/user/roles" // GET
 
-	// update roles
-	QUESTION       = "/api/question/{category}"  // POST
-	ALL_QUESTIONS  = "/api/questions/{category}" // GET|POST
-	CATEGORY       = "/api/category"             // POST
-	ALL_CATEGORIES = "/api/categories"           // GET
-	DOC_PATH       = "/docs"                     // GET
+	// questions
+	QUESTION          = "/api/{category}/question"  // POST
+	ALL_QUESTIONS     = "/api/{category}/questions" // GET|POST|PUT
+	GET_QUESTION_TYPE = "/api/question/types"       // GET
+
+	// Categories
+	CATEGORY       = "/api/category"   // POST
+	ALL_CATEGORIES = "/api/categories" // GET
 
 	// auth
 	LOGIN         = "/api/user/login"    // POST

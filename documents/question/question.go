@@ -14,6 +14,7 @@ type Question struct {
 	Options      []string           `bson:"options"`
 	Answer       string             `bson:"answer"`
 	QuestionType string             `bson:"questionType"`
+	Marks        int                `bson:"marks"`
 	Author       string             `bson:"author"`
 	Deleted      bool               `bson:"deleted"`
 	DeletedBy    string             `bson:"deletedBy"`

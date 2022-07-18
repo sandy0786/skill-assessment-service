@@ -7,6 +7,7 @@ import (
 	"log"
 
 	category "github.com/sandy0786/skill-assessment-service/dao/init/category"
+	questionType "github.com/sandy0786/skill-assessment-service/dao/init/questionType"
 	role "github.com/sandy0786/skill-assessment-service/dao/init/role"
 	user "github.com/sandy0786/skill-assessment-service/dao/init/user"
 	database "github.com/sandy0786/skill-assessment-service/database"
@@ -60,6 +61,17 @@ func InitializeMongoMetadataObject() MongoMetadata {
 				role.AdminRole,
 				role.ManagerRole,
 				role.GuestRole,
+			},
+		},
+		{
+			collection:        questionType.QuestionTypeCollectionName,
+			validatorFilePath: questionType.QuestionTypeValidatorFilePath,
+			indexes: []mongo.IndexModel{
+				questionType.QuestionTypeIndexRoleName,
+			},
+			documents: []interface{}{
+				questionType.CheckboxQT,
+				questionType.RadioQT,
 			},
 		},
 	}
