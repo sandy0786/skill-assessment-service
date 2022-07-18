@@ -7,6 +7,7 @@ import (
 	"log"
 
 	category "github.com/sandy0786/skill-assessment-service/dao/init/category"
+	role "github.com/sandy0786/skill-assessment-service/dao/init/role"
 	user "github.com/sandy0786/skill-assessment-service/dao/init/user"
 	database "github.com/sandy0786/skill-assessment-service/database"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -48,6 +49,18 @@ func InitializeMongoMetadataObject() MongoMetadata {
 				category.CollectionNameIndex,
 			},
 			documents: []interface{}{},
+		},
+		{
+			collection:        role.RoleCollectionName,
+			validatorFilePath: role.RoleValidatorFilePath,
+			indexes: []mongo.IndexModel{
+				role.RoleIndexRoleName,
+			},
+			documents: []interface{}{
+				role.AdminRole,
+				role.ManagerRole,
+				role.GuestRole,
+			},
 		},
 	}
 

@@ -1,0 +1,25 @@
+{
+    "$jsonSchema": {
+        "bsonType": "object",
+        "required": [
+            "role",
+            "createdAt",
+            "updatedAt"
+        ],
+        "properties": {
+            "role": {
+                "bsonType": "string",
+                "minLength": 3,
+                "description": "must be an string with atlease 3 characters and is required"
+            },
+            "CreatedAt": {
+                "bsonType": "date",
+                "description": "must be created date and required"
+            },
+            "UpdatedAt": {
+                "bsonType": "date",
+                "description": "must be updated date and required"
+            }
+        }
+    }
+}

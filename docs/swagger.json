@@ -483,7 +483,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/ResetUserPasswordRequest"
+            "$ref": "#/responses/LoginResponse"
           },
           "400": {
             "$ref": "#/responses/BadRequestErrorResponse"
@@ -493,6 +493,54 @@
           },
           "404": {
             "$ref": "#/responses/NotFoundErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    },
+    "/api/user/roles": {
+      "get": {
+        "security": [
+          {
+            "Bearer": [
+              "[]"
+            ]
+          },
+          {
+            "securityDefinitions": []
+          },
+          {
+            "Bearer": []
+          },
+          {
+            "type": [
+              "apiKey"
+            ]
+          },
+          {
+            "name": [
+              "Authorization"
+            ]
+          },
+          {
+            "in": [
+              "header"
+            ]
+          }
+        ],
+        "description": "Get all roles",
+        "tags": [
+          "admin"
+        ],
+        "operationId": "listRoles",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/RolesResponse"
+          },
+          "401": {
+            "$ref": "#/responses/UnAuthorizedAccessResponse"
           },
           "500": {
             "$ref": "#/responses/InternalServerErrorResponse"
@@ -619,7 +667,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/ResetUserPasswordRequest"
+            "$ref": "#/responses/ResetUserPasswordResponse"
           },
           "400": {
             "$ref": "#/responses/BadRequestErrorResponse"
@@ -886,7 +934,7 @@
           "type": "integer",
           "format": "int64",
           "x-go-name": "Status",
-          "example": 400
+          "example": 401
         },
         "timestamp": {
           "type": "string",
@@ -894,7 +942,7 @@
           "example": "2022-05-20 16:59:05"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/auth"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
     },
     "LoginRequest": {
       "description": "login Request",
@@ -1128,6 +1176,18 @@
         }
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/response/question"
+    },
+    "Role": {
+      "description": "User Response",
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string",
+          "x-go-name": "Role",
+          "example": "admin"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/role"
     },
     "SuccessResponse": {
       "description": "Success response",
@@ -1415,6 +1475,15 @@
       "description": "",
       "schema": {
         "$ref": "#/definitions/PasswordResetSuccess"
+      }
+    },
+    "RolesResponse": {
+      "description": "List of Roles",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Role"
+        }
       }
     },
     "SuccessResponse": {

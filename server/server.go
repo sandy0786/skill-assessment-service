@@ -2,15 +2,19 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/casbin/casbin"
 	"github.com/rs/cors"
 	config "github.com/sandy0786/skill-assessment-service/configuration"
 	constants "github.com/sandy0786/skill-assessment-service/constants"
 	endpoint "github.com/sandy0786/skill-assessment-service/endpoint"
+	globalErr "github.com/sandy0786/skill-assessment-service/errors"
+	jwtP "github.com/sandy0786/skill-assessment-service/jwt"
 	transport "github.com/sandy0786/skill-assessment-service/transport"
 
 	httptransport "github.com/go-kit/kit/transport/http"
@@ -29,6 +33,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		httptransport.ServerErrorEncoder(transport.QuestionErrorEncoder),
 		httptransport.ServerErrorEncoder(transport.CategoryErrorEncoder),
 		httptransport.ServerErrorEncoder(transport.AuthErrorEncoder),
+		httptransport.ServerErrorEncoder(transport.RoleErrorEncoder),
 	}
 
 	// swagger:route GET /api/health miscellaneous health
@@ -122,6 +127,29 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[0],
 	))
 
+	// swagger:route GET /api/user/roles admin listRoles
+	// Get all roles
+	//
+	// Security:
+	// 	- Bearer: []
+	//
+	// securityDefinitions:
+	//   Bearer:
+	//     type: apiKey
+	//     name: Authorization
+	//     in: header
+	//
+	// responses:
+	//  500: InternalServerErrorResponse
+	//  401: UnAuthorizedAccessResponse
+	//  200: RolesResponse
+	r.Methods(http.MethodGet).Path(constants.All_ROLES).Handler(httptransport.NewServer(
+		endpoints.GetAllRolesEndpoint,
+		transport.DecodeGetAllRolesRequest,
+		transport.EncodeGetAllRolesResponse,
+		Opts[4],
+	))
+
 	// swagger:route PUT /api/user/{Username}/revoke admin RevokeUserRequest
 	// Revoke user
 	//
@@ -190,7 +218,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	//  500: InternalServerErrorResponse
 	//  400: BadRequestErrorResponse
 	//  401: UnAuthorizedAccessResponse
-	//  200: ResetUserPasswordResponse
+	//  200: LoginResponse
 	r.Methods(http.MethodPut).Path(constants.RESET_PASSWORD_USER).Handler(httptransport.NewServer(
 		endpoints.ResetUserPasswordEndpoint,
 		transport.DecodeUserPasswordResetRequest,
@@ -368,66 +396,60 @@ func commonMiddleWare(next http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
 
-		next.ServeHTTP(w, r)
-		// Authorizer()
+		err := Authorizer(w, r)
+		if err != (globalErr.GlobalError{}) {
+			w.WriteHeader(err.Status)
+			json.NewEncoder(w).Encode(err)
+		} else {
+			next.ServeHTTP(w, r)
+		}
 	})
 }
 
-func Authorizer(e *casbin.Enforcer) func(next http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		fn := func(w http.ResponseWriter, r *http.Request) {
-			// role := session.GetString(r, "role")
-			// if err != nil {
-			//     writeError(http.StatusInternalServerError, "ERROR", w, err)
-			//     return
-			// }
+func Authorizer(w http.ResponseWriter, r *http.Request) globalErr.GlobalError {
 
-			// if role == "" {
-			// role = "anonymous"
-			// }
-			// setup casbin auth rules
-			authEnforcer, err := casbin.NewEnforcerSafe("./configuration/conf/auth_model.conf", "./configuration/conf/policy.csv")
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			log.Println("authEnforcer >> ", authEnforcer)
-
-			log.Println("authorizer >>>>>")
-			role := "admin"
-
-			// if it's a member, check if the user still exists
-			// if role == "member" {
-			// 	uid, err := session.GetInt(r, "userID")
-			// 	if err != nil {
-			// 		writeError(http.StatusInternalServerError, "ERROR", w, err)
-			// 		return
-			// 	}
-			// 	exists := users.Exists(uid)
-			// 	if !exists {
-			// 		writeError(http.StatusForbidden, "FORBIDDEN", w, errors.New("user does not exist"))
-			// 		return
-			// 	}
-			// }
-
-			// casbin rule enforcing
-			res, err := e.EnforceSafe(role, r.URL.Path, r.Method)
-			if err != nil {
-				// writeError(http.StatusInternalServerError, "ERROR", w, err)
-				log.Println("1 >> ", err)
-				return
-			}
-			if res {
-				next.ServeHTTP(w, r)
-			} else {
-				// writeError(http.StatusForbidden, "FORBIDDEN", w, errors.New("unauthorized"))
-				log.Println("2 >> ", err)
-				return
-			}
+	var claims *jwtP.Claims
+	var tokenErr globalErr.GlobalError
+	if strings.Contains(r.RequestURI, "/login") || strings.Contains(r.RequestURI, "/health") || strings.Contains(r.RequestURI, "/docs") {
+		claims = &jwtP.Claims{
+			Role: "anonymous",
+		}
+	} else {
+		// verify token
+		claims, tokenErr = jwtP.VerifyToken(r)
+		if tokenErr != (globalErr.GlobalError{}) {
+			return tokenErr
 		}
 
-		return http.HandlerFunc(fn)
 	}
+
+	// setup casbin auth rules
+	authEnforcer, err := casbin.NewEnforcerSafe("./configuration/conf/auth/auth_model.conf", "./configuration/conf/auth/policy.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// casbin rule enforcing
+	res, err := authEnforcer.EnforceSafe(claims.Role, r.URL.Path, r.Method)
+	if err != nil {
+		internalServerError := globalErr.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusInternalServerError,
+			Message:   "Something went wrong",
+		}
+		return internalServerError
+	}
+	if res {
+		// next.ServeHTTP(w, r)
+	} else {
+		gerr := globalErr.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusForbidden,
+			Message:   "User does not have access",
+		}
+		return gerr
+	}
+	return globalErr.GlobalError{}
 }
 
 //CreateNewServer is a function to return server

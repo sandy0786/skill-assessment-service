@@ -10,9 +10,10 @@ const (
 	ALL_USERS           = "/api/users"                    // GET
 	REVOKE_USER         = "/api/user/{username}/revoke"   // PUT
 	RESET_PASSWORD      = "/api/user/{username}/password" // PUT
-	LOGIN               = "/api/user/login"               // POST
-	LOGOUT              = "/api/user/logout"              // POST
 	RESET_PASSWORD_USER = "/api/user/password/reset"      // PUT
+
+	//role
+	All_ROLES = "/api/user/roles" // GET
 
 	// update roles
 	QUESTION       = "/api/question/{category}"  // POST
@@ -21,6 +22,8 @@ const (
 	ALL_CATEGORIES = "/api/categories"           // GET
 	DOC_PATH       = "/docs"                     // GET
 
-	// token refresh
+	// auth
+	LOGIN         = "/api/user/login"    // POST
+	LOGOUT        = "/api/user/logout"   // POST
 	REFRESH_TOKEN = "/api/token/refresh" // POST
 )

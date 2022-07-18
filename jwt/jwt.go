@@ -19,7 +19,7 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
-func VerifyToken(r *http.Request) (*Claims, error) {
+func VerifyToken(r *http.Request) (*Claims, err.GlobalError) {
 	if len(r.Header["Authorization"]) == 0 {
 		return &Claims{}, err.GlobalError{
 			TimeStamp: time.Now().UTC().String()[0:19],
@@ -67,5 +67,5 @@ func VerifyToken(r *http.Request) (*Claims, error) {
 		}
 	}
 
-	return claims, nil
+	return claims, err.GlobalError{}
 }

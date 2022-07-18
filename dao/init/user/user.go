@@ -28,7 +28,7 @@ var UserIndexEmail = mongo.IndexModel{
 }
 
 var AdminUser = userModel.User{
-	ID:        primitive.ObjectID{},
+	ID:        primitive.NewObjectID(),
 	CreatedAt: time.Now().UTC(),
 	UpdatedAt: time.Now().UTC(),
 	Username:  "admin",

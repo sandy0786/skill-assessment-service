@@ -28,6 +28,7 @@ import (
 	categoryDao "github.com/sandy0786/skill-assessment-service/dao/category"
 	initDatabase "github.com/sandy0786/skill-assessment-service/dao/init"
 	questionDao "github.com/sandy0786/skill-assessment-service/dao/question"
+	roleDao "github.com/sandy0786/skill-assessment-service/dao/role"
 	userDao "github.com/sandy0786/skill-assessment-service/dao/user"
 	database "github.com/sandy0786/skill-assessment-service/database"
 	endpoint "github.com/sandy0786/skill-assessment-service/endpoint"
@@ -79,12 +80,14 @@ func main() {
 	qsnDao := questionDao.NewQuestionDAO(dbObj, "questions")
 	ctgDao := categoryDao.NewCategoryDAO(dbObj, "categories")
 	authhDao := authDao.NewAuthDAO(dbObj, "users")
+	roleDao := roleDao.NewRoleDAO(dbObj, "role")
 
 	// create service
 	userSrv := service.NewUserService(configobj, empDao)
 	qsnSrv := service.NewQuestionService(configobj, qsnDao)
 	ctgSrv := service.NewCategoryService(configobj, ctgDao)
 	authSrv := service.NewAuthService(configobj, authhDao)
+	roleSrv := service.NewRoleService(configobj, roleDao)
 
 	errChan := make(chan error)
 
@@ -104,6 +107,7 @@ func main() {
 		GetAllCategoriesEndpoint:    endpoint.MakeGetAllCategoriesEndpoint(ctgSrv),
 		RefreshTokenEndpoint:        endpoint.MakeRefreshTokenEndpoint(authSrv),
 		ResetUserPasswordEndpoint:   endpoint.MakeResetPasswordEndpoint(userSrv),
+		GetAllRolesEndpoint:         endpoint.MakeGetAllRolesEndpoint(roleSrv),
 	}
 
 	// HTTP transport

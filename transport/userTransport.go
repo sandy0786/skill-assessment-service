@@ -9,9 +9,8 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/casbin/casbin"
 	userDTO "github.com/sandy0786/skill-assessment-service/dto/user"
-	err "github.com/sandy0786/skill-assessment-service/errors"
+	globalErr "github.com/sandy0786/skill-assessment-service/errors"
 	jwtP "github.com/sandy0786/skill-assessment-service/jwt"
 	userRequest "github.com/sandy0786/skill-assessment-service/request/user"
 	userResponse "github.com/sandy0786/skill-assessment-service/response/user"
@@ -46,64 +45,65 @@ func DecodeAddUserRequest(ctx context.Context, r *http.Request) (interface{}, er
 	log.Println("transport:DecodeAddUserRequest")
 
 	// verify token
-	role, tokenErr := jwtP.VerifyToken(r)
-	if tokenErr != nil {
+	_, tokenErr := jwtP.VerifyToken(r)
+	if tokenErr != (globalErr.GlobalError{}) {
 		return r, tokenErr
 	}
 
-	///////////////////
-	authEnforcer, authErr := casbin.NewEnforcerSafe("./configuration/conf/auth/auth_model.conf", "./configuration/conf/auth/policy.csv")
-	if authErr != nil {
-		log.Fatal(authErr)
-	}
-
-	// log.Println("authEnforcer >> ", authEnforcer)
-
-	log.Println("authorizer >>>>> ", role)
-	// role := "admin"
-
-	// if it's a member, check if the user still exists
-	// if role == "member" {
-	// 	uid, err := session.GetInt(r, "userID")
-	// 	if err != nil {
-	// 		writeError(http.StatusInternalServerError, "ERROR", w, err)
-	// 		return
-	// 	}
-	// 	exists := users.Exists(uid)
-	// 	if !exists {
-	// 		writeError(http.StatusForbidden, "FORBIDDEN", w, errors.New("user does not exist"))
-	// 		return
-	// 	}
-	// }
-
-	// casbin rule enforcing
-	res, err2 := authEnforcer.EnforceSafe(role, r.URL.Path, r.Method)
-	if err2 != nil {
-		// writeError(http.StatusInternalServerError, "ERROR", w, err)
-		log.Println("1 >> ", err2)
-		return r, err.GlobalError{
-			TimeStamp: time.Now().UTC().String()[0:19],
-			Status:    http.StatusInternalServerError,
-			Message:   "Something went wrong",
+	/*
+		///////////////////
+		authEnforcer, authErr := casbin.NewEnforcerSafe("./configuration/conf/auth/auth_model.conf", "./configuration/conf/auth/policy.csv")
+		if authErr != nil {
+			log.Fatal(authErr)
 		}
-		// return
-	}
-	if res {
-		log.Println("2 >> ", err2)
-		// next.ServeHTTP(w, r)
-	} else {
-		// writeError(http.StatusForbidden, "FORBIDDEN", w, errors.New("unauthorized"))
-		log.Println("3 >> ", err2)
-		return r, err.GlobalError{
-			TimeStamp: time.Now().UTC().String()[0:19],
-			Status:    http.StatusForbidden,
-			Message:   "User is not authorized",
+
+		// log.Println("authEnforcer >> ", authEnforcer)
+
+		log.Println("authorizer >>>>> ", role)
+		// role := "admin"
+
+		// if it's a member, check if the user still exists
+		// if role == "member" {
+		// 	uid, err := session.GetInt(r, "userID")
+		// 	if err != nil {
+		// 		writeError(http.StatusInternalServerError, "ERROR", w, err)
+		// 		return
+		// 	}
+		// 	exists := users.Exists(uid)
+		// 	if !exists {
+		// 		writeError(http.StatusForbidden, "FORBIDDEN", w, errors.New("user does not exist"))
+		// 		return
+		// 	}
+		// }
+
+		// casbin rule enforcing
+		res, err2 := authEnforcer.EnforceSafe(role, r.URL.Path, r.Method)
+		if err2 != nil {
+			// writeError(http.StatusInternalServerError, "ERROR", w, err)
+			log.Println("1 >> ", err2)
+			return r, err.GlobalError{
+				TimeStamp: time.Now().UTC().String()[0:19],
+				Status:    http.StatusInternalServerError,
+				Message:   "Something went wrong",
+			}
+			// return
 		}
-		// return
-	}
+		if res {
+			log.Println("2 >> ", err2)
+			// next.ServeHTTP(w, r)
+		} else {
+			// writeError(http.StatusForbidden, "FORBIDDEN", w, errors.New("unauthorized"))
+			log.Println("3 >> ", err2)
+			return r, err.GlobalError{
+				TimeStamp: time.Now().UTC().String()[0:19],
+				Status:    http.StatusForbidden,
+				Message:   "User is not authorized",
+			}
+			// return
+		}
 
-	///////////////////
-
+		///////////////////
+	*/
 	var uRequest userRequest.UserRequest
 	decodeErr := json.NewDecoder(r.Body).Decode(&uRequest)
 	if decodeErr != nil {
@@ -113,7 +113,7 @@ func DecodeAddUserRequest(ctx context.Context, r *http.Request) (interface{}, er
 		} else {
 			errorMessage = "Request body parse error"
 		}
-		return uRequest, err.GlobalError{
+		return uRequest, globalErr.GlobalError{
 			TimeStamp: time.Now().UTC().String()[0:19],
 			Status:    http.StatusBadRequest,
 			Message:   errorMessage,
@@ -133,10 +133,10 @@ func DecodeGetAllUsersRequest(ctx context.Context, r *http.Request) (interface{}
 	log.Println("transport:DecodeGetAllUsersRequest")
 
 	// verify token
-	_, err := jwtP.VerifyToken(r)
-	if err != nil {
-		return r, err
-	}
+	// _, err := jwtP.VerifyToken(r)
+	// if err != (globalErr.GlobalError{}) {
+	// 	return r, err
+	// }
 
 	return r, nil
 }
@@ -159,7 +159,7 @@ func DecodeDeleteUserRequest(ctx context.Context, r *http.Request) (interface{},
 
 	// verify token
 	_, err := jwtP.VerifyToken(r)
-	if err != nil {
+	if err != (globalErr.GlobalError{}) {
 		return r, err
 	}
 
@@ -182,7 +182,7 @@ func DecodePasswordResetRequest(ctx context.Context, r *http.Request) (interface
 
 	// verify token
 	_, err := jwtP.VerifyToken(r)
-	if err != nil {
+	if err != (globalErr.GlobalError{}) {
 		return r, err
 	}
 
@@ -191,9 +191,9 @@ func DecodePasswordResetRequest(ctx context.Context, r *http.Request) (interface
 		return "", errors.New("Path variable 'username' not found")
 	}
 	var userDto userDTO.UserDTO
-	err = json.NewDecoder(r.Body).Decode(&userDto)
-	err = Validate.Struct(userDto)
-	log.Println("aa >> ", err)
+	err1 := json.NewDecoder(r.Body).Decode(&userDto)
+	err1 = Validate.Struct(userDto)
+	log.Println("aa >> ", err1)
 	return userDto, nil
 }
 
@@ -209,24 +209,24 @@ func DecodeUserPasswordResetRequest(ctx context.Context, r *http.Request) (inter
 
 	// verify token
 	claims, err := jwtP.VerifyToken(r)
-	if err != nil {
+	if err != (globalErr.GlobalError{}) {
 		return r, err
 	}
 
 	// username := claims.Username
 
 	var userDto userDTO.UserDTO
-	err = json.NewDecoder(r.Body).Decode(&userDto)
+	err1 := json.NewDecoder(r.Body).Decode(&userDto)
 	userDto.Username = claims.Username
-	err = Validate.Struct(userDto)
-	log.Println("aa >> ", err)
+	err1 = Validate.Struct(userDto)
+	log.Println("aa >> ", err1)
 	return userDto, nil
 }
 
 //ErrorEncoder will encode error to our format
 func ErrorEncoder(ctx context.Context, err1 error, w http.ResponseWriter) {
 	log.Println("transport:ErrorEncoder: Inside ErrorEncoder: ")
-	var globalError err.GlobalError
+	var globalError globalErr.GlobalError
 
 	// Return proper validation error message
 	if errorFields, ok := err1.(validator.ValidationErrors); ok {
@@ -243,15 +243,15 @@ func ErrorEncoder(ctx context.Context, err1 error, w http.ResponseWriter) {
 			message = "Provide valid role"
 		}
 
-		globalError = err.GlobalError{
+		globalError = globalErr.GlobalError{
 			TimeStamp: time.Now().UTC().String()[0:19],
 			Status:    http.StatusBadRequest,
 			Message:   message,
 		}
 	} else {
-		globalError, ok = err1.(err.GlobalError)
+		globalError, ok = err1.(globalErr.GlobalError)
 		if !ok {
-			globalError = err.GlobalError{
+			globalError = globalErr.GlobalError{
 				TimeStamp: time.Now().UTC().String()[0:19],
 				Status:    http.StatusInternalServerError,
 				Message:   "Something went wrong. Please try again after sometime",
