@@ -239,8 +239,8 @@ func ErrorEncoder(ctx context.Context, err1 error, w http.ResponseWriter) {
 			message = "Password should have the length of atleast 8 characters"
 		case "Email":
 			message = "Invalid email"
-		case "Role":
-			message = "Provide valid role"
+		case "RoleId":
+			message = "Provide valid roleId"
 		}
 
 		globalError = globalErr.GlobalError{

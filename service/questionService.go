@@ -12,17 +12,15 @@ import (
 	questionDTO "github.com/sandy0786/skill-assessment-service/dto/question"
 	questionResponse "github.com/sandy0786/skill-assessment-service/response/question"
 	successResponse "github.com/sandy0786/skill-assessment-service/response/success"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/jinzhu/copier"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type QuestionService interface {
-	// GetServiceStatus(context.Context) (string, error)
 	AddQuestion(context.Context, questionDTO.QuestionDTO) (successResponse.SuccessResponse, error)
 	AddMultipleQuestions(context.Context, questionDTO.QuestionsDTO) (successResponse.SuccessResponse, error)
 	GetAllQuestions(context.Context, string) ([]questionResponse.QuestionResponse, error)
-	// GetEmployeeById(context.Context, int64) (employeeResponse.EmployeeResponse, error)
 }
 
 // service for druid

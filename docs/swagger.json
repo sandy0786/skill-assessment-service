@@ -557,10 +557,15 @@
       "put": {
         "security": [
           {
-            "SecurityDefinitions": []
+            "Bearer": [
+              "[]"
+            ]
           },
           {
-            "bearer": []
+            "securityDefinitions": []
+          },
+          {
+            "Bearer": []
           },
           {
             "type": [
@@ -982,7 +987,7 @@
           "type": "integer",
           "format": "int64",
           "x-go-name": "Status",
-          "example": 400
+          "example": 401
         },
         "timestamp": {
           "type": "string",
@@ -990,7 +995,7 @@
           "example": "2022-05-20 16:59:05"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/auth"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
     },
     "LoginRequest": {
       "description": "login Request",
@@ -1122,9 +1127,8 @@
         "options",
         "answer",
         "questionType",
-        "author",
-        "deleted",
-        "deletedBy"
+        "marks",
+        "author"
       ],
       "properties": {
         "answer": {
@@ -1150,6 +1154,13 @@
           "type": "string",
           "x-go-name": "DeletedBy",
           "example": "admin"
+        },
+        "marks": {
+          "description": "Provide marks for this question",
+          "type": "number",
+          "format": "float",
+          "x-go-name": "Marks",
+          "example": 1
         },
         "options": {
           "description": "provide options to choose",
@@ -1240,6 +1251,11 @@
       "description": "User Response",
       "type": "object",
       "properties": {
+        "id": {
+          "type": "string",
+          "x-go-name": "ID",
+          "example": "62d6435f333f27963c162a05"
+        },
         "role": {
           "type": "string",
           "x-go-name": "Role",
@@ -1367,7 +1383,7 @@
         "username",
         "password",
         "email",
-        "role"
+        "roleId"
       ],
       "properties": {
         "email": {
@@ -1382,11 +1398,11 @@
           "minLength": 8,
           "x-go-name": "Password"
         },
-        "role": {
-          "description": "the role for this user",
+        "roleId": {
+          "description": "the roleId for this user",
           "type": "string",
           "x-go-name": "Role",
-          "example": "manager"
+          "example": "62d64f2142dac7953ac4ff32"
         },
         "username": {
           "description": "the username for this user",
@@ -1410,10 +1426,10 @@
           "x-go-name": "Email",
           "example": "admin@provider.com"
         },
-        "role": {
+        "roleId": {
           "type": "string",
           "x-go-name": "Role",
-          "example": "admin"
+          "example": "62d64f2142dac7953ac4ff31"
         },
         "username": {
           "type": "string",
@@ -1421,7 +1437,7 @@
           "example": "admin"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/user"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
     },
     "UserRevokeSuccessResponse": {
       "description": "Success response",

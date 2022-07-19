@@ -14,10 +14,10 @@ type UserRequest struct {
 	// required: true
 	// example: user@provider.com
 	Email string `json:"email" validate:"required,email"`
-	// the role for this user
+	// the roleId for this user
 	// required: true
-	// example: manager
-	Role string `json:"role" validate:"required,min=3"`
+	// example: 62d64f2142dac7953ac4ff32
+	Role string `json:"roleId" validate:"required"`
 }
 
 // User Request

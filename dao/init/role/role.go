@@ -20,8 +20,14 @@ var RoleIndexRoleName = mongo.IndexModel{
 	}, Options: options.Index().SetUnique(true),
 }
 
+var AdminObjId primitive.ObjectID
+
+func init() {
+	AdminObjId, _ = primitive.ObjectIDFromHex("62d6435f333f27963c162e01")
+}
+
 var AdminRole = roleModel.Role{
-	ID:        primitive.NewObjectID(),
+	ID:        AdminObjId,
 	CreatedAt: time.Now().UTC(),
 	UpdatedAt: time.Now().UTC(),
 	Role:      "admin",

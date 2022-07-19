@@ -18,18 +18,20 @@ type QuestionRequest struct {
 	// required: true
 	// example: checkbox/radio
 	QuestionType string `json:"questionType" validate:"required"`
+	// Provide marks for this question
+	// required: true
+	// example: 1.0
+	Marks float32 `json:"marks" validate:"required"`
 	// Provide username of the user who has created this question
 	// required: true
 	// example: admin
 	Author string `json:"author" validate:"required"`
 	// Is this question deleted?
-	// required: true
 	// example: false
-	Deleted bool `json:"deleted" validate:"required"`
+	Deleted bool `json:"deleted"`
 	// Provide username of the user who has deleted this question
-	// required: true
 	// example: admin
-	DeletedBy string `json:"deletedBy" validate:"required"`
+	DeletedBy string `json:"deletedBy"`
 }
 
 // swagger:parameters QuestionRequest

@@ -1,10 +1,10 @@
 package role
 
-// import "go.mongodb.org/mongo-driver/bson/primitive"
-
 // User Response
 // swagger:model
 type Role struct {
+	// example: 62d6435f333f27963c162a05
+	ID string `json:"id"`
 	// example: admin
 	Role string `json:"role"`
 }

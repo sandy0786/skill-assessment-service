@@ -9,8 +9,8 @@ type UserResponse struct {
 	Username string `json:"username"`
 	// example: admin@provider.com
 	Email string `json:"email"`
-	// example: admin
-	Role string `json:"role"`
+	// example: 62d64f2142dac7953ac4ff31
+	Role string `json:"roleId"`
 	// example: true
 	Active bool `json:"active"`
 }

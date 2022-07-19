@@ -22,6 +22,11 @@ type MongoMetadata []struct {
 	documents         []interface{}
 }
 
+func init() {
+	role.AdminRole.ID = role.AdminObjId
+	user.AdminUser.Role = role.AdminObjId
+}
+
 // var mongoMetadataObj MongoMetadata
 
 func InitializeMongoMetadataObject() MongoMetadata {
@@ -31,6 +36,18 @@ func InitializeMongoMetadataObject() MongoMetadata {
 		indexes           []mongo.IndexModel
 		documents         []interface{}
 	}{
+		{
+			collection:        role.RoleCollectionName,
+			validatorFilePath: role.RoleValidatorFilePath,
+			indexes: []mongo.IndexModel{
+				role.RoleIndexRoleName,
+			},
+			documents: []interface{}{
+				role.AdminRole,
+				role.ManagerRole,
+				role.GuestRole,
+			},
+		},
 		{
 			collection:        user.UserCollectionName,
 			validatorFilePath: user.UserValidatorFilePath,
@@ -50,18 +67,6 @@ func InitializeMongoMetadataObject() MongoMetadata {
 				category.CollectionNameIndex,
 			},
 			documents: []interface{}{},
-		},
-		{
-			collection:        role.RoleCollectionName,
-			validatorFilePath: role.RoleValidatorFilePath,
-			indexes: []mongo.IndexModel{
-				role.RoleIndexRoleName,
-			},
-			documents: []interface{}{
-				role.AdminRole,
-				role.ManagerRole,
-				role.GuestRole,
-			},
 		},
 		{
 			collection:        questionType.QuestionTypeCollectionName,
@@ -121,7 +126,7 @@ func InitMongoDBCollections(db database.DatabaseInterface, mongoMetadataObj Mong
 
 		// Insert required documents
 		for _, document := range metadata.documents {
-			mongoCollection.InsertOne(ctx, document)
+			_, _ = mongoCollection.InsertOne(ctx, document)
 		}
 
 	}

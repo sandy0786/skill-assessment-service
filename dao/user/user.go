@@ -102,7 +102,6 @@ func (u *userDAOImpl) RevokeByUserName(username string) (bool, error) {
 			{"$set", bson.D{{"active", true}}},
 		},
 	)
-	log.Println("Revoke user : ", err)
 	if err != nil {
 		return false, err
 	}

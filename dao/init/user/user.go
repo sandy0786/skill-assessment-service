@@ -27,6 +27,12 @@ var UserIndexEmail = mongo.IndexModel{
 	}, Options: options.Index().SetUnique(true),
 }
 
+var objId primitive.ObjectID
+
+func init() {
+	objId, _ = primitive.ObjectIDFromHex("62d6435f333f27963c162e02")
+}
+
 var AdminUser = userModel.User{
 	ID:        primitive.NewObjectID(),
 	CreatedAt: time.Now().UTC(),
@@ -34,6 +40,7 @@ var AdminUser = userModel.User{
 	Username:  "admin",
 	Password:  "admin@123",
 	Email:     "admin@admin.com",
-	Role:      "admin",
-	Active:    true,
+	Role:      objId,
+	// Role:   "admin",
+	Active: true,
 }

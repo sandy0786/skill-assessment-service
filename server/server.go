@@ -154,14 +154,14 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	// swagger:route PUT /api/user/{Username}/revoke admin RevokeUserRequest
 	// Revoke user
 	//
-	//     Security:
-	//     - bearer
+	// Security:
+	// 	- Bearer: []
 	//
-	//     SecurityDefinitions:
-	//     bearer:
-	//          type: apiKey
-	//          name: Authorization
-	//          in: header
+	// securityDefinitions:
+	//   Bearer:
+	//     type: apiKey
+	//     name: Authorization
+	//     in: header
 	//
 	// requests:
 	// responses:

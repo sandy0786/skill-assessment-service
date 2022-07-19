@@ -85,10 +85,10 @@ func main() {
 	questionTypeDao := questionTypeDao.NewQuestionTypeDAO(dbObj, "questionType")
 
 	// create service
-	userSrv := service.NewUserService(configobj, empDao)
+	userSrv := service.NewUserService(configobj, empDao, roleDao)
 	qsnSrv := service.NewQuestionService(configobj, qsnDao)
 	ctgSrv := service.NewCategoryService(configobj, ctgDao)
-	authSrv := service.NewAuthService(configobj, authhDao)
+	authSrv := service.NewAuthService(configobj, authhDao, roleDao)
 	roleSrv := service.NewRoleService(configobj, roleDao)
 	questionTypeSrv := service.NewQuestionTypeService(configobj, questionTypeDao)
 

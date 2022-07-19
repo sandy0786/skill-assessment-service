@@ -13,6 +13,7 @@ type User struct {
 	Username  string             `bson:"username"`
 	Password  string             `bson:"password"`
 	Email     string             `bson:"email,unique"`
-	Role      string             `bson:"role"`
+	Role      primitive.ObjectID `bson:"role"`
 	Active    bool               `bson:"active"`
+	// Role   string `bson:"role"`
 }

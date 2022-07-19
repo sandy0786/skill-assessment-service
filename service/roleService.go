@@ -7,8 +7,6 @@ import (
 	configuration "github.com/sandy0786/skill-assessment-service/configuration"
 	roleDao "github.com/sandy0786/skill-assessment-service/dao/role"
 	roleResponse "github.com/sandy0786/skill-assessment-service/response/role"
-
-	"github.com/jinzhu/copier"
 )
 
 type RoleService interface {
@@ -30,8 +28,15 @@ func NewRoleService(c configuration.ConfigurationInterface, dao roleDao.RoleDAO)
 
 func (r *roleService) GetAllRoles(context.Context) ([]roleResponse.Role, error) {
 	log.Println("Inside GetAllRoles")
-	var rolesResponse []roleResponse.Role
+	var rolesResponses []roleResponse.Role
 	roles, err := r.dao.GetAllRoles()
-	copier.Copy(&rolesResponse, &roles)
-	return rolesResponse, err
+	// copier.Copy(&rolesResponse, &roles)
+	for _, role := range roles {
+		rolesResponse := roleResponse.Role{
+			ID:   role.ID.Hex(),
+			Role: role.Role,
+		}
+		rolesResponses = append(rolesResponses, rolesResponse)
+	}
+	return rolesResponses, err
 }

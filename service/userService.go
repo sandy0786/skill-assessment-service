@@ -7,9 +7,11 @@ import (
 	"time"
 
 	configuration "github.com/sandy0786/skill-assessment-service/configuration"
+	roleDao "github.com/sandy0786/skill-assessment-service/dao/role"
 	userDao "github.com/sandy0786/skill-assessment-service/dao/user"
 	userDocument "github.com/sandy0786/skill-assessment-service/documents/user"
 	userDto "github.com/sandy0786/skill-assessment-service/dto/user"
+	globalErr "github.com/sandy0786/skill-assessment-service/errors"
 	userRequest "github.com/sandy0786/skill-assessment-service/request/user"
 	successResponse "github.com/sandy0786/skill-assessment-service/response/success"
 	userResponse "github.com/sandy0786/skill-assessment-service/response/user"
@@ -31,12 +33,14 @@ type UserService interface {
 type userService struct {
 	testServiceConfig configuration.ConfigurationInterface
 	dao               userDao.UserDAO
+	roleDao           roleDao.RoleDAO
 }
 
-func NewUserService(c configuration.ConfigurationInterface, dao userDao.UserDAO) *userService {
+func NewUserService(c configuration.ConfigurationInterface, dao userDao.UserDAO, roleDao roleDao.RoleDAO) *userService {
 	return &userService{
 		testServiceConfig: c,
 		dao:               dao,
+		roleDao:           roleDao,
 	}
 }
 
@@ -48,14 +52,25 @@ func (t *userService) GetServiceStatus(ctx context.Context) (string, error) {
 func (t *userService) AddUser(ctx context.Context, userRequest userRequest.UserRequest) (successResponse.SuccessResponse, error) {
 	log.Println("Inside Add user")
 	// var userResponse userResponse.UserSuccessResponse
+	isRoleValid := t.roleDao.ValidateRole(userRequest.Role)
+
+	if !isRoleValid {
+		return successResponse.SuccessResponse{}, globalErr.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusBadRequest,
+			Message:   "Invalid role",
+		}
+	}
+
 	var user userDocument.User
 	copier.Copy(&user, &userRequest)
 	user.CreatedAt = time.Now().UTC()
 	user.UpdatedAt = time.Now().UTC()
 	user.ID = primitive.NewObjectID()
 	user.Active = true
+	user.Role, _ = primitive.ObjectIDFromHex(userRequest.Role)
 	userCreated, err := t.dao.Save(&user)
-	// copier.Copy(&userResponse, &userRequest)
+
 	if userCreated {
 		return successResponse.SuccessResponse{
 			Status:    http.StatusOK,
@@ -70,7 +85,16 @@ func (t *userService) GetAllUsers(context.Context) ([]userResponse.UserResponse,
 	log.Println("Inside GetAllusers")
 	var userResponses []userResponse.UserResponse
 	users, err := t.dao.FindAll()
-	copier.Copy(&userResponses, &users)
+	// copier.Copy(&userResponses, &users)
+	for _, user := range users {
+		userResponse := userResponse.UserResponse{
+			Username: user.Username,
+			Email:    user.Email,
+			Active:   user.Active,
+			Role:     user.Role.Hex(),
+		}
+		userResponses = append(userResponses, userResponse)
+	}
 	return userResponses, err
 }
 

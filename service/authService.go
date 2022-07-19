@@ -8,6 +8,7 @@ import (
 
 	configuration "github.com/sandy0786/skill-assessment-service/configuration"
 	authDao "github.com/sandy0786/skill-assessment-service/dao/auth"
+	roleDao "github.com/sandy0786/skill-assessment-service/dao/role"
 	authDocument "github.com/sandy0786/skill-assessment-service/documents/auth"
 	err "github.com/sandy0786/skill-assessment-service/errors"
 	jwtP "github.com/sandy0786/skill-assessment-service/jwt"
@@ -26,14 +27,16 @@ type AuthService interface {
 
 // authentication and authorisation servvice
 type authService struct {
-	config configuration.ConfigurationInterface
-	dao    authDao.AuthDAO
+	config  configuration.ConfigurationInterface
+	dao     authDao.AuthDAO
+	roleDao roleDao.RoleDAO
 }
 
-func NewAuthService(c configuration.ConfigurationInterface, dao authDao.AuthDAO) *authService {
+func NewAuthService(c configuration.ConfigurationInterface, dao authDao.AuthDAO, roleDao roleDao.RoleDAO) *authService {
 	return &authService{
-		config: c,
-		dao:    dao,
+		config:  c,
+		dao:     dao,
+		roleDao: roleDao,
 	}
 }
 
@@ -42,8 +45,17 @@ func (a *authService) Login(ctx context.Context, userRequest authRequest.LoginRe
 	var authDoc authDocument.User
 	copier.Copy(&authDoc, &userRequest)
 	// user.Active = true
-	role, validUser, err := a.dao.Login(&authDoc)
+	user, validUser, err1 := a.dao.Login(&authDoc)
 	if validUser {
+		if !user.Active {
+			return authResponse.LoginResponse{}, err.GlobalError{
+				TimeStamp: time.Now().UTC().String()[0:19],
+				Status:    http.StatusUnauthorized,
+				Message:   "Account is disabled. Please contact administrator",
+			}
+		}
+		// get role from roleId
+		role, _ := a.roleDao.GetRoleById(user.Role)
 		// Declare the expiration time of the token
 		// here, we have kept it as 5 minutes
 		expirationTime := time.Now().Add(time.Duration(a.config.GetConfigDetails().Jwt.ExpiryTime) * time.Minute)
@@ -68,7 +80,7 @@ func (a *authService) Login(ctx context.Context, userRequest authRequest.LoginRe
 		}, err
 	}
 
-	return authResponse.LoginResponse{Token: ""}, err
+	return authResponse.LoginResponse{Token: ""}, err1
 }
 
 func (a *authService) Logout(_ context.Context) (authResponse.LoginResponse, error) {
