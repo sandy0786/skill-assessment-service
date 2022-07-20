@@ -11,15 +11,16 @@ import (
 	err "github.com/sandy0786/skill-assessment-service/errors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type UserDAO interface {
 	Save(*userDocument.User) (bool, error)
-	// FindById(int64) (userModel.User, error)
-	FindAll() ([]userDocument.User, error)
+	FindAll(*int64, *int64, string, string, int) ([]userDocument.User, error)
 	DeleteByUserName(string) (bool, error)
 	RevokeByUserName(string) (bool, error)
 	ResetUserPassword(string, string, string) (bool, error)
+	GetCount(string) (int64, error)
 }
 
 type userDAOImpl struct {
@@ -65,16 +66,25 @@ func (u *userDAOImpl) Save(user *userDocument.User) (bool, error) {
 	return true, nil
 }
 
-func (u *userDAOImpl) FindAll() ([]userDocument.User, error) {
+func (u *userDAOImpl) FindAll(start *int64, length *int64, username string, sortBy string, orderBy int) ([]userDocument.User, error) {
 	log.Println("FindAll Users")
 	var users []userDocument.User
-	cursor, err := u.mongoCollection.Find(u.db.GetMongoDbContext(), bson.M{})
+
+	sort := bson.M{}
+	if sortBy != "" && orderBy != 0 {
+		sort = bson.M{sortBy: orderBy}
+	}
+
+	opts := &options.FindOptions{
+		Limit: length,
+		Skip:  start,
+		Sort:  sort,
+	}
+	cursor, err := u.mongoCollection.Find(u.db.GetMongoDbContext(), bson.M{"username": bson.M{"$regex": username}}, opts)
 	if err != nil {
-		log.Println("error , ", err)
 		return users, err
 	}
 	if err = cursor.All(u.db.GetMongoDbContext(), &users); err != nil {
-		log.Println("error , ", err)
 		return users, err
 	}
 	return users, err
@@ -88,7 +98,7 @@ func (u *userDAOImpl) DeleteByUserName(username string) (bool, error) {
 			{"$set", bson.D{{"active", false}}},
 		},
 	)
-	log.Println("Delete user : ", err)
+
 	if err != nil {
 		return false, err
 	}
@@ -115,9 +125,18 @@ func (u *userDAOImpl) ResetUserPassword(username string, oldpassword string, new
 			{"$set", bson.D{{"password", newPassword}}},
 		},
 	)
-	// log.Println("Reset user password : ", err)
+
 	if err != nil {
 		return false, err
 	}
 	return true, err
+}
+
+func (u *userDAOImpl) GetCount(username string) (int64, error) {
+	log.Println("GetCount")
+	totalCount, err := u.mongoCollection.CountDocuments(u.db.GetMongoDbContext(), bson.M{"username": bson.M{"$regex": username}})
+	if err != nil {
+		return totalCount, err
+	}
+	return totalCount, err
 }

@@ -5,3 +5,11 @@ type UserDTO struct {
 	OldPassword string
 	NewPassword string
 }
+
+type UserPaginationDTO struct {
+	Search  string
+	Start   *int64
+	Length  *int64
+	SortBy  string
+	OrderBy int
+}

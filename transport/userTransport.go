@@ -50,60 +50,6 @@ func DecodeAddUserRequest(ctx context.Context, r *http.Request) (interface{}, er
 		return r, tokenErr
 	}
 
-	/*
-		///////////////////
-		authEnforcer, authErr := casbin.NewEnforcerSafe("./configuration/conf/auth/auth_model.conf", "./configuration/conf/auth/policy.csv")
-		if authErr != nil {
-			log.Fatal(authErr)
-		}
-
-		// log.Println("authEnforcer >> ", authEnforcer)
-
-		log.Println("authorizer >>>>> ", role)
-		// role := "admin"
-
-		// if it's a member, check if the user still exists
-		// if role == "member" {
-		// 	uid, err := session.GetInt(r, "userID")
-		// 	if err != nil {
-		// 		writeError(http.StatusInternalServerError, "ERROR", w, err)
-		// 		return
-		// 	}
-		// 	exists := users.Exists(uid)
-		// 	if !exists {
-		// 		writeError(http.StatusForbidden, "FORBIDDEN", w, errors.New("user does not exist"))
-		// 		return
-		// 	}
-		// }
-
-		// casbin rule enforcing
-		res, err2 := authEnforcer.EnforceSafe(role, r.URL.Path, r.Method)
-		if err2 != nil {
-			// writeError(http.StatusInternalServerError, "ERROR", w, err)
-			log.Println("1 >> ", err2)
-			return r, err.GlobalError{
-				TimeStamp: time.Now().UTC().String()[0:19],
-				Status:    http.StatusInternalServerError,
-				Message:   "Something went wrong",
-			}
-			// return
-		}
-		if res {
-			log.Println("2 >> ", err2)
-			// next.ServeHTTP(w, r)
-		} else {
-			// writeError(http.StatusForbidden, "FORBIDDEN", w, errors.New("unauthorized"))
-			log.Println("3 >> ", err2)
-			return r, err.GlobalError{
-				TimeStamp: time.Now().UTC().String()[0:19],
-				Status:    http.StatusForbidden,
-				Message:   "User is not authorized",
-			}
-			// return
-		}
-
-		///////////////////
-	*/
 	var uRequest userRequest.UserRequest
 	decodeErr := json.NewDecoder(r.Body).Decode(&uRequest)
 	if decodeErr != nil {
@@ -132,11 +78,93 @@ func EncodeAddUserResponse(ctx context.Context, w http.ResponseWriter, response 
 func DecodeGetAllUsersRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	log.Println("transport:DecodeGetAllUsersRequest")
 
-	// verify token
-	// _, err := jwtP.VerifyToken(r)
-	// if err != (globalErr.GlobalError{}) {
-	// 	return r, err
-	// }
+	/*
+		// verify query params
+		queryParamValues := r.URL.Query()
+
+		// validate query params
+		if len(queryParamValues["page"]) == 0 {
+			return nil, globalErr.GlobalError{
+				TimeStamp: time.Now().UTC().String()[0:19],
+				Status:    http.StatusBadRequest,
+				Message:   "page query param is required",
+			}
+		}
+
+		if len(queryParamValues["pageSize"]) == 0 {
+			return nil, globalErr.GlobalError{
+				TimeStamp: time.Now().UTC().String()[0:19],
+				Status:    http.StatusBadRequest,
+				Message:   "pageSize query param is required",
+			}
+		}
+
+		if len(queryParamValues["search"]) == 0 {
+			return nil, globalErr.GlobalError{
+				TimeStamp: time.Now().UTC().String()[0:19],
+				Status:    http.StatusBadRequest,
+				Message:   "search query param is required",
+			}
+		}
+
+		if len(queryParamValues["page"]) > 1 {
+			return nil, globalErr.GlobalError{
+				TimeStamp: time.Now().UTC().String()[0:19],
+				Status:    http.StatusBadRequest,
+				Message:   "page query param should be provided only once",
+			}
+		}
+
+		if len(queryParamValues["pageSize"]) > 1 {
+			return nil, globalErr.GlobalError{
+				TimeStamp: time.Now().UTC().String()[0:19],
+				Status:    http.StatusBadRequest,
+				Message:   "pageSize query param should be provided only once",
+			}
+		}
+
+		if len(queryParamValues["search"]) > 1 {
+			return nil, globalErr.GlobalError{
+				TimeStamp: time.Now().UTC().String()[0:19],
+				Status:    http.StatusBadRequest,
+				Message:   "search query param should be provided only once",
+			}
+		}
+
+		startQueryParam := queryParamValues["page"][0]
+		lengthQueryParam := queryParamValues["pageSize"][0]
+		orderByQueryParam := queryParamValues["orderBy"][0]
+
+		start, err := strconv.ParseInt(startQueryParam, 10, 64)
+		if err != nil {
+			log.Println("error wile converting page", err)
+		}
+
+		pageSize, err := strconv.ParseInt(lengthQueryParam, 10, 64)
+		if err != nil {
+			log.Println("error wile converting pageSize", err)
+		}
+
+		var orderBy = 1
+		if orderByQueryParam == "asc" {
+			orderBy = 1
+		} else if orderByQueryParam == "desc" {
+			orderBy = -1
+		}
+
+		start--
+
+		// create pagination object
+		pagination := userDTO.UserPaginationDTO{
+			Search:  queryParamValues["search"][0],
+			Start:   &start,
+			Length:  &pageSize,
+			SortBy:  queryParamValues["sortBy"][0],
+			OrderBy: orderBy,
+		}
+
+		log.Println("pagination >> ", pagination)
+	*/
 
 	return r, nil
 }
@@ -144,8 +172,8 @@ func DecodeGetAllUsersRequest(ctx context.Context, r *http.Request) (interface{}
 // EncodeGetAllUsersResponse - encodes status service response
 func EncodeGetAllUsersResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
 	log.Println("transport:EncodeGetAllUsersResponse")
-	resp := response.([]userResponse.UserResponse)
-	if len(resp) == 0 {
+	resp := response.(userResponse.UserResults)
+	if resp.TotalRecords == 0 {
 		// if no questions found return empty response with 404 status code
 		w.WriteHeader(http.StatusNotFound)
 		return json.NewEncoder(w).Encode([]interface{}{})

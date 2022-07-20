@@ -13,13 +13,23 @@ type UserResponse struct {
 	Role string `json:"roleId"`
 	// example: true
 	Active bool `json:"active"`
+	// example: 1658228764
+	CreatedAt int64 `json:"createdAt"`
+	// example: 1658228764
+	UpdatedAt int64 `json:"updatedAt"`
+}
+
+type UserResults struct {
+	Data []UserResponse `json:"data"`
+	// example: 1
+	TotalRecords int64 `json:"totalRecords"`
 }
 
 // List of Users
 // swagger:response UsersResponse
 type UsersResponse struct {
 	// in: body
-	Body []UserResponse
+	Body UserResults
 }
 
 // swagger:model

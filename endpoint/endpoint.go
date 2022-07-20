@@ -3,6 +3,7 @@ package endpoint
 import (
 	"context"
 	"log"
+	"net/http"
 
 	questionDTO "github.com/sandy0786/skill-assessment-service/dto/question"
 	userDTO "github.com/sandy0786/skill-assessment-service/dto/user"
@@ -62,20 +63,11 @@ func MakeAddUserEndpoint(srv service.UserService) endpoint.Endpoint {
 func MakeGetAllUsersEndpoint(srv service.UserService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		log.Println("MakeGetAllUsersEndpoint")
-		responseFromService, err := srv.GetAllUsers(ctx)
+		req := request.(*http.Request)
+		responseFromService, err := srv.GetAllUsers(ctx, req)
 		return responseFromService, err
 	}
 }
-
-// //MakeGetEmployeeByIdEndpoint returns response
-// func MakeGetEmployeeByIdEndpoint(srv service.Service) endpoint.Endpoint {
-// 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-// 		log.Println("MakeGetEmployeeByIdEndpoint")
-// 		id, err := strconv.ParseInt(request.(string), 10, 64)
-// 		responseFromService, err := srv.GetEmployeeById(ctx, id)
-// 		return responseFromService, err
-// 	}
-// }
 
 //MakeAddQuestionEndpoint returns response
 func MakeAddQuestionEndpoint(srv service.QuestionService) endpoint.Endpoint {

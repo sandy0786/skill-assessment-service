@@ -103,7 +103,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[0],
 	))
 
-	// swagger:route GET /api/users admin listUsers
+	// swagger:route GET /api/users admin GetAllUsersRequest
 	// Get all available users
 	//
 	// Security:

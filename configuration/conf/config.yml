@@ -25,3 +25,7 @@ corsOptions:
   origin: '*'
   debug: false
 
+# Enable sign in 
+user:
+  keepSigned: true
+

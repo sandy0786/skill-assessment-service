@@ -68,3 +68,32 @@ type ResetUserPasswordRequestSwagger struct {
 	// in: body
 	Body PasswordReset
 }
+
+// swagger:parameters GetAllUsersRequest
+type AllUsersRequestSwagger struct {
+	// Provide page number
+	// in: query
+	// required: true
+	// example: 1
+	Page int `json:"page"`
+	// Provide page size
+	// in: query
+	// required: true
+	// example: 10
+	PageSize int `json:"pageSize"`
+	// Provide search literal
+	// in: query
+	// required: true
+	// example: admin
+	Search string `json:"search"`
+	// Provide sort by field (username|email|createdAt|updatedAt)
+	// in: query
+	// required: false
+	// example: username
+	SortBy string `json:"sortBy"`
+	// provide order by asc|desc
+	// in: query
+	// required: false
+	// example: asc
+	OrderBy string `json:"orderBy"`
+}

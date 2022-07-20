@@ -4,6 +4,10 @@
 //  Schemes: http, https
 //  Host: localhost:8084
 //  BasePath: /
+//
+//  Consumes:
+//    - application/json
+//
 //  Produces:
 //    - application/json
 //
@@ -36,6 +40,7 @@ import (
 	server "github.com/sandy0786/skill-assessment-service/server"
 	service "github.com/sandy0786/skill-assessment-service/service"
 	transport "github.com/sandy0786/skill-assessment-service/transport"
+	userValidation "github.com/sandy0786/skill-assessment-service/validations/user"
 
 	"github.com/go-playground/validator"
 )
@@ -84,8 +89,11 @@ func main() {
 	roleDao := roleDao.NewRoleDAO(dbObj, "role")
 	questionTypeDao := questionTypeDao.NewQuestionTypeDAO(dbObj, "questionType")
 
+	// create validator
+	userValidator := userValidation.NewUserValidator()
+
 	// create service
-	userSrv := service.NewUserService(configobj, empDao, roleDao)
+	userSrv := service.NewUserService(configobj, empDao, roleDao, userValidator)
 	qsnSrv := service.NewQuestionService(configobj, qsnDao)
 	ctgSrv := service.NewCategoryService(configobj, ctgDao)
 	authSrv := service.NewAuthService(configobj, authhDao, roleDao)

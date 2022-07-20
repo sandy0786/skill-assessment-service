@@ -58,7 +58,7 @@ func (a *authService) Login(ctx context.Context, userRequest authRequest.LoginRe
 		role, _ := a.roleDao.GetRoleById(user.Role)
 		// Declare the expiration time of the token
 		// here, we have kept it as 5 minutes
-		expirationTime := time.Now().Add(time.Duration(a.config.GetConfigDetails().Jwt.ExpiryTime) * time.Minute)
+		expirationTime := time.Now().UTC().Add(time.Duration(a.config.GetConfigDetails().Jwt.ExpiryTime) * time.Minute)
 		// Create the JWT claims, which includes the username and expiry time
 		claims := &jwtP.Claims{
 			Username: userRequest.Username,
@@ -122,7 +122,7 @@ func (a *authService) Refresh(ctx context.Context, token string) (authResponse.L
 	}
 
 	// Now, create a new token for the current use, with a renewed expiration time
-	expirationTime := time.Now().Add(time.Duration(a.config.GetConfigDetails().Jwt.ExpiryTime) * time.Minute)
+	expirationTime := time.Now().UTC().Add(time.Duration(a.config.GetConfigDetails().Jwt.ExpiryTime) * time.Minute)
 	claims.ExpiresAt = expirationTime.Unix()
 	tempToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err1 := tempToken.SignedString([]byte(a.config.GetConfigDetails().Jwt.Secret))

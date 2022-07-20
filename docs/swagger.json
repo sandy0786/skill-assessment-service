@@ -1,4 +1,7 @@
 {
+  "consumes": [
+    "application/json"
+  ],
   "produces": [
     "application/json"
   ],
@@ -653,7 +656,54 @@
         "tags": [
           "admin"
         ],
-        "operationId": "listUsers",
+        "operationId": "GetAllUsersRequest",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "example": 1,
+            "x-go-name": "Page",
+            "description": "Provide page number",
+            "name": "page",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "example": 10,
+            "x-go-name": "PageSize",
+            "description": "Provide page size",
+            "name": "pageSize",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "admin",
+            "x-go-name": "Search",
+            "description": "Provide search literal",
+            "name": "search",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "username",
+            "x-go-name": "SortBy",
+            "description": "Provide sort by field (username|email|createdAt|updatedAt)",
+            "name": "sortBy",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "example": "asc",
+            "x-go-name": "OrderBy",
+            "description": "provide order by asc|desc",
+            "name": "orderBy",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "$ref": "#/responses/UsersResponse"
@@ -1421,6 +1471,12 @@
           "x-go-name": "Active",
           "example": true
         },
+        "createdAt": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "CreatedAt",
+          "example": 1658228764
+        },
         "email": {
           "type": "string",
           "x-go-name": "Email",
@@ -1431,10 +1487,35 @@
           "x-go-name": "Role",
           "example": "62d64f2142dac7953ac4ff31"
         },
+        "updatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "UpdatedAt",
+          "example": 1658228764
+        },
         "username": {
           "type": "string",
           "x-go-name": "Username",
           "example": "admin"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
+    },
+    "UserResults": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserResponse"
+          },
+          "x-go-name": "Data"
+        },
+        "totalRecords": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "TotalRecords",
+          "example": 1
         }
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
@@ -1609,10 +1690,7 @@
     "UsersResponse": {
       "description": "List of Users",
       "schema": {
-        "type": "array",
-        "items": {
-          "$ref": "#/definitions/UserResponse"
-        }
+        "$ref": "#/definitions/UserResults"
       }
     }
   },
