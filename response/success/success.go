@@ -13,6 +13,17 @@ type SuccessResponse struct {
 
 // Success response
 // swagger:model
+type SuccessCreatedResponse struct {
+	// example: 2022-05-20 16:59:05
+	TimeStamp string `json:"timestamp"`
+	// example: 201
+	Status int `json:"status"`
+	// example: Data saved successfully
+	Message string `json:"message"`
+}
+
+// Success response
+// swagger:model
 type UserDeleteSuccessResponse struct {
 	// example: 2022-05-20 16:59:05
 	TimeStamp string `json:"timestamp"`
@@ -75,4 +86,10 @@ type UserRevokeSuccessResp struct {
 type PasswordResetSuccessResp struct {
 	// in: body
 	Body PasswordResetSuccessResponse
+}
+
+// swagger:response DataSavedSuccessResponse
+type DataSavedSuccessResp struct {
+	// in: body
+	Body SuccessCreatedResponse
 }

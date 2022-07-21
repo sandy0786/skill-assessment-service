@@ -64,15 +64,25 @@ func (u *userValidator) ValidateGetAllUsersRequest(r *http.Request) (bool, error
 	}
 
 	// validate page number
-	flag, errMsg = u.ValidatorNumberType(query[constants.PAGE][0])
+	val, flag, errMsg := u.ValidatorNumberType(query[constants.PAGE][0])
 	if !flag {
 		return false, u.ValidationError(errMsg, constants.PAGE)
 	}
 
+	// Check for zero value
+	if val == 0 {
+		return false, u.ValidationError("ErrInvalidData", constants.PAGE)
+	}
+
 	// validate page size
-	flag, errMsg = u.ValidatorNumberType(query[constants.PAGE_SIZE][0])
+	val, flag, errMsg = u.ValidatorNumberType(query[constants.PAGE_SIZE][0])
 	if !flag {
 		return false, u.ValidationError(errMsg, constants.PAGE_SIZE)
+	}
+
+	// Check for zero value
+	if val == 0 {
+		return false, u.ValidationError("ErrInvalidData", constants.PAGE_SIZE)
 	}
 
 	// validate sortBy

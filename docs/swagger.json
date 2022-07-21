@@ -19,37 +19,59 @@
   "paths": {
     "/api/categories": {
       "get": {
-        "security": [
-          {
-            "SecurityDefinitions": []
-          },
-          {
-            "bearer": []
-          },
-          {
-            "type": [
-              "apiKey"
-            ]
-          },
-          {
-            "name": [
-              "Authorization"
-            ]
-          },
-          {
-            "in": [
-              "header"
-            ]
-          }
-        ],
         "description": "Fetch all categories",
         "tags": [
           "category"
         ],
-        "operationId": "listCategories",
+        "operationId": "GetAllCategoriesRequest",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "example": 1,
+            "x-go-name": "Page",
+            "description": "Provide page number",
+            "name": "page",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "example": 10,
+            "x-go-name": "PageSize",
+            "description": "Provide page size",
+            "name": "pageSize",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "admin",
+            "x-go-name": "Search",
+            "description": "Provide search literal",
+            "name": "search",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "example": "asc",
+            "x-go-name": "OrderBy",
+            "description": "provide order by asc|desc",
+            "name": "orderBy",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "$ref": "#/responses/CategoriesResponse"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "401": {
+            "$ref": "#/responses/UnAuthorizedAccessResponse"
           },
           "500": {
             "$ref": "#/responses/InternalServerErrorResponse"
@@ -59,29 +81,6 @@
     },
     "/api/category": {
       "post": {
-        "security": [
-          {
-            "SecurityDefinitions": []
-          },
-          {
-            "bearer": []
-          },
-          {
-            "type": [
-              "apiKey"
-            ]
-          },
-          {
-            "name": [
-              "Authorization"
-            ]
-          },
-          {
-            "in": [
-              "header"
-            ]
-          }
-        ],
         "description": "Add new category",
         "tags": [
           "category"
@@ -97,8 +96,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "$ref": "#/responses/SuccessResponse"
+          "201": {
+            "$ref": "#/responses/DataSavedSuccessResponse"
           },
           "400": {
             "$ref": "#/responses/BadRequestErrorResponse"
@@ -714,9 +713,6 @@
           "401": {
             "$ref": "#/responses/UnAuthorizedAccessResponse"
           },
-          "404": {
-            "$ref": "#/responses/NotFoundEmptyErrorResponse"
-          },
           "500": {
             "$ref": "#/responses/InternalServerErrorResponse"
           }
@@ -757,6 +753,7 @@
           {
             "type": "string",
             "example": "go",
+            "description": "Provide category",
             "name": "Category",
             "in": "path",
             "required": true
@@ -843,10 +840,15 @@
       "post": {
         "security": [
           {
-            "SecurityDefinitions": []
+            "Bearer": [
+              "[]"
+            ]
           },
           {
-            "bearer": []
+            "securityDefinitions": []
+          },
+          {
+            "Bearer": []
           },
           {
             "type": [
@@ -930,8 +932,7 @@
       "description": "Category Request",
       "type": "object",
       "required": [
-        "categoryName",
-        "collectionName",
+        "category",
         "author"
       ],
       "properties": {
@@ -942,18 +943,11 @@
           "x-go-name": "Author",
           "example": "admin"
         },
-        "categoryName": {
+        "category": {
           "description": "the category name",
           "type": "string",
           "minLength": 2,
-          "x-go-name": "CategoryName",
-          "example": "go"
-        },
-        "collectionName": {
-          "description": "the collection name",
-          "type": "string",
-          "minLength": 2,
-          "x-go-name": "CollectionName",
+          "x-go-name": "Category",
           "example": "go"
         }
       },
@@ -963,20 +957,45 @@
       "description": "List of Categories",
       "type": "object",
       "properties": {
-        "author": {
+        "category": {
           "type": "string",
-          "x-go-name": "Author",
-          "example": "admin"
-        },
-        "categoryName": {
-          "type": "string",
-          "x-go-name": "CategoryName",
+          "x-go-name": "Category",
           "example": "go"
         },
-        "collectionName": {
+        "createdAt": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "CreatedAt",
+          "example": 1658228764
+        },
+        "id": {
           "type": "string",
-          "x-go-name": "CollectionName",
-          "example": "go"
+          "x-go-name": "ID"
+        },
+        "updatedAt": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "UpdatedAt",
+          "example": 1658228764
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/category"
+    },
+    "CategoryResults": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CategoryResponse"
+          },
+          "x-go-name": "Data"
+        },
+        "totalRecords": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "TotalRecords",
+          "example": 1
         }
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/response/category"
@@ -1037,7 +1056,7 @@
           "type": "integer",
           "format": "int64",
           "x-go-name": "Status",
-          "example": 401
+          "example": 400
         },
         "timestamp": {
           "type": "string",
@@ -1045,7 +1064,7 @@
           "example": "2022-05-20 16:59:05"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/auth"
     },
     "LoginRequest": {
       "description": "login Request",
@@ -1314,6 +1333,29 @@
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/response/role"
     },
+    "SuccessCreatedResponse": {
+      "description": "Success response",
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "x-go-name": "Message",
+          "example": "Data saved successfully"
+        },
+        "status": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Status",
+          "example": 201
+        },
+        "timestamp": {
+          "type": "string",
+          "x-go-name": "TimeStamp",
+          "example": "2022-05-20 16:59:05"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/success"
+    },
     "SuccessResponse": {
       "description": "Success response",
       "type": "object",
@@ -1499,7 +1541,7 @@
           "example": "admin"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/user"
     },
     "UserResults": {
       "type": "object",
@@ -1554,16 +1596,19 @@
     "CategoriesResponse": {
       "description": "",
       "schema": {
-        "type": "array",
-        "items": {
-          "$ref": "#/definitions/CategoryResponse"
-        }
+        "$ref": "#/definitions/CategoryResults"
       }
     },
     "ConflictErrorResponse": {
       "description": "",
       "schema": {
         "$ref": "#/definitions/ConflictError"
+      }
+    },
+    "DataSavedSuccessResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/SuccessCreatedResponse"
       }
     },
     "HealthResponse": {

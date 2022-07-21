@@ -23,7 +23,7 @@ var ValidationErrors = map[string]string{
 	"ErrInvalidQueryParam":   "Invalid Query param : ",
 	"ErrMandatoryQueryParam": "Mandatory Query param missing : ",
 	"ErrQueryParamOccurence": "Multiple occurence of query param is not allowed : ",
-	"ErrInvalidData":         "Invalid data provided. Provide only number : ",
+	"ErrInvalidData":         "Invalid data provided. Provide number type data which is greater than '0' : ",
 	"ErrInvalidSortBy":       "Invalid order by literal provided. Supported only (username|email|createdAt|updatedAt) : ",
 	"ErrInvalidOrderBy":      "Invalid order by literal provided. Supported only (asc|desc) : ",
 	"ErrMissingSortBy":       "'orderBy' require 'sortBy' query param : ",

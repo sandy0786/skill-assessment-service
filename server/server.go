@@ -117,7 +117,6 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	//
 	// responses:
 	//  500: InternalServerErrorResponse
-	//  404: NotFoundEmptyErrorResponse
 	//  401: UnAuthorizedAccessResponse
 	//  400: BadRequestErrorResponse
 	//  200: UsersResponse
@@ -284,12 +283,14 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	// Fetch all categories
 	//
 	// Security:
-	// - bearer
-	// SecurityDefinitions:
-	// bearer:
-	//      type: apiKey
-	//      name: Authorization
-	//      in: header
+	// 	- Bearer: []
+	//
+	// securityDefinitions:
+	//   Bearer:
+	//     type: apiKey
+	//     name: Authorization
+	//     in: header
+	//
 	// responses:
 	//  500: InternalServerErrorResponse
 	//  400: BadRequestErrorResponse
@@ -349,18 +350,11 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	// swagger:route POST /api/category category CategoryRequest
 	// Add new category
 	//
-	// Security:
-	// - bearer
-	// SecurityDefinitions:
-	// bearer:
-	//      type: apiKey
-	//      name: Authorization
-	//      in: header
 	// responses:
 	//  500: InternalServerErrorResponse
 	//  400: BadRequestErrorResponse
 	//  409: ConflictErrorResponse
-	//  200: SuccessResponse
+	//  201: DataSavedSuccessResponse
 	r.Methods(http.MethodPost).Path(constants.CATEGORY).Handler(httptransport.NewServer(
 		endpoints.AddCategoryEndpoint,
 		transport.DecodeAddCategoryRequest,
@@ -368,19 +362,14 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[2],
 	))
 
-	// swagger:route GET /api/categories category listCategories
+	// swagger:route GET /api/categories category GetAllCategoriesRequest
 	// Fetch all categories
 	//
-	// Security:
-	// - bearer
-	// SecurityDefinitions:
-	// bearer:
-	//      type: apiKey
-	//      name: Authorization
-	//      in: header
 	// responses:
-	//  500: InternalServerErrorResponse
 	//  200: CategoriesResponse
+	//  400: BadRequestErrorResponse
+	//  401: UnAuthorizedAccessResponse
+	//  500: InternalServerErrorResponse
 	r.Methods(http.MethodGet).Path(constants.ALL_CATEGORIES).Handler(httptransport.NewServer(
 		endpoints.GetAllCategoriesEndpoint,
 		transport.DecodeGetAllCategoriesRequest,

@@ -64,7 +64,6 @@ func InitializeMongoMetadataObject() MongoMetadata {
 			validatorFilePath: category.ValidatorFilePath,
 			indexes: []mongo.IndexModel{
 				category.CategoryNameIndex,
-				category.CollectionNameIndex,
 			},
 			documents: []interface{}{},
 		},

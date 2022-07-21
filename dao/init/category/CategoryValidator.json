@@ -2,22 +2,16 @@
     "$jsonSchema": {
         "bsonType": "object",
         "required": [
-            "categoryName",
-            "collectionName",
+            "category",
             "author",
             "createdAt",
             "updatedAt"
         ],
         "properties": {
-            "categoryName": {
+            "category": {
                 "bsonType": "string",
                 "minLength": 2,
                 "description": "must be a string and is required"
-            },
-            "collectionName": {
-                "bsonType": "string",
-                "minLength": 2,
-                "description": "must be an string with atlease 1 character and is required"
             },
             "author": {
                 "bsonType": "string",

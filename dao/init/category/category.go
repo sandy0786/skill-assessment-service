@@ -12,13 +12,6 @@ var ValidatorFilePath = "./dao/init/category/CategoryValidator.json"
 // index model
 var CategoryNameIndex = mongo.IndexModel{
 	Keys: bson.M{
-		"categoryName": 1, // index in ascending order
-	}, Options: options.Index().SetUnique(true),
-}
-
-// index model
-var CollectionNameIndex = mongo.IndexModel{
-	Keys: bson.M{
-		"collectionName": 1, // index in ascending order
+		"category": 1, // index in ascending order
 	}, Options: options.Index().SetUnique(true),
 }

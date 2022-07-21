@@ -3,19 +3,27 @@ package category
 import (
 	"context"
 	"log"
+	"net/http"
+	"strings"
+	"time"
 
 	Database "github.com/sandy0786/skill-assessment-service/database"
 	categoryDocument "github.com/sandy0786/skill-assessment-service/documents/category"
+	categoryDTO "github.com/sandy0786/skill-assessment-service/dto/category"
+	err "github.com/sandy0786/skill-assessment-service/errors"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type CategoryDAO interface {
 	Save(*categoryDocument.Category) (bool, error)
 	// SaveAll([]questionDocument.Question) (bool, error)
 	// FindById(int64) (userModel.User, error)
-	FindAll() ([]categoryDocument.Category, error)
-	CreateCollection(string) (*categoryDAOImpl, error)
+	FindAll(categoryDTO.Pagination) ([]categoryDocument.Category, error)
+	// CreateCollection(string) (*categoryDAOImpl, error)
+	GetCount(string) (int64, error)
 }
 
 type categoryDAOImpl struct {
@@ -34,12 +42,28 @@ func NewCategoryDAO(db Database.DatabaseInterface, collectionName string) *categ
 
 func (q *categoryDAOImpl) Save(category *categoryDocument.Category) (bool, error) {
 	log.Println("Save category")
-	_, err := q.mongoCollection.InsertOne(q.db.GetMongoDbContext(), category)
-	log.Println("cat save err : ", err)
-	if err != nil {
-		return false, err
+	_, writeError := q.mongoCollection.InsertOne(q.db.GetMongoDbContext(), category)
+	if writeError != nil {
+		writeException, ok := writeError.(mongo.WriteException)
+		// handle mongo errors
+		if ok {
+			var errMessage string
+			switch writeException.WriteErrors[0].Code {
+			case 11000: // duplicate error
+				if strings.Contains(writeException.WriteErrors[0].Error(), "category") {
+					errMessage = "category already exists "
+				} else {
+					errMessage = writeException.WriteErrors[0].Error()
+				}
+				return false, err.GlobalError{
+					TimeStamp: time.Now().UTC().String()[0:19],
+					Status:    http.StatusConflict,
+					Message:   errMessage,
+				}
+			}
+		}
 	}
-	return true, err
+	return true, nil
 }
 
 // func (q *categoryDAOImpl) SaveAll(questions []questionDocument.Question) (bool, error) {
@@ -65,10 +89,17 @@ func (q *categoryDAOImpl) Save(category *categoryDocument.Category) (bool, error
 // 	return employe, db.Error
 // }
 
-func (q *categoryDAOImpl) FindAll() ([]categoryDocument.Category, error) {
+func (q *categoryDAOImpl) FindAll(pagination categoryDTO.Pagination) ([]categoryDocument.Category, error) {
 	log.Println("FindAll Questions")
 	var categories []categoryDocument.Category
-	cursor, err := q.mongoCollection.Find(q.db.GetMongoDbContext(), bson.M{})
+
+	opts := &options.FindOptions{
+		Limit: pagination.Length,
+		Skip:  pagination.Start,
+		Sort:  bson.M{"category": pagination.OrderBy},
+	}
+
+	cursor, err := q.mongoCollection.Find(q.db.GetMongoDbContext(), bson.M{"category": bson.M{"$regex": pagination.Search}}, opts)
 	if err != nil {
 		return categories, err
 	}
@@ -87,4 +118,13 @@ func (c *categoryDAOImpl) CreateCollection(collectionName string) (*categoryDAOI
 	}
 	// c.mongoCollection = c.mongoCollection.Database().Collection(collectionName)
 	return c, err
+}
+
+func (u *categoryDAOImpl) GetCount(category string) (int64, error) {
+	log.Println("GetCount")
+	totalCount, err := u.mongoCollection.CountDocuments(u.db.GetMongoDbContext(), bson.M{"category": bson.M{"$regex": category}})
+	if err != nil {
+		return totalCount, err
+	}
+	return totalCount, err
 }

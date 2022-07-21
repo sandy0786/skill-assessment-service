@@ -40,6 +40,7 @@ import (
 	server "github.com/sandy0786/skill-assessment-service/server"
 	service "github.com/sandy0786/skill-assessment-service/service"
 	transport "github.com/sandy0786/skill-assessment-service/transport"
+	categoryValidation "github.com/sandy0786/skill-assessment-service/validations/category"
 	userValidation "github.com/sandy0786/skill-assessment-service/validations/user"
 
 	"github.com/go-playground/validator"
@@ -60,14 +61,6 @@ func main() {
 
 	// log.Println("config > ", configobj.GetConfigDetails())
 	dbDetails := configobj.GetConfigDetails().DatabaseDetails
-
-	// // setup casbin auth rules
-	// authEnforcer, err := casbin.NewEnforcerSafe("./configuration/conf/auth_model.conf", "./configuration/conf/policy.csv")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// log.Println("authEnforcer >> ", authEnforcer)
 
 	// connect to db
 	dbObj := database.NewMongoObj(dbDetails.Host, dbDetails.Port, dbDetails.User, dbDetails.Password, dbDetails.Name, dbDetails.ConnectionString)
@@ -91,11 +84,12 @@ func main() {
 
 	// create validator
 	userValidator := userValidation.NewUserValidator()
+	categoryValidator := categoryValidation.NewCategoryValidator()
 
 	// create service
 	userSrv := service.NewUserService(configobj, empDao, roleDao, userValidator)
 	qsnSrv := service.NewQuestionService(configobj, qsnDao)
-	ctgSrv := service.NewCategoryService(configobj, ctgDao)
+	ctgSrv := service.NewCategoryService(configobj, ctgDao, categoryValidator)
 	authSrv := service.NewAuthService(configobj, authhDao, roleDao)
 	roleSrv := service.NewRoleService(configobj, roleDao)
 	questionTypeSrv := service.NewQuestionTypeService(configobj, questionTypeDao)

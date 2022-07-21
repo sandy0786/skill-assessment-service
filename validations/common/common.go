@@ -5,12 +5,12 @@ import (
 )
 
 // function types
-type ValidatorIsNumberType func(string) (bool, string)
+type ValidatorIsNumberType func(string) (int, bool, string)
 
-func IsQueryParamNumber(queryParam string) (bool, string) {
-	_, err := strconv.Atoi(queryParam)
+func IsQueryParamNumber(queryParam string) (int, bool, string) {
+	val, err := strconv.Atoi(queryParam)
 	if err != nil {
-		return false, "ErrInvalidData"
+		return val, false, "ErrInvalidData"
 	}
-	return true, ""
+	return val, true, ""
 }

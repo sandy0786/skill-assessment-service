@@ -7,17 +7,12 @@ type CategoryRequest struct {
 	// required: true
 	// min length: 2
 	// example: go
-	CategoryName string `json:"categoryName" validate:"required"`
-	// the collection name
-	// required: true
-	// min length: 2
-	// example: go
-	CollectionName string `json:"collectionName" validate:"required"`
+	Category string `json:"category" validate:"required,min=2"`
 	// Author of this category
 	// required: true
 	// min length: 5
 	// example: admin
-	Author string `json:"author" validate:"required"`
+	Author string `json:"author" validate:"required,min=5"`
 }
 
 // Category Request
@@ -25,4 +20,28 @@ type CategoryRequest struct {
 type CategoryRequestSwagger struct {
 	// in:body
 	Body CategoryRequest
+}
+
+// swagger:parameters GetAllCategoriesRequest
+type AllUsersRequestSwagger struct {
+	// Provide page number
+	// in: query
+	// required: true
+	// example: 1
+	Page int `json:"page"`
+	// Provide page size
+	// in: query
+	// required: true
+	// example: 10
+	PageSize int `json:"pageSize"`
+	// Provide search literal
+	// in: query
+	// required: true
+	// example: admin
+	Search string `json:"search"`
+	// provide order by asc|desc
+	// in: query
+	// required: false
+	// example: asc
+	OrderBy string `json:"orderBy"`
 }

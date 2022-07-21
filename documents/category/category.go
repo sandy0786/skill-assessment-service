@@ -7,10 +7,9 @@ import (
 )
 
 type Category struct {
-	ID             primitive.ObjectID `bson:"_id"`
-	CreatedAt      time.Time          `bson:"createdAt"`
-	UpdatedAt      time.Time          `bson:"updatedAt"`
-	CategoryName   string             `bson:"categoryName"`
-	CollectionName string             `bson:"collectionName"`
-	Author         string             `bson:"author"`
+	ID        primitive.ObjectID `bson:"_id"`
+	CreatedAt time.Time          `bson:"createdAt"`
+	UpdatedAt time.Time          `bson:"updatedAt"`
+	Category  string             `bson:"category"`
+	Author    string             `bson:"author"`
 }

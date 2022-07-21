@@ -36,6 +36,7 @@ type QuestionRequest struct {
 
 // swagger:parameters QuestionRequest
 type QuestionRequestSwagger struct {
+	// Provide category
 	// in: path
 	// required: true
 	// example: go

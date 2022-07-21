@@ -114,7 +114,8 @@ func MakeAddCategoryEndpoint(srv service.CategoryService) endpoint.Endpoint {
 func MakeGetAllCategoriesEndpoint(srv service.CategoryService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		log.Println("MakeGetAllCategoriesEndpoint")
-		responseFromService, err := srv.GetAllCategories(ctx)
+		req := request.(*http.Request)
+		responseFromService, err := srv.GetAllCategories(ctx, req)
 		return responseFromService, err
 	}
 }

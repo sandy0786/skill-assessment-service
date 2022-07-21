@@ -24,8 +24,9 @@ const (
 	GET_QUESTION_TYPE = "/api/question/types"       // GET
 
 	// Categories
-	CATEGORY       = "/api/category"   // POST
-	ALL_CATEGORIES = "/api/categories" // GET
+	CATEGORY       = "/api/category"      // POST
+	CATEGORY_ID    = "/api/category/{id}" // DELETE|PUT
+	ALL_CATEGORIES = "/api/categories"    // GET
 
 	// auth
 	LOGIN         = "/api/user/login"    // POST
