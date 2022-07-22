@@ -13,6 +13,7 @@ import (
 	categoryDao "github.com/sandy0786/skill-assessment-service/dao/category"
 	categoryDocument "github.com/sandy0786/skill-assessment-service/documents/category"
 	categoryDto "github.com/sandy0786/skill-assessment-service/dto/category"
+	globalErr "github.com/sandy0786/skill-assessment-service/errors"
 	categoryRequest "github.com/sandy0786/skill-assessment-service/request/category"
 	categoryResponse "github.com/sandy0786/skill-assessment-service/response/category"
 	successResponse "github.com/sandy0786/skill-assessment-service/response/success"
@@ -23,11 +24,9 @@ import (
 )
 
 type CategoryService interface {
-	// GetServiceStatus(context.Context) (string, error)
 	AddCategory(context.Context, categoryRequest.CategoryRequest) (successResponse.SuccessResponse, error)
-	// AddMultipleQuestions(context.Context, []categoryRequest.CategoryRequest) (successResponse.SuccessResponse, error)
 	GetAllCategories(context.Context, *http.Request) (categoryResponse.CategoryResults, error)
-	// GetEmployeeById(context.Context, int64) (employeeResponse.EmployeeResponse, error)
+	UpdateCategory(context.Context, categoryDto.UpdateCategory) (successResponse.SuccessResponse, error)
 }
 
 // service for druid
@@ -47,12 +46,6 @@ func NewCategoryService(c configuration.ConfigurationInterface, dao categoryDao.
 
 func (t *categoryService) AddCategory(_ context.Context, categoryRequest categoryRequest.CategoryRequest) (successResponse.SuccessResponse, error) {
 	log.Println("Inside Add Category")
-
-	// create collection with provided collection name
-	// _, err := t.dao.CreateCollection(categoryRequest.CollectionName)
-	// if err != nil {
-	// 	return successResponse.SuccessResponse{}, err
-	// }
 
 	// update category details in db
 	var category categoryDocument.Category
@@ -137,4 +130,36 @@ func (t *categoryService) GetAllCategories(_ context.Context, r *http.Request) (
 	categoryResults.Data = categoryResponses
 	categoryResults.TotalRecords = totalCount
 	return categoryResults, err
+}
+
+func (t *categoryService) UpdateCategory(_ context.Context, updateCategory categoryDto.UpdateCategory) (successResponse.SuccessResponse, error) {
+	log.Println("Inside Add Category")
+
+	// update category details in db
+	var category categoryDocument.Category
+
+	id, err := primitive.ObjectIDFromHex(updateCategory.Id)
+
+	if err != nil {
+		return successResponse.SuccessResponse{}, globalErr.GlobalError{
+			TimeStamp: time.Now().UTC().String(),
+			Status:    http.StatusBadRequest,
+			Message:   "Invalid id provided",
+		}
+	}
+
+	category.Category = updateCategory.Category
+	category.ID = id
+	category.UpdatedAt = time.Now().UTC()
+	categoryUpdated, err := t.dao.UpdateCategoryById(&category)
+
+	if !categoryUpdated {
+		return successResponse.SuccessResponse{}, err
+	}
+
+	return successResponse.SuccessResponse{
+		Status:    http.StatusOK,
+		Message:   "Category updated successfully",
+		TimeStamp: time.Now().UTC().String(),
+	}, err
 }

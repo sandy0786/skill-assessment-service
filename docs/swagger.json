@@ -111,6 +111,50 @@
         }
       }
     },
+    "/api/category/{id}": {
+      "put": {
+        "description": "Update existing category name",
+        "tags": [
+          "category"
+        ],
+        "operationId": "UpdateCategoryRequestId",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "62d91ea59b5df5fa6df6ff0f",
+            "x-go-name": "Id",
+            "description": "Provide categoryId",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/UpdateCategoryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UpdateCategorySuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/BadRequestErrorResponse"
+          },
+          "404": {
+            "$ref": "#/responses/UpdateCategoryNotFoundResponse"
+          },
+          "409": {
+            "$ref": "#/responses/UpdateCategoryConflictResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
+      }
+    },
     "/api/health": {
       "get": {
         "description": "Health of the application",
@@ -1445,6 +1489,23 @@
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/errors"
     },
+    "UpdateCategoryRequest": {
+      "description": "Update Category Request",
+      "type": "object",
+      "required": [
+        "category"
+      ],
+      "properties": {
+        "category": {
+          "description": "the category name",
+          "type": "string",
+          "minLength": 2,
+          "x-go-name": "Category",
+          "example": "golang"
+        }
+      },
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/request/category"
+    },
     "UserDeleteSuccessResponse": {
       "description": "Success response",
       "type": "object",
@@ -1541,7 +1602,7 @@
           "example": "admin"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/user"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
     },
     "UserResults": {
       "type": "object",
@@ -1718,6 +1779,78 @@
       "description": "",
       "schema": {
         "$ref": "#/definitions/UnAuthorizedError"
+      }
+    },
+    "UpdateCategoryConflictResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "x-go-name": "Message",
+            "example": "Category already exists"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "Status",
+            "example": 409
+          },
+          "timestamp": {
+            "type": "string",
+            "x-go-name": "TimeStamp",
+            "example": "2022-05-20 16:59:05"
+          }
+        }
+      }
+    },
+    "UpdateCategoryNotFoundResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "x-go-name": "Message",
+            "example": "No matching category found"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "Status",
+            "example": 404
+          },
+          "timestamp": {
+            "type": "string",
+            "x-go-name": "TimeStamp",
+            "example": "2022-05-20 16:59:05"
+          }
+        }
+      }
+    },
+    "UpdateCategorySuccessResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "x-go-name": "Message",
+            "example": "Category updated successfully"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "Status",
+            "example": 200
+          },
+          "timestamp": {
+            "type": "string",
+            "x-go-name": "TimeStamp",
+            "example": "2022-05-20 16:59:05"
+          }
+        }
       }
     },
     "UserDeleteSuccessResponse": {

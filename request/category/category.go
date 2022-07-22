@@ -45,3 +45,24 @@ type AllUsersRequestSwagger struct {
 	// example: asc
 	OrderBy string `json:"orderBy"`
 }
+
+// Update Category Request
+// swagger:model
+type UpdateCategoryRequest struct {
+	// the category name
+	// required: true
+	// min length: 2
+	// example: golang
+	Category string `json:"category" validate:"required,min=2"`
+}
+
+// swagger:parameters UpdateCategoryRequestId
+type UpdateCategoryRequestSwagger struct {
+	// Provide categoryId
+	// in: path
+	// required: true
+	// example: 62d91ea59b5df5fa6df6ff0f
+	Id string `json:"id"`
+	// in:body
+	Body UpdateCategoryRequest
+}

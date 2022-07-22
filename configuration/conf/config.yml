@@ -27,5 +27,5 @@ corsOptions:
 
 # Enable sign in 
 user:
-  keepSigned: true
+  staySignedIn: true
 

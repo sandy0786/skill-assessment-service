@@ -6,3 +6,8 @@ type Pagination struct {
 	Length  *int64
 	OrderBy int
 }
+
+type UpdateCategory struct {
+	Id       string
+	Category string
+}

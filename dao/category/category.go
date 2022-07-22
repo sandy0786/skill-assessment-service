@@ -1,7 +1,6 @@
 package category
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"strings"
@@ -19,10 +18,8 @@ import (
 
 type CategoryDAO interface {
 	Save(*categoryDocument.Category) (bool, error)
-	// SaveAll([]questionDocument.Question) (bool, error)
-	// FindById(int64) (userModel.User, error)
+	UpdateCategoryById(*categoryDocument.Category) (bool, error)
 	FindAll(categoryDTO.Pagination) ([]categoryDocument.Category, error)
-	// CreateCollection(string) (*categoryDAOImpl, error)
 	GetCount(string) (int64, error)
 }
 
@@ -66,28 +63,41 @@ func (q *categoryDAOImpl) Save(category *categoryDocument.Category) (bool, error
 	return true, nil
 }
 
-// func (q *categoryDAOImpl) SaveAll(questions []questionDocument.Question) (bool, error) {
-// 	log.Println("Save all questions")
-// 	tempQuestions := []interface{}{}
-// 	for _, question := range questions {
-// 		tempQuestions = append(tempQuestions, question)
-// 	}
-// 	_, err := q.mongoCollection.InsertMany(q.db.GetMongoDbContext(), tempQuestions)
+func (c *categoryDAOImpl) UpdateCategoryById(category *categoryDocument.Category) (bool, error) {
+	log.Println("Update Category by id ")
 
-// 	if err != nil {
-// 		log.Println("err >> ", err)
-// 		return false, err
-// 	}
-// 	return true, err
-// }
+	update := bson.M{"$set": bson.M{"category": category.Category, "updatedAt": category.UpdatedAt}}
+	updateResult, UpdateErr := c.mongoCollection.UpdateOne(c.db.GetMongoDbContext(), bson.M{"_id": category.ID}, update)
 
-// func (e *userDAOImpl) FindById(idint64) (model.Employee, error) {
-// 	log.Println("FindById employee : ", id)
-// 	var employeemodel.Employee
-// 	// db := e.db.GtDbObject().Find(&employee, id)
-//	db := e.db.GetDbObject().Model(&employee).Preload("Address").Find(&employee, id)
-// 	return employe, db.Error
-// }
+	if UpdateErr != nil {
+		writeException, ok := UpdateErr.(mongo.WriteException)
+		// handle mongo errors
+		if ok {
+			var errMessage string
+			switch writeException.WriteErrors[0].Code {
+			case 11000: // duplicate error
+				if strings.Contains(writeException.WriteErrors[0].Error(), "category") {
+					errMessage = "Category already exists "
+				} else {
+					errMessage = writeException.WriteErrors[0].Error()
+				}
+				return false, err.GlobalError{
+					TimeStamp: time.Now().UTC().String()[0:19],
+					Status:    http.StatusConflict,
+					Message:   errMessage,
+				}
+			}
+		}
+	} else if updateResult.MatchedCount == 0 {
+		return false, err.GlobalError{
+			Message:   "No matching category found",
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusNotFound,
+		}
+	}
+
+	return true, nil
+}
 
 func (q *categoryDAOImpl) FindAll(pagination categoryDTO.Pagination) ([]categoryDocument.Category, error) {
 	log.Println("FindAll Questions")
@@ -107,17 +117,6 @@ func (q *categoryDAOImpl) FindAll(pagination categoryDTO.Pagination) ([]category
 		return categories, err
 	}
 	return categories, err
-}
-
-func (c *categoryDAOImpl) CreateCollection(collectionName string) (*categoryDAOImpl, error) {
-	ctx := context.TODO()
-	err := c.db.GetMongoDbObject().CreateCollection(ctx, collectionName)
-	if err != nil {
-		log.Println("Error while creating collection : ", err)
-		return nil, err
-	}
-	// c.mongoCollection = c.mongoCollection.Database().Collection(collectionName)
-	return c, err
 }
 
 func (u *categoryDAOImpl) GetCount(category string) (int64, error) {

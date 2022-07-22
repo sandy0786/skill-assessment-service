@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	categoryDTO "github.com/sandy0786/skill-assessment-service/dto/category"
 	questionDTO "github.com/sandy0786/skill-assessment-service/dto/question"
 	userDTO "github.com/sandy0786/skill-assessment-service/dto/user"
 	authRequest "github.com/sandy0786/skill-assessment-service/request/auth"
@@ -30,6 +31,7 @@ type Endpoints struct {
 	AddMultipleQuestionEndpoint endpoint.Endpoint
 	GetAllQuestionsEndpoint     endpoint.Endpoint
 	AddCategoryEndpoint         endpoint.Endpoint
+	UpdateCategoryEndpoint      endpoint.Endpoint
 	GetAllCategoriesEndpoint    endpoint.Endpoint
 	RefreshTokenEndpoint        endpoint.Endpoint
 	ResetUserPasswordEndpoint   endpoint.Endpoint
@@ -106,6 +108,16 @@ func MakeAddCategoryEndpoint(srv service.CategoryService) endpoint.Endpoint {
 		log.Println("MakeAddCategoryEndpoint")
 		categoryRequest := request.(categoryRequest.CategoryRequest)
 		responseFromService, err := srv.AddCategory(ctx, categoryRequest)
+		return responseFromService, err
+	}
+}
+
+//MakeUpdateCategoryEndpoint returns response
+func MakeUpdateCategoryEndpoint(srv service.CategoryService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		log.Println("MakeUpdateCategoryEndpoint")
+		categoryRequest := request.(categoryDTO.UpdateCategory)
+		responseFromService, err := srv.UpdateCategory(ctx, categoryRequest)
 		return responseFromService, err
 	}
 }

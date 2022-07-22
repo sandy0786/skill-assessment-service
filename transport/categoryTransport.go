@@ -7,11 +7,13 @@ import (
 	"net/http"
 	"time"
 
+	categoryDTO "github.com/sandy0786/skill-assessment-service/dto/category"
 	errors "github.com/sandy0786/skill-assessment-service/errors"
 	categoryRequest "github.com/sandy0786/skill-assessment-service/request/category"
 	categoryResponse "github.com/sandy0786/skill-assessment-service/response/category"
 
 	"github.com/go-playground/validator"
+	"github.com/gorilla/mux"
 )
 
 //DecodeAddCategoryRequest - decodes POST request
@@ -27,6 +29,27 @@ func DecodeAddCategoryRequest(ctx context.Context, r *http.Request) (interface{}
 func EncodeAddCategoryResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
 	log.Println("transport:EncodeAddCategoryResponse")
 	w.WriteHeader(http.StatusCreated)
+	return json.NewEncoder(w).Encode(response)
+}
+
+//DecodeUpdateCategoryRequest
+func DecodeUpdateCategoryRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	log.Println("transport:DecodeUpdateCategoryRequest")
+	var cRequest categoryRequest.UpdateCategoryRequest
+	err := json.NewDecoder(r.Body).Decode(&cRequest)
+	err = Validate.Struct(cRequest)
+
+	categoryId := mux.Vars(r)["id"]
+	categoryDto := categoryDTO.UpdateCategory{
+		Id:       categoryId,
+		Category: cRequest.Category,
+	}
+	return categoryDto, err
+}
+
+// EncodeUpdateCategoryResponse
+func EncodeUpdateCategoryResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	log.Println("transport:EncodeUpdateCategoryResponse")
 	return json.NewEncoder(w).Encode(response)
 }
 

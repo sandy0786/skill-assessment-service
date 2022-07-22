@@ -362,6 +362,22 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[2],
 	))
 
+	// swagger:route PUT /api/category/{id} category UpdateCategoryRequestId
+	// Update existing category name
+	//
+	// responses:
+	//  500: InternalServerErrorResponse
+	//  400: BadRequestErrorResponse
+	//  409: UpdateCategoryConflictResponse
+	//  404: UpdateCategoryNotFoundResponse
+	//  200: UpdateCategorySuccessResponse
+	r.Methods(http.MethodPut).Path(constants.CATEGORY_ID).Handler(httptransport.NewServer(
+		endpoints.UpdateCategoryEndpoint,
+		transport.DecodeUpdateCategoryRequest,
+		transport.EncodeUpdateCategoryResponse,
+		Opts[2],
+	))
+
 	// swagger:route GET /api/categories category GetAllCategoriesRequest
 	// Fetch all categories
 	//
