@@ -62,3 +62,29 @@ type UpdateCategoryConflictResponse struct {
 		Message string `json:"message"`
 	}
 }
+
+// swagger:response DeleteCategorySuccessResponse
+type DeleteCategorySuccessResponse struct {
+	// in: body
+	Body struct {
+		// example: 2022-05-20 16:59:05
+		TimeStamp string `json:"timestamp"`
+		// example: 200
+		Status int `json:"status"`
+		// example: Category deleted successfully
+		Message string `json:"message"`
+	}
+}
+
+// swagger:response DeleteCategoryBadRequestResponse
+type DeleteCategoryBadRequestResponse struct {
+	// in: body
+	Body struct {
+		// example: 2022-05-20 16:59:05
+		TimeStamp string `json:"timestamp"`
+		// example: 400
+		Status int `json:"status"`
+		// example: Invalid id provided
+		Message string `json:"message"`
+	}
+}

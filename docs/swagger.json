@@ -153,6 +153,38 @@
             "$ref": "#/responses/InternalServerErrorResponse"
           }
         }
+      },
+      "delete": {
+        "description": "Update existing category name",
+        "tags": [
+          "category"
+        ],
+        "operationId": "DeleteCategoryRequestId",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "62d91ea59b5df5fa6df6ff0f",
+            "x-go-name": "Id",
+            "description": "Provide categoryId",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteCategorySuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/DeleteCategoryBadRequestResponse"
+          },
+          "404": {
+            "$ref": "#/responses/UpdateCategoryNotFoundResponse"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerErrorResponse"
+          }
+        }
       }
     },
     "/api/health": {
@@ -1208,7 +1240,7 @@
           "example": "2022-05-20 16:59:05"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/user"
     },
     "PasswordResetSuccessResponse": {
       "description": "Success response",
@@ -1602,7 +1634,7 @@
           "example": "admin"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/user"
     },
     "UserResults": {
       "type": "object",
@@ -1670,6 +1702,54 @@
       "description": "",
       "schema": {
         "$ref": "#/definitions/SuccessCreatedResponse"
+      }
+    },
+    "DeleteCategoryBadRequestResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "x-go-name": "Message",
+            "example": "Invalid id provided"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "Status",
+            "example": 400
+          },
+          "timestamp": {
+            "type": "string",
+            "x-go-name": "TimeStamp",
+            "example": "2022-05-20 16:59:05"
+          }
+        }
+      }
+    },
+    "DeleteCategorySuccessResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "x-go-name": "Message",
+            "example": "Category deleted successfully"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int64",
+            "x-go-name": "Status",
+            "example": 200
+          },
+          "timestamp": {
+            "type": "string",
+            "x-go-name": "TimeStamp",
+            "example": "2022-05-20 16:59:05"
+          }
+        }
       }
     },
     "HealthResponse": {

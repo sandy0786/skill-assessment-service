@@ -53,6 +53,23 @@ func EncodeUpdateCategoryResponse(ctx context.Context, w http.ResponseWriter, re
 	return json.NewEncoder(w).Encode(response)
 }
 
+//DecodeDeleteCategoryRequest
+func DecodeDeleteCategoryRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+	log.Println("transport:DecodeDeleteCategoryRequest")
+
+	categoryId := mux.Vars(r)["id"]
+	categoryDto := categoryDTO.UpdateCategory{
+		Id: categoryId,
+	}
+	return categoryDto, nil
+}
+
+// EncodeDeleteCategoryResponse
+func EncodeDeleteCategoryResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	log.Println("transport:EncodeDeleteCategoryResponse")
+	return json.NewEncoder(w).Encode(response)
+}
+
 func DecodeGetAllCategoriesRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	log.Println("transport:DecodeGetAllCategoriesRequest")
 	return r, nil

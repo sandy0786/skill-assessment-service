@@ -12,6 +12,7 @@ import (
 	err "github.com/sandy0786/skill-assessment-service/errors"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -19,6 +20,7 @@ import (
 type CategoryDAO interface {
 	Save(*categoryDocument.Category) (bool, error)
 	UpdateCategoryById(*categoryDocument.Category) (bool, error)
+	DeleteCategoryById(primitive.ObjectID) error
 	FindAll(categoryDTO.Pagination) ([]categoryDocument.Category, error)
 	GetCount(string) (int64, error)
 }
@@ -97,6 +99,27 @@ func (c *categoryDAOImpl) UpdateCategoryById(category *categoryDocument.Category
 	}
 
 	return true, nil
+}
+
+func (q *categoryDAOImpl) DeleteCategoryById(categoryId primitive.ObjectID) error {
+	log.Println("Delete category")
+
+	deleteResult, deleteError := q.mongoCollection.DeleteOne(q.db.GetMongoDbContext(), bson.M{"_id": categoryId})
+
+	if deleteError != nil {
+		return err.GlobalError{
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusInternalServerError,
+			Message:   deleteError.Error(),
+		}
+	} else if deleteResult.DeletedCount == 0 {
+		return err.GlobalError{
+			Message:   "No matching category found",
+			TimeStamp: time.Now().UTC().String()[0:19],
+			Status:    http.StatusNotFound,
+		}
+	}
+	return nil
 }
 
 func (q *categoryDAOImpl) FindAll(pagination categoryDTO.Pagination) ([]categoryDocument.Category, error) {

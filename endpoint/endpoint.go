@@ -32,6 +32,7 @@ type Endpoints struct {
 	GetAllQuestionsEndpoint     endpoint.Endpoint
 	AddCategoryEndpoint         endpoint.Endpoint
 	UpdateCategoryEndpoint      endpoint.Endpoint
+	DeleteCategoryEndpoint      endpoint.Endpoint
 	GetAllCategoriesEndpoint    endpoint.Endpoint
 	RefreshTokenEndpoint        endpoint.Endpoint
 	ResetUserPasswordEndpoint   endpoint.Endpoint
@@ -118,6 +119,16 @@ func MakeUpdateCategoryEndpoint(srv service.CategoryService) endpoint.Endpoint {
 		log.Println("MakeUpdateCategoryEndpoint")
 		categoryRequest := request.(categoryDTO.UpdateCategory)
 		responseFromService, err := srv.UpdateCategory(ctx, categoryRequest)
+		return responseFromService, err
+	}
+}
+
+//MakeDeleteCategoryEndpoint returns response
+func MakeDeleteCategoryEndpoint(srv service.CategoryService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		log.Println("MakeDeleteCategoryEndpoint")
+		categoryRequest := request.(categoryDTO.UpdateCategory)
+		responseFromService, err := srv.DeleteCategory(ctx, categoryRequest)
 		return responseFromService, err
 	}
 }

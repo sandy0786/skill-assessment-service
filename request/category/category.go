@@ -66,3 +66,12 @@ type UpdateCategoryRequestSwagger struct {
 	// in:body
 	Body UpdateCategoryRequest
 }
+
+// swagger:parameters DeleteCategoryRequestId
+type DeleteCategoryRequestSwagger struct {
+	// Provide categoryId
+	// in: path
+	// required: true
+	// example: 62d91ea59b5df5fa6df6ff0f
+	Id string `json:"id"`
+}

@@ -378,6 +378,21 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 		Opts[2],
 	))
 
+	// swagger:route DELETE /api/category/{id} category DeleteCategoryRequestId
+	// Update existing category name
+	//
+	// responses:
+	//  500: InternalServerErrorResponse
+	//  400: DeleteCategoryBadRequestResponse
+	//  404: UpdateCategoryNotFoundResponse
+	//  200: DeleteCategorySuccessResponse
+	r.Methods(http.MethodDelete).Path(constants.CATEGORY_ID).Handler(httptransport.NewServer(
+		endpoints.DeleteCategoryEndpoint,
+		transport.DecodeDeleteCategoryRequest,
+		transport.EncodeDeleteCategoryResponse,
+		Opts[2],
+	))
+
 	// swagger:route GET /api/categories category GetAllCategoriesRequest
 	// Fetch all categories
 	//

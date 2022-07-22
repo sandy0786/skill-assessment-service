@@ -27,6 +27,7 @@ type CategoryService interface {
 	AddCategory(context.Context, categoryRequest.CategoryRequest) (successResponse.SuccessResponse, error)
 	GetAllCategories(context.Context, *http.Request) (categoryResponse.CategoryResults, error)
 	UpdateCategory(context.Context, categoryDto.UpdateCategory) (successResponse.SuccessResponse, error)
+	DeleteCategory(context.Context, categoryDto.UpdateCategory) (successResponse.SuccessResponse, error)
 }
 
 // service for druid
@@ -133,7 +134,7 @@ func (t *categoryService) GetAllCategories(_ context.Context, r *http.Request) (
 }
 
 func (t *categoryService) UpdateCategory(_ context.Context, updateCategory categoryDto.UpdateCategory) (successResponse.SuccessResponse, error) {
-	log.Println("Inside Add Category")
+	log.Println("Inside Update Category")
 
 	// update category details in db
 	var category categoryDocument.Category
@@ -160,6 +161,32 @@ func (t *categoryService) UpdateCategory(_ context.Context, updateCategory categ
 	return successResponse.SuccessResponse{
 		Status:    http.StatusOK,
 		Message:   "Category updated successfully",
+		TimeStamp: time.Now().UTC().String(),
+	}, err
+}
+
+func (t *categoryService) DeleteCategory(_ context.Context, updateCategory categoryDto.UpdateCategory) (successResponse.SuccessResponse, error) {
+	log.Println("Inside Delete Category")
+
+	id, err := primitive.ObjectIDFromHex(updateCategory.Id)
+
+	if err != nil {
+		return successResponse.SuccessResponse{}, globalErr.GlobalError{
+			TimeStamp: time.Now().UTC().String(),
+			Status:    http.StatusBadRequest,
+			Message:   "Invalid id provided",
+		}
+	}
+
+	err = t.dao.DeleteCategoryById(id)
+
+	if err != nil {
+		return successResponse.SuccessResponse{}, err
+	}
+
+	return successResponse.SuccessResponse{
+		Status:    http.StatusOK,
+		Message:   "Category deleted successfully",
 		TimeStamp: time.Now().UTC().String(),
 	}, err
 }
