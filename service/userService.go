@@ -98,10 +98,10 @@ func (t *userService) GetAllUsers(_ context.Context, r *http.Request) (userRespo
 	}
 
 	queryParamValues := r.URL.Query()
-	startQueryParam := queryParamValues[constants.PAGE][0]
+	pageQueryParam := queryParamValues[constants.PAGE][0]
 	lengthQueryParam := queryParamValues[constants.PAGE_SIZE][0]
 
-	start, err := strconv.ParseInt(startQueryParam, 10, 64)
+	page, err := strconv.ParseInt(pageQueryParam, 10, 64)
 	if err != nil {
 		log.Println("error wile converting page", err)
 	}
@@ -123,7 +123,7 @@ func (t *userService) GetAllUsers(_ context.Context, r *http.Request) (userRespo
 		orderBy = -1
 	}
 
-	start--
+	start := pageSize * (page - 1)
 
 	var sortBy string
 	if len(queryParamValues[constants.SORT_BY]) > 0 {

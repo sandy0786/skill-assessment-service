@@ -76,10 +76,10 @@ func (t *categoryService) GetAllCategories(_ context.Context, r *http.Request) (
 
 	queryParamValues := r.URL.Query()
 
-	startQueryParam := queryParamValues[constants.PAGE][0]
+	pageQueryParam := queryParamValues[constants.PAGE][0]
 	lengthQueryParam := queryParamValues[constants.PAGE_SIZE][0]
 
-	start, err := strconv.ParseInt(startQueryParam, 10, 64)
+	page, err := strconv.ParseInt(pageQueryParam, 10, 64)
 	if err != nil {
 		log.Println("error wile converting page", err)
 	}
@@ -101,7 +101,7 @@ func (t *categoryService) GetAllCategories(_ context.Context, r *http.Request) (
 		orderBy = -1
 	}
 
-	start--
+	start := pageSize * (page - 1)
 
 	// create pagination object
 	pagination := categoryDto.Pagination{
