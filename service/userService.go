@@ -31,6 +31,7 @@ type UserService interface {
 	DeleteUserByUserName(context.Context, string) (successResponse.SuccessResponse, error)
 	RevokeUserByUserName(context.Context, string) (successResponse.SuccessResponse, error)
 	ResetUserPassword(context.Context, userDto.UserDTO) (successResponse.SuccessResponse, error)
+	ResetUserAdminPassword(context.Context, userDto.UserPasswordAdminResetDTO) (successResponse.SuccessResponse, error)
 }
 
 // service for druid
@@ -195,6 +196,19 @@ func (t *userService) RevokeUserByUserName(_ context.Context, username string) (
 func (t *userService) ResetUserPassword(_ context.Context, userdto userDto.UserDTO) (successResponse.SuccessResponse, error) {
 	log.Println("Inside ResetUserPassword ")
 	resetSuccess, err := t.dao.ResetUserPassword(userdto.Username, userdto.OldPassword, userdto.NewPassword)
+	if resetSuccess {
+		return successResponse.SuccessResponse{
+			Status:    http.StatusOK,
+			Message:   "Password reset success",
+			TimeStamp: time.Now().UTC().String(),
+		}, err
+	}
+	return successResponse.SuccessResponse{}, err
+}
+
+func (t *userService) ResetUserAdminPassword(_ context.Context, userdto userDto.UserPasswordAdminResetDTO) (successResponse.SuccessResponse, error) {
+	log.Println("Inside ResetUserPassword ")
+	resetSuccess, err := t.dao.ResetUserByAdminPassword(userdto.Username, userdto.Password)
 	if resetSuccess {
 		return successResponse.SuccessResponse{
 			Status:    http.StatusOK,

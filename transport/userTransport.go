@@ -132,11 +132,16 @@ func DecodePasswordResetRequest(ctx context.Context, r *http.Request) (interface
 	if len(username) == 0 {
 		return "", errors.New("Path variable 'username' not found")
 	}
-	var userDto userDTO.UserDTO
-	err1 := json.NewDecoder(r.Body).Decode(&userDto)
-	err1 = Validate.Struct(userDto)
-	log.Println("aa >> ", err1)
-	return userDto, nil
+
+	var userPasswordAdminResetDTO userDTO.UserPasswordAdminResetDTO
+	userPasswordAdminResetDTO.Username = username
+	err1 := json.NewDecoder(r.Body).Decode(&userPasswordAdminResetDTO)
+	if err1 != nil {
+		return "", err1
+	}
+	err1 = Validate.Struct(userPasswordAdminResetDTO)
+
+	return userPasswordAdminResetDTO, err1
 }
 
 // EncodePasswordResetRequest

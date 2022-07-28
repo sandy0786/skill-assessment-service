@@ -599,7 +599,7 @@
         "parameters": [
           {
             "type": "string",
-            "example": "admin",
+            "example": "testuser",
             "name": "Username",
             "in": "path",
             "required": true
@@ -608,7 +608,16 @@
             "name": "Body",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/PasswordReset"
+              "type": "object",
+              "required": [
+                "Password"
+              ],
+              "properties": {
+                "Password": {
+                  "description": "the new password for this user",
+                  "type": "string"
+                }
+              }
             }
           }
         ],
@@ -1240,7 +1249,7 @@
           "example": "2022-05-20 16:59:05"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/user"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
     },
     "PasswordResetSuccessResponse": {
       "description": "Success response",

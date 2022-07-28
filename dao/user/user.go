@@ -21,6 +21,7 @@ type UserDAO interface {
 	DeleteByUserName(string) (bool, error)
 	RevokeByUserName(string) (bool, error)
 	ResetUserPassword(string, string, string) (bool, error)
+	ResetUserByAdminPassword(string, string) (bool, error)
 	GetCount(string) (int64, error)
 }
 
@@ -124,6 +125,20 @@ func (u *userDAOImpl) ResetUserPassword(username string, oldpassword string, new
 	_, err := u.mongoCollection.UpdateOne(u.db.GetMongoDbContext(), bson.M{"username": username, "password": oldpassword},
 		bson.D{
 			{"$set", bson.D{{"password", newPassword}}},
+		},
+	)
+
+	if err != nil {
+		return false, err
+	}
+	return true, err
+}
+
+func (u *userDAOImpl) ResetUserByAdminPassword(username string, password string) (bool, error) {
+	log.Println("Reset user by admin password")
+	_, err := u.mongoCollection.UpdateOne(u.db.GetMongoDbContext(), bson.M{"username": username},
+		bson.D{
+			{"$set", bson.D{{"password", password}}},
 		},
 	)
 

@@ -113,7 +113,7 @@ func main() {
 		DeleteCategoryEndpoint:      endpoint.MakeDeleteCategoryEndpoint(ctgSrv),
 		GetAllCategoriesEndpoint:    endpoint.MakeGetAllCategoriesEndpoint(ctgSrv),
 		RefreshTokenEndpoint:        endpoint.MakeRefreshTokenEndpoint(authSrv),
-		ResetUserPasswordEndpoint:   endpoint.MakeResetPasswordEndpoint(userSrv),
+		ResetUserPasswordEndpoint:   endpoint.MakeResetUserPasswordEndpoint(userSrv),
 		GetAllRolesEndpoint:         endpoint.MakeGetAllRolesEndpoint(roleSrv),
 		GetAllQuestionTypesEndpoint: endpoint.MakeGetAllQuestionTypesEndpoint(questionTypeSrv),
 	}

@@ -173,6 +173,16 @@ func MakeResetPasswordEndpoint(srv service.UserService) endpoint.Endpoint {
 	}
 }
 
+//MakeResetUserPasswordEndpoint returns response
+func MakeResetUserPasswordEndpoint(srv service.UserService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		log.Println("MakeResetUserPasswordEndpoint")
+		userDto := request.(userDTO.UserPasswordAdminResetDTO)
+		responseFromService, err := srv.ResetUserAdminPassword(ctx, userDto)
+		return responseFromService, err
+	}
+}
+
 //MakeLoginEndpoint returns response
 func MakeLoginEndpoint(srv service.AuthService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {

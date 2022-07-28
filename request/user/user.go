@@ -57,10 +57,14 @@ type PasswordReset struct {
 type ResetPasswordRequestSwagger struct {
 	// in: path
 	// required: true
-	// example: admin
+	// example: testuser
 	Username string
 	// in: body
-	Body PasswordReset
+	Body struct {
+		// the new password for this user
+		// required: true
+		Password string `json:"Password" validate:"required,min=8"`
+	}
 }
 
 // swagger:parameters ResetUserPasswordRequest

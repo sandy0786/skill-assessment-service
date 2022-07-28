@@ -195,7 +195,7 @@ func NewHTTPServer(ctx context.Context, endpoints endpoint.Endpoints, options ..
 	//  401: UnAuthorizedAccessResponse
 	//  200: ResetUserPasswordResponse
 	r.Methods(http.MethodPut).Path(constants.RESET_PASSWORD).Handler(httptransport.NewServer(
-		endpoints.ResetPasswordEndpoint,
+		endpoints.ResetUserPasswordEndpoint,
 		transport.DecodePasswordResetRequest,
 		transport.EncodePasswordResetRequest,
 		Opts[0],

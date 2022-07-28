@@ -13,3 +13,8 @@ type UserPaginationDTO struct {
 	SortBy  string
 	OrderBy int
 }
+
+type UserPasswordAdminResetDTO struct {
+	Username string
+	Password string
+}
