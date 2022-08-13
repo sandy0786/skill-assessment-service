@@ -89,7 +89,7 @@ func main() {
 	// create service
 	userSrv := service.NewUserService(configobj, empDao, roleDao, userValidator)
 	qsnSrv := service.NewQuestionService(configobj, qsnDao)
-	ctgSrv := service.NewCategoryService(configobj, ctgDao, categoryValidator)
+	ctgSrv := service.NewCategoryService(configobj, ctgDao, categoryValidator, empDao)
 	authSrv := service.NewAuthService(configobj, authhDao, roleDao)
 	roleSrv := service.NewRoleService(configobj, roleDao)
 	questionTypeSrv := service.NewQuestionTypeService(configobj, questionTypeDao)

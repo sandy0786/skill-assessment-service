@@ -13,6 +13,10 @@ type CategoryRequest struct {
 	// min length: 5
 	// example: admin
 	Author string `json:"author" validate:"required,min=5"`
+	// Provide id of user who can create questions on this category
+	// required: true
+	// example: ["62d91ea59b5df5fa6df6ff0f"]
+	Users []string `json:"users" validate:"required"`
 }
 
 // Category Request

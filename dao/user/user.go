@@ -11,6 +11,7 @@ import (
 	err "github.com/sandy0786/skill-assessment-service/errors"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -23,6 +24,7 @@ type UserDAO interface {
 	ResetUserPassword(string, string, string) (bool, error)
 	ResetUserByAdminPassword(string, string) (bool, error)
 	GetCount(string) (int64, error)
+	GetUserById(primitive.ObjectID) (userDocument.User, error)
 }
 
 type userDAOImpl struct {
@@ -155,4 +157,11 @@ func (u *userDAOImpl) GetCount(username string) (int64, error) {
 		return totalCount, err
 	}
 	return totalCount, err
+}
+
+func (u *userDAOImpl) GetUserById(id primitive.ObjectID) (userDocument.User, error) {
+	log.Println("GetUserById ")
+	var user userDocument.User
+	err := u.mongoCollection.FindOne(u.db.GetMongoDbContext(), bson.M{"_id": id}).Decode(&user)
+	return user, err
 }

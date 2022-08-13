@@ -5,6 +5,8 @@ package user
 // User Response
 // swagger:model
 type UserResponse struct {
+	// example: 62d91ea59b5df5fa6df6ff0f
+	Id string `json:"id"`
 	// example: admin
 	Username string `json:"username"`
 	// example: admin@provider.com

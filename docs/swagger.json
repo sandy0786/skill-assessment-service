@@ -1018,7 +1018,8 @@
       "type": "object",
       "required": [
         "category",
-        "author"
+        "author",
+        "users"
       ],
       "properties": {
         "author": {
@@ -1034,6 +1035,17 @@
           "minLength": 2,
           "x-go-name": "Category",
           "example": "go"
+        },
+        "users": {
+          "description": "Provide id of user who can create questions on this category",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Users",
+          "example": [
+            "62d91ea59b5df5fa6df6ff0f"
+          ]
         }
       },
       "x-go-package": "github.com/sandy0786/skill-assessment-service/request/category"
@@ -1249,7 +1261,7 @@
           "example": "2022-05-20 16:59:05"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/user"
     },
     "PasswordResetSuccessResponse": {
       "description": "Success response",
@@ -1626,6 +1638,11 @@
           "x-go-name": "Email",
           "example": "admin@provider.com"
         },
+        "id": {
+          "type": "string",
+          "x-go-name": "Id",
+          "example": "62d91ea59b5df5fa6df6ff0f"
+        },
         "roleId": {
           "type": "string",
           "x-go-name": "Role",
@@ -1643,7 +1660,7 @@
           "example": "admin"
         }
       },
-      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/user"
+      "x-go-package": "github.com/sandy0786/skill-assessment-service/response/User"
     },
     "UserResults": {
       "type": "object",

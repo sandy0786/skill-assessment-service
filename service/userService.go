@@ -149,6 +149,7 @@ func (t *userService) GetAllUsers(_ context.Context, r *http.Request) (userRespo
 	// loop through each user and process
 	for _, user := range users {
 		userResponse := userResponse.UserResponse{
+			Id:        user.ID.Hex(),
 			Username:  user.Username,
 			Email:     user.Email,
 			Active:    user.Active,

@@ -11,6 +11,7 @@ import (
 	configuration "github.com/sandy0786/skill-assessment-service/configuration"
 	constants "github.com/sandy0786/skill-assessment-service/constants"
 	categoryDao "github.com/sandy0786/skill-assessment-service/dao/category"
+	userDao "github.com/sandy0786/skill-assessment-service/dao/user"
 	categoryDocument "github.com/sandy0786/skill-assessment-service/documents/category"
 	categoryDto "github.com/sandy0786/skill-assessment-service/dto/category"
 	globalErr "github.com/sandy0786/skill-assessment-service/errors"
@@ -35,13 +36,15 @@ type categoryService struct {
 	questionServiceConfig configuration.ConfigurationInterface
 	dao                   categoryDao.CategoryDAO
 	validator             categoryValidation.CategoryValidator
+	userDao               userDao.UserDAO
 }
 
-func NewCategoryService(c configuration.ConfigurationInterface, dao categoryDao.CategoryDAO, validator categoryValidation.CategoryValidator) *categoryService {
+func NewCategoryService(c configuration.ConfigurationInterface, dao categoryDao.CategoryDAO, validator categoryValidation.CategoryValidator, userDao userDao.UserDAO) *categoryService {
 	return &categoryService{
 		questionServiceConfig: c,
 		dao:                   dao,
 		validator:             validator,
+		userDao:               userDao,
 	}
 }
 
@@ -54,6 +57,27 @@ func (t *categoryService) AddCategory(_ context.Context, categoryRequest categor
 	category.CreatedAt = time.Now().UTC()
 	category.UpdatedAt = time.Now().UTC()
 	category.ID = primitive.NewObjectID()
+
+	// Validate users
+	for _, id := range categoryRequest.Users {
+		userId, err := primitive.ObjectIDFromHex(id)
+		if err != nil {
+			return successResponse.SuccessResponse{}, globalErr.GlobalError{
+				Status:    http.StatusBadRequest,
+				Message:   "Invalid user id : " + id,
+				TimeStamp: time.Now().UTC().String(),
+			}
+		}
+		_, err = t.userDao.GetUserById(userId)
+		if err != nil {
+			return successResponse.SuccessResponse{}, globalErr.GlobalError{
+				Status:    http.StatusBadRequest,
+				Message:   "No user found with id : " + id,
+				TimeStamp: time.Now().UTC().String(),
+			}
+		}
+	}
+
 	categoryCreated, err := t.dao.Save(&category)
 	if !categoryCreated {
 		return successResponse.SuccessResponse{}, err

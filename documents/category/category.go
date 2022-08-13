@@ -12,4 +12,5 @@ type Category struct {
 	UpdatedAt time.Time          `bson:"updatedAt"`
 	Category  string             `bson:"category"`
 	Author    string             `bson:"author"`
+	Users     []string           `bson:"users"`
 }

@@ -104,6 +104,8 @@ func CategoryErrorEncoder(ctx context.Context, err error, w http.ResponseWriter)
 			message = "'category' should not contain any special characters and should be atleast 2 characters"
 		case "Author":
 			message = "'author' should not contain any special characters and should be atleast 5 characters"
+		case "Users":
+			message = "'users' is required field and should contain 'id's"
 		}
 
 		globalError = errors.GlobalError{
